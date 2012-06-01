@@ -12,30 +12,36 @@ Sound is an issue at the moment, but I'm working on it. Not all implemented game
 
 The following drivers/games are implemented for now and seems to work ok.
 
-Pacman
-Invaders
-1942
-1943
-zaxxon
-szaxxon
-galaga
-digdug
-dkong
-mario
-bombjack
-amidar
-phoenix
-locomotn
-tp84
-phozon
-mappy
-gunfight
-boothill
-arkanoid
-frogger
-gunsmoke
-qix
-mpatrol
-pbaction
-citycon
-jackal
+  * Pacman
+  * Invaders
+  * 1942
+  * 1943
+  * zaxxon
+  * szaxxon
+  * galaga
+  * digdug
+  * dkong
+  * mario
+  * bombjack
+  * amidar
+  * phoenix
+  * locomotn
+  * tp84
+  * phozon
+  * mappy
+  * gunfight
+  * boothill
+  * arkanoid
+  * frogger
+  * gunsmoke
+  * qix
+  * mpatrol
+  * pbaction
+  * citycon
+  * jackal
+
+And even some vector games
+  * zektor
+  * tacscan
+  * asteroid
+  * llander
