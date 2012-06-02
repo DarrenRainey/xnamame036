@@ -10,7 +10,11 @@ Sound is an issue at the moment, but I'm working on it. Not all implemented game
 
 = Details =
 
-The following drivers/games are implemented for now and seems to work ok.
+Since this started out as a project I wanted to try for myself, some things here is different than in the MAME version. Obviously, I've used more of the .NET API and C# language features to reach my goal. For instance, game drivers are loaded through reflection at need instead of being statically linked into the main program. For each driver then to be "self-contained" a drivers corresponding machine/vidhrdw entry is moved into the driver itself. Only drivers that are inherited have entries in these directories now.
+
+There is one thing that will/may reduce the runtime memory footprint that I'd like to do real soon, and that is to create the CPU/SOUND drivers for a game when needed. Now they are contained in a static array just like in MAME.
+
+== List of drivers/games that can be played (or sort of) ==
 
   * Pacman
   * Invaders
