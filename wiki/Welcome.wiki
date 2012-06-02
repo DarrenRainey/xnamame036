@@ -4,7 +4,7 @@ This is the XnaMame 036 project, a port of the MAME v0.36 to XNA/C#
 = Introduction =
 The aim of this project was to check if MAME could be ported to C#/XNA so that I could run Pacman. Silly, I know; but it seems to run ok.
 
-This that was an success, I wanted to implement the drivers for the games that I remember playing as a kid.
+Feeling that it was an success, I wanted to implement the drivers for the games that I remember playing as a kid.
 
 Sound is an issue at the moment, but I'm working on it. Not all implemented games have proper joystick/gamepad controls mapped - yet.
 
