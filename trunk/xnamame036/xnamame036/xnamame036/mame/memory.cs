@@ -102,6 +102,11 @@ namespace xnamame036.mame
             public MemoryReadAddress(int start) { this.start = start; }
             public MemoryReadAddress(int start, int end, int _handler) { this.start = start; this.end = end; this._handler = _handler; }
             public MemoryReadAddress(int start, int end, mem_read_handler handler) { this.start = start; this.end = end; this.handler = handler; }
+
+            public override string ToString()
+            {
+                return string.Format("MRA {0}-{1}",start.ToString("x"),end.ToString("x"));
+            }
         }
         public class MemoryWriteAddress
         {
@@ -402,32 +407,32 @@ namespace xnamame036.mame
         static int memory_allocate_ext()
         {
             int ext = 0;
-            int cpu;
 
             /* a change for MESS */
             if (Machine.gamedrv.rom == null) return 1;
 
             /* loop over all CPUs */
-            for (cpu = 0; cpu < cpu_gettotalcpu(); cpu++)
+            for (int cpu = 0; cpu < cpu_gettotalcpu(); cpu++)
             {
-                //const struct MemoryReadAddress *mra;
-                //const struct MemoryWriteAddress *mwa;
-
                 int region = REGION_CPU1 + cpu;
                 int size = memory_region_length(region);
 
                 /* now it's time to loop */
                 while (true)
-                {
+                 {
                     int lowest = 0x7fffffff, end, lastend;
 
                     /* find the base of the lowest memory region that extends past the end */
-                    for (int mra=0;mra<Machine.drv.cpu[cpu].memory_read.Length && Machine.drv.cpu[cpu].memory_read[mra].start != -1;mra++)
-                        if (Machine.drv.cpu[cpu].memory_read[mra].end >= size && Machine.drv.cpu[cpu].memory_read[mra].start < lowest) lowest = Machine.drv.cpu[cpu].memory_read[mra].start;
+                    for (int mra=0;Machine.drv.cpu[cpu].memory_read[mra].start != -1;mra++)
+                        if (Machine.drv.cpu[cpu].memory_read[mra].end >= size && 
+                            Machine.drv.cpu[cpu].memory_read[mra].start < lowest)
+                            lowest = Machine.drv.cpu[cpu].memory_read[mra].start;
 
-                    for (int mwa = 0; mwa < Machine.drv.cpu[cpu].memory_write.Length && Machine.drv.cpu[cpu].memory_write[mwa].start != -1; mwa++)
-                        if (Machine.drv.cpu[cpu].memory_write[mwa].end >= size && Machine.drv.cpu[cpu].memory_write[mwa].start < lowest) lowest = Machine.drv.cpu[cpu].memory_read[mwa].start;
-
+                    for (int mwa = 0; Machine.drv.cpu[cpu].memory_write[mwa].start != -1; mwa++)
+                        if (Machine.drv.cpu[cpu].memory_write[mwa].end >= size && 
+                            Machine.drv.cpu[cpu].memory_write[mwa].start < lowest) 
+                            lowest = Machine.drv.cpu[cpu].memory_write[mwa].start;
+                    System.Console.WriteLine("lowest={0}" + lowest.ToString("x"));
                     /* done if nothing found */
                     if (lowest == 0x7fffffff)
                         break;
@@ -440,10 +445,10 @@ namespace xnamame036.mame
                         lastend = end;
 
                         /* find the base of the lowest memory region that extends past the end */
-                        for (int mra = 0; mra < Machine.drv.cpu[cpu].memory_read.Length && Machine.drv.cpu[cpu].memory_read[mra].start != -1; mra++)
+                        for (int mra = 0; Machine.drv.cpu[cpu].memory_read[mra].start != -1; mra++)
                             if (Machine.drv.cpu[cpu].memory_read[mra].start <= end && Machine.drv.cpu[cpu].memory_read[mra].end > end) end = Machine.drv.cpu[cpu].memory_read[mra].end + 1;
                         
-                         for (int mwa = 0; mwa < Machine.drv.cpu[cpu].memory_write.Length && Machine.drv.cpu[cpu].memory_write[mwa].start != -1; mwa++)
+                         for (int mwa = 0;  Machine.drv.cpu[cpu].memory_write[mwa].start != -1; mwa++)
                             if (Machine.drv.cpu[cpu].memory_write[mwa].start <= end && Machine.drv.cpu[cpu].memory_write[mwa].end > end) end = Machine.drv.cpu[cpu].memory_write[mwa].end + 1;
                         
                     }
@@ -998,6 +1003,11 @@ namespace xnamame036.mame
         static int BYTE_XOR_BE(int a) { return a ; }
         static int BYTE_XOR_LE(int a){return a^1;}
 #endif
+        public static void COMBINE_WORD_MEM(_BytePtr a, int o,int d)
+        {
+            a.write16(o,(ushort)(a.read16(o & ((d) >> 16)) | (d)));
+        }
+
         public static int cpu_readmem16(int address)
         {
             MHELE hw = cur_mrhard[(uint)address >> (ABITS2_16 + ABITS_MIN_16)];

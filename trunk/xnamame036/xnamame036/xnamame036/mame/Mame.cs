@@ -121,7 +121,7 @@ namespace xnamame036.mame
             //main("jackal");
             //main("speedbal"); 
             //main("gyruss"); 
-
+            //main("rocnrope");
 
             //Here are some vector games
             //main("zektor");
@@ -133,7 +133,7 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers have problems that should be fixable
             
-             //main("rocnrope");//Graphics all screwed up
+             
             //main("pang"); // needs sound. graphics glitches
 
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
@@ -154,6 +154,7 @@ namespace xnamame036.mame
             //main("kangaroo"); //z80
             //main("irobot");//6809
             
+            //main("gtmr"); // 68000 don't have roms for this one
             //main("gtmre"); // 68000
             //main("qbert"); // I8086,M6502
             //main("outrun"); // 680000, Z80
@@ -161,10 +162,10 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have major problems
-            //main("galaxian");// not working yet, problems with custom sound interface, inheritance
-            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
+            main("galaxian");// not working yet, problems with custom sound interface, inheritance
+           //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
-            //main("raiden");  cpu problems ?
+            //main("raiden");  //cpu problems ?
             
         }
         public void main(string game)

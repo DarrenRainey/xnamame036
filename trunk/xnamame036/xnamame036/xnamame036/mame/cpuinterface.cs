@@ -29,11 +29,15 @@ namespace xnamame036.mame
         public const int CPU_M6502 = 14;
         public const byte CPU_CCPU = 15;
         public const byte CPU_V30 = 16;
+        public const int CPU_M68000 = 17; 
+        
+        
+        
         public const byte CPU_I86 = 17;
 
 
 
-        public const int CPU_M68000 = 17;
+        
         public const int CPU_M68010 = 18;
 
         public const int CPU_M6509 = 19;
@@ -110,9 +114,10 @@ namespace xnamame036.mame
                                              new cpu_m6502(),
                                              new cpu_ccpu(),
                                              new cpu_v30(),
+                                             new cpu_m68000(),
                                              //new cpu_i86(),
                                              
-                                             //new cpu_m68000(),
+                                             
                                              
                                              
 

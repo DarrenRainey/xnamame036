@@ -158,14 +158,13 @@ namespace xnamame036.mame
                     }
             }
         }
-        public static
-void OKIM6295_set_bank_base(int which, int channel, int _base)
+        public static void OKIM6295_set_bank_base(int which, int channel, int _base)
         {
 
             /* handle the all voice case */
             if (channel == ALL_VOICES)
             {
-                int i ;
+                int i;
                 for (i = 0; i < MAX_OKIM6295_VOICES; i++)
                     OKIM6295_set_bank_base(which, i, _base);
                 return;
@@ -342,36 +341,40 @@ void OKIM6295_set_bank_base(int which, int channel, int _base)
         }
 
         static int OKIM6295_status_r(int num)
-{
-	int i, result;
+        {
+            int i, result;
 
-	/* range check the numbers */
-	if (num >= num_voices / MAX_OKIM6295_VOICES)
-	{
-		Mame.printf("error: OKIM6295_status_r() called with chip = %d, but only %d chips allocated\n",num, num_voices / MAX_OKIM6295_VOICES);
-		return 0x0f;
-	}
+            /* range check the numbers */
+            if (num >= num_voices / MAX_OKIM6295_VOICES)
+            {
+                Mame.printf("error: OKIM6295_status_r() called with chip = %d, but only %d chips allocated\n", num, num_voices / MAX_OKIM6295_VOICES);
+                return 0x0f;
+            }
 
-	/* set the bit to 1 if something is playing on a given channel */
-	result = 0;
-	for (i = 0; i < MAX_OKIM6295_VOICES; i++)
-	{
-		ADPCMVoice voice = _adpcm[num * MAX_OKIM6295_VOICES + i];
+            /* set the bit to 1 if something is playing on a given channel */
+            result = 0;
+            for (i = 0; i < MAX_OKIM6295_VOICES; i++)
+            {
+                ADPCMVoice voice = _adpcm[num * MAX_OKIM6295_VOICES + i];
 
-		/* update the stream */
-		Mame.stream_update(voice.stream, 0);
+                /* update the stream */
+                Mame.stream_update(voice.stream, 0);
 
-		/* set the bit if it's playing */
-		if (voice.playing!=0)
-			result |= 1 << i;
-	}
+                /* set the bit if it's playing */
+                if (voice.playing != 0)
+                    result |= 1 << i;
+            }
 
-	return result;
-}
+            return result;
+        }
 
         public static void OKIM6295_data_0_w(int offset, int data)
         {
             OKIM6295_data_w(0, data);
+        }
+        public static void OKIM6295_data_1_w(int offset, int data)
+        {
+            OKIM6295_data_w(1, data);
         }
         public static int OKIM6295_status_0_r(int offset)
         {
@@ -386,13 +389,14 @@ void OKIM6295_set_bank_base(int which, int channel, int _base)
 
 
 
+
         public override int chips_clock(Mame.MachineSound msound)
         {
-             return (( OKIM6295interface)msound.sound_interface).num; 
+            return ((OKIM6295interface)msound.sound_interface).num;
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-            return (( OKIM6295interface)msound.sound_interface).num; 
+            return ((OKIM6295interface)msound.sound_interface).num;
         }
         public override int start(Mame.MachineSound msound)
         {
@@ -440,11 +444,11 @@ void OKIM6295_set_bank_base(int which, int channel, int _base)
         }
         public override void reset()
         {
-           //none
+            //none
         }
         public override void update()
         {
-           //none
+            //none
         }
     }
 }

@@ -13,17 +13,17 @@ namespace xnamame036.mame
             public object _private;
             public _BytePtr[] line;
         }
-        const int OSD_FILETYPE_ROM = 1;
-        const int OSD_FILETYPE_SAMPLE = 2;
-        const int OSD_FILETYPE_NVRAM = 3;
-        const int OSD_FILETYPE_HIGHSCORE = 4;
-        const int OSD_FILETYPE_CONFIG = 5;
-        const int OSD_FILETYPE_INPUTLOG = 6;
-        const int OSD_FILETYPE_STATE = 7;
-        const int OSD_FILETYPE_ARTWORK = 8;
-        const int OSD_FILETYPE_MEMCARD = 9;
-        const int OSD_FILETYPE_SCREENSHOT = 10;
-        const uint OSD_KEY_NONE = 0xffffffff;
+        public const int OSD_FILETYPE_ROM = 1;
+        public const int OSD_FILETYPE_SAMPLE = 2;
+        public const int OSD_FILETYPE_NVRAM = 3;
+        public const int OSD_FILETYPE_HIGHSCORE = 4;
+        public const int OSD_FILETYPE_CONFIG = 5;
+        public const int OSD_FILETYPE_INPUTLOG = 6;
+        public const int OSD_FILETYPE_STATE = 7;
+        public const int OSD_FILETYPE_ARTWORK = 8;
+        public const int OSD_FILETYPE_MEMCARD = 9;
+        public const int OSD_FILETYPE_SCREENSHOT = 10;
+        public const uint OSD_KEY_NONE = 0xffffffff;
 
         const byte PATH_NOT_FOUND = 0, PATH_IS_FILE = 1, PATH_IS_DIRECTORY = 2;
 
