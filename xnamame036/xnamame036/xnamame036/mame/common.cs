@@ -524,7 +524,7 @@ namespace xnamame036.mame
                 samples.sample[i] = null;
             samples = null;
         }
-        static GameSamples readsamples(string[] samplenames, string basename)
+        public static GameSamples readsamples(string[] samplenames, string basename)
         {
             int i;
             GameSamples samples;

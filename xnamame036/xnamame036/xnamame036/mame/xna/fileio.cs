@@ -105,7 +105,7 @@ namespace xnamame036.mame
 
             return 0;
         }
-        static void osd_fclose(object file)
+        public static void osd_fclose(object file)
         {
             FakeFileHandle f = (FakeFileHandle)file;
 
@@ -128,11 +128,11 @@ namespace xnamame036.mame
 
             return f.crc;
         }
-        object osd_fopen(int pathtype, int pathindex, string filename, string mode)
+        public static object osd_fopen(int pathtype, int pathindex, string filename, string mode)
         {
             return fopen(filename, mode);
         }
-        static object osd_fopen(string game, string filename, int filetype, int _write)
+        public static object osd_fopen(string game, string filename, int filetype, int _write)
         {
             string name, gamename;
             bool found = false;

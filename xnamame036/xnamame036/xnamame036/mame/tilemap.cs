@@ -141,7 +141,10 @@ namespace xnamame036.mame
 
         public const byte TILE_FLIPX = 0x01;
         public const byte TILE_FLIPY = 0x02;
-
+        public static int TILE_FLIPXY(int XY)
+        {
+            return ((((XY) >> 1) | ((XY) << 1)) & 3);
+        }
         public static void SET_TILE_INFO(int GFX, int CODE, int COLOR)
         {
             GfxElement gfx = Machine.gfx[(GFX)];
@@ -2220,7 +2223,19 @@ namespace xnamame036.mame
                 }
             }
         }
+        public static void tilemap_set_scrolldx(tilemap tilemap, int dx, int dx_if_flipped)
+        {
+            tilemap.dx = dx;
+            tilemap.dx_if_flipped = dx_if_flipped;
+            tilemap.scrollx_delta = (tilemap.attributes & TILEMAP_FLIPX) != 0 ? dx_if_flipped : dx;
+        }
 
+        public static void tilemap_set_scrolldy(tilemap tilemap, int dy, int dy_if_flipped)
+        {
+            tilemap.dy = dy;
+            tilemap.dy_if_flipped = dy_if_flipped;
+            tilemap.scrolly_delta = (tilemap.attributes & TILEMAP_FLIPY) != 0 ? dy_if_flipped : dy;
+        }
         public static void tilemap_set_scroll_rows(tilemap _tilemap, int n)
         {
             if ((_tilemap.orientation & ORIENTATION_SWAP_XY) != 0)

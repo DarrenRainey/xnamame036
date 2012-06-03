@@ -234,7 +234,6 @@
     <Compile Include="mame\sound.cs" />
     <Compile Include="mame\soundhardware\dkong.cs" />
     <Compile Include="mame\soundhardware\frogger.cs" />
-    <Compile Include="mame\soundhardware\galaxian.cs" />
     <Compile Include="mame\soundhardware\irem.cs" />
     <Compile Include="mame\soundhardware\Sega.cs" />
     <Compile Include="mame\soundhardware\timeplt.cs" />
@@ -269,7 +268,6 @@
     <Compile Include="mame\videohardware\digdug.cs" />
     <Compile Include="mame\videohardware\dkong.cs" />
     <Compile Include="mame\videohardware\frogger.cs" />
-    <Compile Include="mame\videohardware\galaxian.cs" />
     <Compile Include="mame\videohardware\Generic.cs" />
     <Compile Include="mame\videohardware\konamiic.cs" />
     <Compile Include="mame\videohardware\pengo.cs" />

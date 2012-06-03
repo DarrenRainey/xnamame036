@@ -68,13 +68,17 @@ namespace xnamame036.mame
         public const byte SOUND_K007232 = 10;
         public const byte SOUND_POKEY = 11;
         public const byte SOUND_YM3812 = 12;
-        public const byte SOUND_SEGAPCM = 13;
-        
-        public const byte SOUND_CUSTOM = 14;
+        public const byte SOUND_CUSTOM = 13;
 
+        public const byte SOUND_SEGAPCM = 14;
 
-        public abstract class CustomSoundInterface : snd_interface
+        public delegate int CustomSoundStart(MachineSound msound);
+        public delegate void CustomSoundHandler();
+
+        public class CustomSoundInterface : snd_interface
         {
+            public CustomSoundStart SoundStart;
+            public CustomSoundHandler SoundStop, SoundUpdate;
             public override int chips_clock(MachineSound msound)
             {
                 throw new NotImplementedException();
@@ -85,9 +89,22 @@ namespace xnamame036.mame
             }
             public override void reset()
             {
-                throw new NotImplementedException();
+                //nothing
+            }
+            public override int start(MachineSound msound)
+            {
+                if (SoundStart != null) return SoundStart(msound); else return 0;                
+            }
+            public override void stop()
+            {
+                if (SoundStop != null)SoundStop();
+            }
+            public override void update()
+            {
+                if (SoundUpdate != null)SoundUpdate();
             }
         }
+        
         public static snd_interface[] sndintf = {
                                       new SOUND_DUMMY(),
                                       new Namco(),
@@ -102,6 +119,7 @@ namespace xnamame036.mame
                                       new K007232(),
                                       new Pokey(),
                                       new YM3812(),
+                                      new CustomSoundInterface(),
                                   };
         int sound_start()
         {
@@ -133,6 +151,12 @@ namespace xnamame036.mame
 
             while (totalsound < Machine.drv.sound.Count && Machine.drv.sound[totalsound].sound_type != 0 && totalsound < MAX_SOUND)
             {
+                if (Machine.drv.sound[totalsound].sound_type == SOUND_CUSTOM)
+                {
+                    ((CustomSoundInterface)sndintf[SOUND_CUSTOM]).SoundStart = ((snd_interface)Machine.drv.sound[totalsound].sound_interface).start;
+                    ((CustomSoundInterface)sndintf[SOUND_CUSTOM]).SoundStop = ((snd_interface)Machine.drv.sound[totalsound].sound_interface).stop;
+                    ((CustomSoundInterface)sndintf[SOUND_CUSTOM]).SoundUpdate = ((snd_interface)Machine.drv.sound[totalsound].sound_interface).update;
+                }
                 if ((sndintf[Machine.drv.sound[totalsound].sound_type].start)(Machine.drv.sound[totalsound]) != 0)
                     goto getout;
 

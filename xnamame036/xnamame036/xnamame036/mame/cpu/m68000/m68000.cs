@@ -7,7 +7,7 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
-        public class m68000:cpu_interface
+        public class cpu_m68000:cpu_interface
         {
             const byte MC68000_INT_NONE = 0;
             const byte MC68000_IRQ_1 = 1;
@@ -22,7 +22,7 @@ namespace xnamame036.mame
             const byte MC68000_CPU_MDOE_68000 = 1;
             const byte MC68000_CPU_MODE_68010 = 2;
             const byte MC68000_CPU_MODE_68020 = 4;
-            public m68000()
+            public cpu_m68000()
             {
                 cpu_num = CPU_M68000;
                 num_irqs = 8;
