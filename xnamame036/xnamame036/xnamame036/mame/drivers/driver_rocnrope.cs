@@ -95,7 +95,7 @@ namespace xnamame036.mame.drivers
             public machine_driver_rocnrope()
             {
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6809, 2048000, readmem, writemem, null, null, Mame.interrupt, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80 | Mame.CPU_AUDIO_CPU, 14318180 / 7, timeplt.timeplt_sound_readmem, timeplt.timeplt_sound_writemem, null, null, Mame.ignore_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80 | Mame.CPU_AUDIO_CPU, 14318180 / 8, timeplt.timeplt_sound_readmem, timeplt.timeplt_sound_writemem, null, null, Mame.ignore_interrupt, 1));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 1;
@@ -126,7 +126,7 @@ namespace xnamame036.mame.drivers
                     int bit0 = (color_prom[cpi] >> 0) & 0x01;
                     int bit1 = (color_prom[cpi] >> 1) & 0x01;
                     int bit2 = (color_prom[cpi] >> 2) & 0x01;
-                    palette[i++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+                    palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
                     /* green component */
                     bit0 = (color_prom[cpi] >> 3) & 0x01;
                     bit1 = (color_prom[cpi] >> 4) & 0x01;
@@ -142,11 +142,9 @@ namespace xnamame036.mame.drivers
                 }
 
                 /* color_prom now points to the beginning of the lookup table */
-
                 /* sprites */
                 for (int i = 0; i < TOTAL_COLORS(1); i++)
                     COLOR(colortable, 1, i, color_prom[cpi++] & 0x0f);
-
                 /* characters */
                 for (int i = 0; i < TOTAL_COLORS(0); i++)
                     COLOR(colortable, 0, i, color_prom[cpi++] & 0x0f);
