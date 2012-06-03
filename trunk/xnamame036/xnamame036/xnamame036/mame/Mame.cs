@@ -122,6 +122,7 @@ namespace xnamame036.mame
             //main("speedbal"); 
             //main("gyruss"); 
             //main("rocnrope");
+            //main("galaxian");// sound from samples not good
 
             //Here are some vector games
             //main("zektor");
@@ -162,7 +163,7 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have major problems
-            main("galaxian");// not working yet, problems with custom sound interface, inheritance
+            
            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
             //main("raiden");  //cpu problems ?
