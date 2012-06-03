@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<mamecfg>
+  <config>
+    <scanlines>1</scanlines>
+    <stretch>1</stretch>
+    <artwork>1</artwork>
+    <samples>1</samples>    
+  </config>
+  <directory>
+    <nvram>nvram</nvram>
+  </directory>
+</mamecfg>

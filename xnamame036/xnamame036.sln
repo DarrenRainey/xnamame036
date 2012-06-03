@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xnamame036", "xnamame036\xnamame036\xnamame036.csproj", "{A3FCE2A5-C72C-419E-A705-5D66A9441FA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xnamame036Content", "xnamame036\xnamame036Content\xnamame036Content.contentproj", "{7F20C2AD-3F89-4DFC-AE52-4B0AFC04CAC1}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3FCE2A5-C72C-419E-A705-5D66A9441FA6}.Debug|x86.ActiveCfg = Debug|x86
+		{A3FCE2A5-C72C-419E-A705-5D66A9441FA6}.Debug|x86.Build.0 = Debug|x86
+		{A3FCE2A5-C72C-419E-A705-5D66A9441FA6}.Release|x86.ActiveCfg = Release|x86
+		{A3FCE2A5-C72C-419E-A705-5D66A9441FA6}.Release|x86.Build.0 = Release|x86
+		{7F20C2AD-3F89-4DFC-AE52-4B0AFC04CAC1}.Debug|x86.ActiveCfg = Debug|x86
+		{7F20C2AD-3F89-4DFC-AE52-4B0AFC04CAC1}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
