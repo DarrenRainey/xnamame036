@@ -195,49 +195,49 @@ namespace xnamame036.mame.drivers
         static Mame.DACinterface dac_interface = new Mame.DACinterface(1, new int[] { 100 });
         static Namco_interface namco_interface = new Namco_interface(23920 / 2, 8, 50, -1, true);
         static YM2151interface ym2151_interface = new YM2151interface(1, 3579580,
-            new int[] {YM2151.YM3012_VOL(80, Mame.MIXER_PAN_LEFT, 80, Mame.MIXER_PAN_RIGHT) }, null);
-        
-        
-static Mame.GfxLayout charlayout =
-new Mame.GfxLayout(
-	8,8,	/* 8*8 characters */
-	16384,	/* 16384 characters max */
-	1,		/* 1 bit per pixel */
-	new uint[]{ 0 },	/* bitplanes offset */
-	new uint[]{ 0, 1, 2, 3, 4, 5, 6, 7 },
-	new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8 },
-	8*8 	/* every char takes 8 consecutive bytes */
-);
+            new int[] { YM2151.YM3012_VOL(80, Mame.MIXER_PAN_LEFT, 80, Mame.MIXER_PAN_RIGHT) }, null);
 
-static Mame.GfxLayout tilelayout =
-new Mame.GfxLayout(
-	8,8,	/* 8*8 characters */
-	16384,	/* 16384 characters max */
-	8,		/* 8 bits per pixel */
-	new uint[]{ 0, 1, 2, 3, 4, 5, 6, 7 }, 	/* bitplanes offset */
-	new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8 },
-	new uint[]{ 0*64, 1*64, 2*64, 3*64, 4*64, 5*64, 6*64, 7*64 },
-	64*8	/* every char takes 64 consecutive bytes */
-);
 
-static Mame.GfxLayout spritelayout =
-new Mame.GfxLayout(
-	32,32,	/* 32*32 sprites */
-	2048,	/* 2048 sprites max */
-	4,		/* 4 bits per pixel */
-	new uint[]{ 0, 1, 2, 3 },  /* the bitplanes are packed */
-	new uint[]{  0*4,  1*4,  2*4,  3*4,  4*4,  5*4,  6*4,  7*4,
+        static Mame.GfxLayout charlayout =
+        new Mame.GfxLayout(
+            8, 8,	/* 8*8 characters */
+            16384,	/* 16384 characters max */
+            1,		/* 1 bit per pixel */
+            new uint[] { 0 },	/* bitplanes offset */
+            new uint[] { 0, 1, 2, 3, 4, 5, 6, 7 },
+            new uint[] { 0 * 8, 1 * 8, 2 * 8, 3 * 8, 4 * 8, 5 * 8, 6 * 8, 7 * 8 },
+            8 * 8 	/* every char takes 8 consecutive bytes */
+        );
+
+        static Mame.GfxLayout tilelayout =
+        new Mame.GfxLayout(
+            8, 8,	/* 8*8 characters */
+            16384,	/* 16384 characters max */
+            8,		/* 8 bits per pixel */
+            new uint[] { 0, 1, 2, 3, 4, 5, 6, 7 }, 	/* bitplanes offset */
+            new uint[] { 0 * 8, 1 * 8, 2 * 8, 3 * 8, 4 * 8, 5 * 8, 6 * 8, 7 * 8 },
+            new uint[] { 0 * 64, 1 * 64, 2 * 64, 3 * 64, 4 * 64, 5 * 64, 6 * 64, 7 * 64 },
+            64 * 8	/* every char takes 64 consecutive bytes */
+        );
+
+        static Mame.GfxLayout spritelayout =
+        new Mame.GfxLayout(
+            32, 32,	/* 32*32 sprites */
+            2048,	/* 2048 sprites max */
+            4,		/* 4 bits per pixel */
+            new uint[] { 0, 1, 2, 3 },  /* the bitplanes are packed */
+            new uint[]{  0*4,  1*4,  2*4,  3*4,  4*4,  5*4,  6*4,  7*4,
 	   8*4,  9*4, 10*4, 11*4, 12*4, 13*4, 14*4, 15*4,
 	 256*4,257*4,258*4,259*4,260*4,261*4,262*4,263*4,
 	 264*4,265*4,266*4,267*4,268*4,269*4,270*4,271*4},
-	new uint[]{ 0*4*16, 1*4*16,  2*4*16,	3*4*16,  4*4*16,  5*4*16,  6*4*16,	7*4*16,
+            new uint[]{ 0*4*16, 1*4*16,  2*4*16,	3*4*16,  4*4*16,  5*4*16,  6*4*16,	7*4*16,
 	  8*4*16, 9*4*16, 10*4*16, 11*4*16, 12*4*16, 13*4*16, 14*4*16, 15*4*16,
 	 32*4*16,33*4*16, 34*4*16, 35*4*16, 36*4*16, 37*4*16, 38*4*16, 39*4*16,
 	 40*4*16,41*4*16, 42*4*16, 43*4*16, 44*4*16, 45*4*16, 46*4*16, 47*4*16 },
-	32*4*8*4  /* every sprite takes 512 consecutive bytes */
-);
+            32 * 4 * 8 * 4  /* every sprite takes 512 consecutive bytes */
+        );
 
-static Mame.GfxDecodeInfo[] gfxdecodeinfo =
+        static Mame.GfxDecodeInfo[] gfxdecodeinfo =
 {
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX1, 0, charlayout,		 0,   1 ),	/* character mask */
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX2, 0, tilelayout,	128*16,   6 ),	/* characters */
@@ -252,6 +252,7 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6809, 49152000 / 32, sound_readmem, sound_writemem, null, null, Mame.interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_HD63701, 49152000 / 8 / 4, mcu_readmem, mcu_writemem, mcu_readport, mcu_writeport, Mame.interrupt, 1));
                 frames_per_second = 60;
+                cpu_slices_per_frame = 0;
                 vblank_duration = Mame.DEFAULT_REAL_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 0;
                 screen_width = 36 * 8;
@@ -260,26 +261,21 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
                 gfxdecodeinfo = driver_namcos1.gfxdecodeinfo;
                 total_colors = 128 * 16 + 6 * 256 + 6 * 256 + 1;
                 color_table_len = 128 * 16 + 6 * 256 + 1;
+                video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE | Mame.VIDEO_UPDATE_BEFORE_VBLANK;
                 sound_attributes = Mame.SOUND_SUPPORTS_STEREO;
                 //sound.Add(new Mame.MachineSound(Mame.SOUND_YM2151, ym2151_interface));
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_NAMCO, namco_interface));
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_DAC, dac_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_NAMCO, namco_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_DAC, dac_interface));
             }
             public override void init_machine()
             {
-                int oldcpu = Mame.cpu_getactivecpu(), i;
+                int oldcpu = Mame.cpu_getactivecpu();
 
                 /* Point all of our bankhandlers to the error handlers */
-                for (i = 0; i < 8; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     namcos1.namcos1_banks[0, i] = new namcos1.bankhandler();
-                    namcos1.namcos1_banks[0, i].bank_handler_r = namcos1.unknown_r;
-                    namcos1.namcos1_banks[0, i].bank_handler_w = namcos1.unknown_w;
-                    namcos1.namcos1_banks[0, i].bank_offset = 0;
                     namcos1.namcos1_banks[1, i] = new namcos1.bankhandler();
-                    namcos1.namcos1_banks[1, i].bank_handler_r = namcos1.unknown_r;
-                    namcos1.namcos1_banks[1, i].bank_handler_w = namcos1.unknown_w;
-                    namcos1.namcos1_banks[1, i].bank_offset = 0;
                 }
 
                 /* Prepare code for Cpu 0 */
@@ -298,11 +294,10 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
                 Mame.cpu_setactivecpu(oldcpu);
 
                 /* Point mcu & sound shared RAM to destination */
-                {
                     _BytePtr RAM = new _BytePtr(Namco.namco_wavedata, 0x1000); /* Ram 1, bank 1, offset 0x1000 */
                     Mame.cpu_setbank(2, RAM);
                     Mame.cpu_setbank(3, RAM);
-                }
+                
 
                 /* In case we had some cpu's suspended, resume them now */
                 Mame.cpu_set_reset_line(1, Mame.ASSERT_LINE);
@@ -317,11 +312,11 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
             }
             public override void nvram_handler(object file, int read_or_write)
             {
-                if (read_or_write!=0)
+                if (read_or_write != 0)
                     Mame.osd_fwrite(file, nvram, nvram_size[0]);
                 else
                 {
-                    if (file!=null)
+                    if (file != null)
                         Mame.osd_fread(file, nvram, nvram_size[0]);
                 }
             }
@@ -343,12 +338,12 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
             }
             public override void vh_eof_callback()
             {
-               //nothing
+                //nothing
             }
         }
     }
     class driver_galaga88 : driver_namcos1
-    {      
+    {
         void ROM_LOAD_HS(string name, uint start, uint length, uint crc)
         {
             ROM_LOAD(name, start, length, crc);
@@ -454,15 +449,7 @@ static Mame.GfxDecodeInfo[] gfxdecodeinfo =
         }
         public override void driver_init()
         {
-
-            namcos1.namcos1_specific galaga88_specific =
-           new namcos1.namcos1_specific(
-               0x2d, 0x31,				/* key query , key id */
-               namcos1.rev1_key_r, namcos1.rev1_key_w,	/* key handler */
-               namcos1.normal_slice,			/* CPU slice normal */
-               1						/* use tilemap flag : speedup optimize */
-           );
-            namcos1.namcos1_driver_init(galaga88_specific);
+            namcos1.init_galaga88();
         }
         public driver_galaga88()
         {

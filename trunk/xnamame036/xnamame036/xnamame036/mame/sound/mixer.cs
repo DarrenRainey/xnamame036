@@ -309,8 +309,7 @@ namespace xnamame036.mame
 
                     /* if we're looping, wrap to the beginning */
                     else
-                        //throw new Exception();// source.offset -= (INT16*)source_end - (INT16*)channel.data_start;
-                        source.offset -= source_end;
+                        throw new Exception();// source.offset -= (INT16*)source_end - (INT16*)channel.data_start;
                 }
             }
 
@@ -444,7 +443,7 @@ namespace xnamame036.mame
             {
                 while (input_pos < len)
                 {
-                    left_accum[output_pos] += (data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
+                    left_accum[output_pos] += ((short)data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
                     input_pos += step_size;
                     output_pos = (output_pos + 1) & ACCUMULATOR_MASK;
                     samples_mixed++;
@@ -456,7 +455,7 @@ namespace xnamame036.mame
             {
                 while (input_pos < len)
                 {
-                    right_accum[output_pos] += (data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
+                    right_accum[output_pos] += ((short)data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
                     input_pos += step_size;
                     output_pos = (output_pos + 1) & ACCUMULATOR_MASK;
                     samples_mixed++;
@@ -468,7 +467,7 @@ namespace xnamame036.mame
             {
                 while (input_pos < len)
                 {
-                    int mixing_value = (data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
+                    int mixing_value = ((short)data.read16((int)(input_pos >> FRACTION_BITS)) * mixing_volume) >> 8;
                     left_accum[output_pos] += mixing_value;
                     right_accum[output_pos] += mixing_value;
                     input_pos += step_size;
@@ -544,7 +543,7 @@ namespace xnamame036.mame
             else if (mixer_channel[ch].pan == MIXER_PAN_RIGHT)
                 mixer_channel[ch].name += " (Rt)";
         }
-        static void mixer_set_mixing_level(int ch, int level)
+        public static void mixer_set_mixing_level(int ch, int level)
         {
             mixer_update_channel(mixer_channel[ch], sound_scalebufferpos((int)samples_this_frame));
             mixer_channel[ch].mixing_level = (byte)level;
@@ -575,14 +574,14 @@ namespace xnamame036.mame
             /* now determine where to mix it */
             mixer_channel[ch].input_frac = 0;
             mixer_channel[ch].data_start = data;
-            mixer_channel[ch].data_current = data;
+            mixer_channel[ch].data_current = new _BytePtr(data);
             //Buffer.BlockCopy(data, 0, mixer_channel[ch].data_current.buffer, 0, data.Length);
             mixer_channel[ch].data_end = len;
             mixer_channel[ch].is_playing = true;
             mixer_channel[ch].is_looping = loop;
             mixer_channel[ch].is_16bit = false;
         }
-        public static void mixer_play_sample_16(int ch, _ShortPtr data, int len, int freq, bool loop)
+        public static void mixer_play_sample_16(int ch,_ShortPtr data, int len, int freq, bool loop)
         {
             /* skip if sound is off, or if this channel is a stream */
             if (Machine.sample_rate == 0 || mixer_channel[ch].is_stream)
@@ -601,13 +600,15 @@ namespace xnamame036.mame
             /* now determine where to mix it */
             mixer_channel[ch].input_frac = 0;
             mixer_channel[ch].data_start = data;
-            mixer_channel[ch].data_current = data;
+            mixer_channel[ch].data_current = data;// new _BytePtr(data.Length * 2);
+            //for (int i = 0; i < data.Length; i++)mixer_channel[ch].data_current.write16(i,(ushort) data[i]);
+            //Buffer.BlockCopy(data, 0, mixer_channel[ch].data_current.buffer, 0, data.Length * 2);
             mixer_channel[ch].data_end = len;
             mixer_channel[ch].is_playing = true;
             mixer_channel[ch].is_looping = loop;
             mixer_channel[ch].is_16bit = true;
         }
-        static bool mixer_is_sample_playing(int ch)
+        static public bool mixer_is_sample_playing(int ch)
         {
             mixer_update_channel(mixer_channel[ch], sound_scalebufferpos((int)samples_this_frame));
             return mixer_channel[ch].is_playing;
@@ -648,17 +649,18 @@ namespace xnamame036.mame
             }
             config_invalid = 0;
         }
-        public static
-void mixer_set_sample_frequency(int ch, int freq)
-        {
-            mixer_update_channel(mixer_channel[ch], sound_scalebufferpos((int)samples_this_frame));
 
-            /* compute the step size for sample rate conversion */
-            if (freq != mixer_channel[ch].frequency)
-            {
-                mixer_channel[ch].frequency = (uint)freq;
-                mixer_channel[ch].step_size = (uint)((double)freq * (double)(1 << FRACTION_BITS) / (double)Machine.sample_rate);
-            }
-        }
+        public static void mixer_set_sample_frequency(int ch, int freq)
+{
+
+	mixer_update_channel(mixer_channel[ch], sound_scalebufferpos((int)samples_this_frame));
+
+	/* compute the step size for sample rate conversion */
+    if (freq != mixer_channel[ch].frequency)
+	{
+		mixer_channel[ch].frequency =(uint) freq;
+		mixer_channel[ch].step_size = (uint)((double)freq * (double)(1 << FRACTION_BITS) / (double)Machine.sample_rate);
+	}
+}
     }
 }

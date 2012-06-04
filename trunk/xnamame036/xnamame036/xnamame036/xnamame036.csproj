@@ -185,6 +185,8 @@
     <Compile Include="mame\drivers\driver_jackal.cs" />
     <Compile Include="mame\drivers\gottlieb.cs" />
     <Compile Include="mame\drivers\driver_gyruss.cs" />
+    <Compile Include="mame\drivers\driver_ladybug.cs" />
+    <Compile Include="mame\drivers\m62.cs" />
     <Compile Include="mame\drivers\pleiads.cs" />
     <Compile Include="mame\drivers\driver_speedbal.cs" />
     <Compile Include="mame\drivers\driver_qix.cs" />

@@ -588,10 +588,9 @@ namespace xnamame036.mame
             /* initialize object manager */
             default_object = new Mame.gfx_object();//memset(&default_object,0,sizeof(struct gfx_object));
             default_object.transparency = Mame.TRANSPARENCY_PEN;
-            default_object.transparet_color = 15;
+            default_object.transparent_color = 15;
             default_object.gfx = Mame.Machine.gfx[2];
             objectlist = Mame.gfxobj_create(MAX_PLAYFIELDS + MAX_SPRITES, 8, default_object);
-
 
             objects = objectlist.objects;
 
@@ -675,11 +674,9 @@ namespace xnamame036.mame
                     int line, x, c;
 
                     mask_ptr = new _BytePtr[total];
-
-
+                    
                     mask_data = new _BytePtr(total * 8);
-
-
+                    
                     for (c = 0; c < total; c++)
                     {
                         _BytePtr src_mask = new _BytePtr(mask_data, c * 8);

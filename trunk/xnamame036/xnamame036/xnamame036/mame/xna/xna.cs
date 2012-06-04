@@ -150,11 +150,7 @@ namespace xnamame036.mame
                 }
             }
 
-            
-
             return 0;
         }
-
-
     }
 }

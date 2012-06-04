@@ -25,7 +25,6 @@ namespace xnamame036.mame
         static int frameskip;
         static int[] bright_lookup = new int[256];
 
-        static int gone_to_gfx_mode;
         static int frameskip_counter;
         static int frames_displayed;
         static long start_time, end_time;    /* to calculate fps average on exit */
@@ -39,43 +38,31 @@ namespace xnamame036.mame
 
         /* type of monitor output- */
         /* Standard PC, NTSC, PAL or Arcade */
-        static int monitor_type;
         static int game_width;
         static int game_height;
         static int game_attributes;
-        static int vgafreq;
-        static int always_synced;
         static int video_sync;
         static int wait_vsync;
         static int use_triplebuf;
-        static int triplebuf_pos, triplebuf_page_width;
         static int vsync_frame_rate;
         static int skiplines;
         static int skipcolumns;
         static int scanlines;
         static int stretch;
         static int use_mmx;
-        static int mmxlfb;
         static int use_tweaked;
         static int use_vesa;
         static int use_dirty;
         static float osd_gamma_correction = 1.0f;
         static int brightness;
         static float brightness_paused_adjust;
-        //static char* resolution;
-        //static char* mode_desc;
-        static int gfx_mode;
+        
+        
         static int gfx_width;
         static int gfx_height;
 
 
-        /*new 'half' flag (req. for 15.75KHz Arcade Monitor Modes)*/
-        int half_yres = 0;
-        /* indicates unchained video mode (req. for 15.75KHz Arcade Monitor Modes)*/
-        static int unchained;
-        /* flags for lowscanrate modes */
-        int scanrate15KHz;
-
+        
         static int auto_resolution;
         static int viswidth;
         static int visheight;
@@ -134,9 +121,7 @@ namespace xnamame036.mame
             dirty_bright = 1;
 
             if (frameskip < 0) frameskip = 0;
-            if (frameskip >= FRAMESKIP_LEVELS) frameskip = FRAMESKIP_LEVELS - 1;
-
-            gone_to_gfx_mode = 0;
+            if (frameskip >= FRAMESKIP_LEVELS) frameskip = FRAMESKIP_LEVELS - 1;            
 
             /* Look if this is a vector game */
             if ((Machine.drv.video_attributes & VIDEO_TYPE_VECTOR) != 0)
@@ -270,9 +255,9 @@ namespace xnamame036.mame
             if (use_vesa != 0)
             {
                 /*removed local 'found' */
-                int mode, bits, err;
+                int mode, bits;
 
-                mode = gfx_mode;
+                
                 found = 0;
                 bits = scrbitmap.depth;
 
@@ -432,172 +417,11 @@ namespace xnamame036.mame
         "   resolution ('-640x480', '-800x600').\n");
                     return 0;
                 }
-                else
-                {
-                    //printf ( "Found matching %s mode\n", gfx_driver.desc);
-                    gfx_mode = mode;
-                    /* disable triple buffering if the screen is not large enough */
-                    //printf ( "Virtual screen size %dx%d\n",VIRTUAL_W,VIRTUAL_H);
-                    //if (VIRTUAL_W < 3*triplebuf_page_width)
-                    //{
-                    //    use_triplebuf = 0;
-                    //    if (errorlog)
-                    //        fprintf (errorlog, "Triple buffer disabled\n");
-                    //}
 
-                    ///* if triple buffering is enabled, turn off vsync */
-                    //if (use_triplebuf)
-                    //{
-                    //    wait_vsync = 0;
-                    //    video_sync = 0;
-                    //}
-                }
             }
-            else
-            {
-
-
-                ///* set the VGA clock */
-                //if (video_sync || always_synced || wait_vsync)
-                //    reg[0].value = (reg[0].value & 0xf3) | (videofreq << 2);
-
-                /* VGA triple buffering */
-                //if(use_triplebuf)
-                //{
-
-                //    int vga_page_size = (gfx_width * gfx_height);
-                //    /* see if it'll fit */
-                //    if ((vga_page_size * 3) > 0x40000)
-                //    {
-                //        /* too big */
-                //        if (errorlog)
-                //            fprintf(errorlog,"tweaked mode %dx%d is too large to triple buffer\ntriple buffering disabled\n",gfx_width,gfx_height);
-                //        use_triplebuf = 0;
-                //    }
-                //    else
-                //    {
-                //        /* it fits, so set up the 3 pages */
-                //        no_xpages = 3;
-                //        xpage_size = vga_page_size / 4;
-                //        if (errorlog)
-                //            fprintf(errorlog,"unchained VGA triple buffering page size :%d\n",xpage_size);
-                //        /* and make sure the mode's unchained */
-                //        unchain_vga (reg);
-                //        /* triple buffering is enabled, turn off vsync */
-                //        wait_vsync = 0;
-                //        video_sync = 0;
-                //    }
-                //}
-                /* center the mode */
-                //center_mode (reg);
-
-                ///* set the horizontal and vertical total */
-                //if (scanrate15KHz)
-                //    /* 15.75KHz modes */
-                //    adjust_array = arcade_adjust;
-                //else
-                //    /* PC monitor modes */
-                //    adjust_array = pc_adjust;
-
-                //for (i=0; adjust_array[i].x != 0; i++)
-                //{
-                //    if ((gfx_width == adjust_array[i].x) && (gfx_height == adjust_array[i].y))
-                //    {
-                //        /* check for 'special vertical' modes */
-                //        if((!adjust_array[i].vertical_mode && !(Machine.orientation & ORIENTATION_SWAP_XY)) ||
-                //            (adjust_array[i].vertical_mode && (Machine.orientation & ORIENTATION_SWAP_XY)))
-                //        {
-                //            reg[H_TOTAL_INDEX].value = *adjust_array[i].hadjust;
-                //            reg[V_TOTAL_INDEX].value = *adjust_array[i].vadjust;
-                //            break;
-                //        }
-                //    }
-                //}
-
-                ///*if scanlines were requested - change the array values to get a scanline mode */
-                //if (scanlines && !scanrate15KHz)
-                //    reg = make_scanline_mode(reg,reglen);
-
-                ///* big hack: open a mode 13h screen using Allegro, then load the custom screen */
-                ///* definition over it. */
-                //if (set_gfx_mode(GFX_VGA,320,200,0,0) != 0)
-                //    return 0;
-
-                //if (errorlog)
-                //{
-                //    fprintf(errorlog,"Generated Tweak Values :-\n");
-                //    for (i=0; i<reglen; i++)
-                //    {
-                //        fprintf(errorlog,"{ 0x%02x, 0x%02x, 0x%02x},",reg[i].port,reg[i].index,reg[i].value);
-                //        if (!((i+1)%3))
-                //            fprintf(errorlog,"\n");
-                //    }
-                //}
-
-                ///* tweak the mode */
-                //outRegArray(reg,reglen);
-
-                ///* check for unchained mode,  if unchained clear all pages */
-                //if (unchained)
-                //{
-                //    uint g address;
-                //    /* clear all 4 bit planes */
-                //    outportw (0x3c4, (0x02 | (0x0f << 0x08)));
-                //    for (address = 0xa0000; address < 0xb0000; address += 4)
-                //        _farpokel(screen.seg, address, 0);
-                //}
-            }
-
-            gone_to_gfx_mode = 1;
 
             vsync_frame_rate = (int)Machine.drv.frames_per_second;
 
-#if false
-            if (video_sync != 0)
-            {
-                long a = 0, b;
-                float rate;
-
-                /* wait some time to let everything stabilize */
-                for (i = 0; i < 60; i++)
-                {
-                    //vsync();
-                    a = ticker();
-                }
-
-                /* small delay for really really fast machines */
-                for (i = 0; i < 100000; i++) ;
-
-                //vsync();
-                b = ticker();
-
-                rate = ((float)TICKS_PER_SEC) / (b - a);
-
-                printf("target frame rate = %ffps, video frame rate = %3.2fHz\n", Machine.drv.frames_per_second, rate);
-
-                /* don't allow more than 8% difference between target and actual frame rate */
-                while (rate > Machine.drv.frames_per_second * 108 / 100)
-                    rate /= 2;
-
-                if (rate < Machine.drv.frames_per_second * 92 / 100)
-                {
-                    osd_close_display();
-                    printf("-vsync option cannot be used with this display mode:\n" +
-                                "video refresh frequency = %dHz, target frame rate = %ffps\n",
-                                (int)(TICKS_PER_SEC / (b - a)), Machine.drv.frames_per_second);
-                    return 0;
-                }
-
-                printf("adjusted video frame rate = %3.2fHz\n", rate);
-                vsync_frame_rate = (int)rate;
-
-                if (Machine.sample_rate != 0)
-                {
-                    Machine.sample_rate = (int)(Machine.sample_rate * Machine.drv.frames_per_second / rate);
-                    printf("sample rate adjusted to match video freq: %d\n", Machine.sample_rate);
-                }
-            }
-#endif
             warming_up = true;
 
             return 1;
@@ -895,9 +719,9 @@ namespace xnamame036.mame
         {
             //throw new Exception();
         }
-        static update_screen_delegate[][][][] updaters8;
-        static update_screen_delegate[][][][] updaters16;
-        static update_screen_delegate[][][][] updaters16_palettized;
+        //static update_screen_delegate[][][][] updaters8;
+        //static update_screen_delegate[][][][] updaters16;
+        //static update_screen_delegate[][][][] updaters16_palettized;
 
         static ushort makecol(byte r, byte g, byte b)
         {
@@ -1133,6 +957,7 @@ namespace xnamame036.mame
                                 }
                                 else
                                 {
+                                    
                                     //adjusted_palette.r >>= 2;
                                     //adjusted_palette.g >>= 2;
                                     //adjusted_palette.b >>= 2;
@@ -1299,7 +1124,7 @@ namespace xnamame036.mame
         }
         static void select_display_mode(int depth)
         {
-            int width, height, i;
+            int width, height;
 
             if (vector_game)
             {

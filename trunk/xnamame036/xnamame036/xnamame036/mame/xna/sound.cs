@@ -13,10 +13,6 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
-        static int num_used_opl;
-        int nominal_sample_rate;
-        int usestereo;
-        int attenuation = 0;
         static int master_volume = 256;
 
         static int stream_playing;
