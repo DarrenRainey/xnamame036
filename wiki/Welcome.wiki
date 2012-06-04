@@ -43,9 +43,15 @@ There is one thing that will/may reduce the runtime memory footprint that I'd li
   * pbaction
   * citycon
   * jackal
+  * speedbal
+  * gyruss
+  * rocnrope
+  * galaxian
+  * ladybug
 
 And even some vector games
   * zektor
   * tacscan
   * asteroid
   * llander
+  * speedfrk
