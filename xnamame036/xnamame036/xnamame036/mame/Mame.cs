@@ -92,7 +92,7 @@ namespace xnamame036.mame
         public void Run()
         {
             //These driver seems to work OK
-            //main("pacman");               
+           // main("pacman");               
             //main("invaders");
             //main("1942");
             //main("1943"); 
@@ -123,6 +123,10 @@ namespace xnamame036.mame
             //main("gyruss"); 
             //main("rocnrope");
             //main("galaxian");// sound from samples not good
+            //main("ladybug"); 
+
+
+
 
             //Here are some vector games
             //main("zektor");
@@ -145,17 +149,18 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers I would like to implement
-            
 
-           // main("galaga88");   //6809,hd63701                    
+            main("ldrun");
+
+            //main("galaga88");   //6809,hd63701                    
             //main("marble");//m68010,m6502
             
-            //main("ladybug"); // z80, 
+            
             //main("ajax"); // does not work. tilemap implementation problems, or konami chip
             //main("kangaroo"); //z80
             //main("irobot");//6809
             
-            //main("gtmr"); // 68000 don't have roms for this one
+            //main("gtmr"); // 68000 
             //main("gtmre"); // 68000
             //main("qbert"); // I8086,M6502
             //main("outrun"); // 680000, Z80

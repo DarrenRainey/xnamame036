@@ -1199,7 +1199,7 @@ void  FM_CALC_EG(OUT,SLOT)
             YM2203 F2203 = FM2203[num];
             FM_OPN OPN = FM2203[num].OPN;
             int i;
-            FM_CH ch;
+            //FM_CH ch;
             _ShortPtr buf = buffer;
 
             fm_cur_chip = F2203;

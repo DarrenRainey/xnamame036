@@ -842,7 +842,7 @@ const int OPL_MINOUT =(-0x8000<<OPL_OUTSB);
         {
 
             FM_OPL OPL;
-            int state_size;
+            //int state_size;
             int max_ch = 9; /* normaly 9 channels */
 
             if (OPL_LockTable() == -1) return null;

@@ -287,7 +287,7 @@ namespace xnamame036.mame
         }
         static string messagetext;
         static int messagecounter;
-        static int setup_selected, osd_selected, jukebox_selected, single_step;
+        static int setup_selected, osd_selected, single_step;
         public static void usrintf_showmessage(string text, params object[] args)
         {
             messagetext = sprintf(text, args);
@@ -334,7 +334,7 @@ namespace xnamame036.mame
                 if ((Machine.gamedrv.flags & GAME_NOT_WORKING) != 0)
                 {
                     GameDriver maindrv;
-                    int foundworking;
+                    //int foundworking;
 
                     buf += "THIS SYSTEM DOESN'T WORK PROPERLY";
 
@@ -342,8 +342,7 @@ namespace xnamame036.mame
                         maindrv = Machine.gamedrv.clone_of;
                     else maindrv = Machine.gamedrv;
 
-                    foundworking = 0;
-                    int i = 0;
+                    //foundworking = 0;
                     throw new Exception();
                     //while (drivers[i])
                     //{
@@ -878,9 +877,7 @@ namespace xnamame036.mame
             setup_selected = 0;
 
             onscrd_init();
-            osd_selected = 0;
-
-            jukebox_selected = -1;
+            osd_selected = 0;            
 
             single_step = 0;
         }

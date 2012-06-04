@@ -14,7 +14,7 @@ namespace xnamame036.mame
             public MachineSound(int sound_type, object sound_interface) { this.sound_type = sound_type; this.sound_interface = sound_interface; }
         }
         static Timer.timer_entry sound_update_timer;
-        double snd_refresh_period, refresh_period_inf;
+        double snd_refresh_period;
 
         public abstract class snd_interface
         {
@@ -200,7 +200,6 @@ namespace xnamame036.mame
             else
                 return "";
         }
-
         int sound_num(MachineSound msound)
         {
             if (msound.sound_type < SOUND_COUNT)// && sndintf[msound.sound_type].chips_num)
@@ -246,14 +245,11 @@ namespace xnamame036.mame
             if (value >= 0) return (result < value) ? result : value;
             else return (result > value) ? result : value;
         }
-
         static int cleared_value = 0x00;
-        static int latch, read_debug;
+        static int latch;
         static void soundlatch_callback(int param)
         {
-            //printf("Warning: sound latch written before being read. Previous: %02x, new: %02x\n", latch, param);
             latch = param;
-            read_debug = 0;
         }
         public static void soundlatch_w(int offset, int data)
         {
@@ -265,18 +261,14 @@ namespace xnamame036.mame
             /* make all the CPUs synchronize, and only AFTER that write the new command to the latch */
             Timer.timer_set(Timer.TIME_NOW, data, soundlatch2_callback);
         }
-        static int latch2, read_debug2;
+        static int latch2;
 
         static void soundlatch2_callback(int param)
         {
-            //if (errorlog && read_debug2 == 0 && latch2 != param)fprintf(errorlog, "Warning: sound latch 2 written before being read. Previous: %02x, new: %02x\n", latch2, param);
             latch2 = param;
-            read_debug2 = 0;
         }
-
         public static int soundlatch_r(int offset)
         {
-            read_debug = 1;
             return latch;
         }
         static void soundlatch_clear_w(int offset, int data)
@@ -285,7 +277,6 @@ namespace xnamame036.mame
         }
         public static int soundlatch2_r(int offset)
         {
-            read_debug2 = 1;
             return latch2;
         }
 

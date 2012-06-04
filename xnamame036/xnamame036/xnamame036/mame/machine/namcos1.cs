@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,6 @@ namespace xnamame036.mame
 
         const int NAMCOS1_MAX_BANK = 0x400;
 
-
         const int NAMCOS1_MAX_KEY = 0x100;
         static byte[] key = new byte[NAMCOS1_MAX_KEY];
 
@@ -21,18 +21,9 @@ namespace xnamame036.mame
         public static int namcos1_cpu1_banklatch;
         public static int namcos1_reset = 0;
 
-
         public static int berabohm_input_counter;
 
-
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) Rev1 (Pacmania & Galaga 88)						   *
-        *																			   *
-        *******************************************************************************/
-
-        static int key_id;
+                static int key_id;
         static int key_id_query;
 
         public static int rev1_key_r(int offset)
@@ -114,13 +105,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) Rev2 (Dragon Spirit, Blazer, World Court)		   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int rev2_key_r(int offset)
         {
             //Mame.printf("CPU #%d PC %08x: keychip read %04X=%02x\n",Mame.cpu_getactivecpu(),Mame.cpu_get_pc(),offset,key[offset]);
@@ -201,13 +186,7 @@ namespace xnamame036.mame
                 }
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) for Dangerous Seed								   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int dangseed_key_r(int offset)
         {
             //	if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: keychip read %04X=%02x\n",Mame.cpu_getactivecpu(),Mame.cpu_get_pc(),offset,key[offset]);
@@ -246,13 +225,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) for Dragon Spirit								   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int dspirit_key_r(int offset)
         {
             //Mame.printf("CPU #%d PC %08x: keychip read %04X=%02x\n",Mame.cpu_getactivecpu(),Mame.cpu_get_pc(),offset,key[offset]);
@@ -357,13 +330,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) for Blazer										   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int blazer_key_r(int offset)
         {
             Mame.printf("CPU #%d PC %08x: keychip read %04X=%02x\n", Mame.cpu_getactivecpu(), Mame.cpu_get_pc(), offset, key[offset]);
@@ -445,13 +412,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Key emulation (CUS136) for World Stadium								   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int ws_key_r(int offset)
         {
             //	if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: keychip read %04X=%02x\n",Mame.cpu_getactivecpu(),Mame.cpu_get_pc(),offset,key[offset]);
@@ -509,13 +470,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Banking emulation (CUS117)												   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int soundram_r(int offset)
         {
             if (offset < 0x100)
@@ -567,10 +522,10 @@ namespace xnamame036.mame
 
         public class bankhandler
         {
-            public Mame.mem_read_handler bank_handler_r;
-            public Mame.mem_write_handler bank_handler_w;
-            public int bank_offset;
-            public _BytePtr bank_pointer;
+            public Mame.mem_read_handler bank_handler_r = unknown_r;
+            public Mame.mem_write_handler bank_handler_w = unknown_w;
+            public int bank_offset=0;
+            public _BytePtr bank_pointer=null;
         } ;
 
         static bankhandler[] namcos1_bank_element = new bankhandler[NAMCOS1_MAX_BANK];
@@ -666,11 +621,6 @@ namespace xnamame036.mame
         public static void namcos1_1_banked_area6_w(int offset, int data) { if (namcos1_banks[1, 6].bank_handler_w != null) { namcos1_banks[1, 6].bank_handler_w(offset + namcos1_banks[1, 6].bank_offset, data); return; } namcos1_banks[1, 6].bank_pointer[offset] = (byte)data; }
         public static void namcos1_1_banked_area7_w(int offset, int data) { if (namcos1_banks[1, 7].bank_handler_w != null) { namcos1_banks[1, 7].bank_handler_w(offset + namcos1_banks[1, 7].bank_offset, data); return; } namcos1_banks[1, 7].bank_pointer[offset] = (byte)data; }
 
-        /*******************************************************************************
-        *																			   *
-        *	63701 MCU emulation (CUS64) 											   *
-        *																			   *
-        *******************************************************************************/
 
         public static int mcu_patch_data;
 
@@ -696,12 +646,6 @@ namespace xnamame036.mame
             }
         }
 
-        /*******************************************************************************
-        *																			   *
-        *	Sound banking emulation (CUS121)										   *
-        *																			   *
-        *******************************************************************************/
-
         public static void namcos1_sound_bankswitch_w(int offset, int data)
         {
             _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU3);
@@ -710,11 +654,6 @@ namespace xnamame036.mame
             Mame.cpu_setbank(1, new _BytePtr(RAM, 0x0c000 + (0x4000 * bank)));
         }
 
-        /*******************************************************************************
-        *																			   *
-        *	CPU idling spinlock routine 											   *
-        *																			   *
-        *******************************************************************************/
         static _BytePtr sound_spinlock_ram;
         static int sound_spinlock_pc;
 
@@ -726,11 +665,6 @@ namespace xnamame036.mame
             return sound_spinlock_ram[0];
         }
 
-        /*******************************************************************************
-        *																			   *
-        *	MCU banking emulation and patch 										   *
-        *																			   *
-        *******************************************************************************/
 
         /* mcu banked rom area select */
         public static void namcos1_mcu_bankswitch_w(int offset, int data)
@@ -778,13 +712,7 @@ namespace xnamame036.mame
 
             Mame.mwh_bank3(offset, data);
         }
-
-        /*******************************************************************************
-        *																			   *
-        *	Initialization															   *
-        *																			   *
-        *******************************************************************************/
-
+        
         static int namcos1_setopbase_0(int pc)
         {
             int bank = (pc >> 13) & 7;
@@ -925,11 +853,6 @@ namespace xnamame036.mame
         }
 
 
-        /*******************************************************************************
-        *																			   *
-        *	driver specific initialize routine										   *
-        *																			   *
-        *******************************************************************************/
         public class namcos1_slice_timer
         {
             public int sync_cpu;	/* synchronus cpu attribute */
@@ -976,15 +899,14 @@ namespace xnamame036.mame
             /* sound cpu speedup optimize (auto detect) */
             {
                 _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU3); /* sound cpu */
-                int addr, flag_ptr;
-
-                for (addr = 0xd000; addr < 0xd0ff; addr++)
+                
+                for (int addr = 0xd000; addr < 0xd0ff; addr++)
                 {
                     if (RAM[addr + 0] == 0xb6 &&   /* lda xxxx */
                        RAM[addr + 3] == 0x27 &&   /* BEQ addr */
                        RAM[addr + 4] == 0xfb)
                     {
-                        flag_ptr = RAM[addr + 1] * 256 + RAM[addr + 2];
+                       int flag_ptr = RAM[addr + 1] * 256 + RAM[addr + 2];
                         if (flag_ptr > 0x5140 && flag_ptr < 0x5400)
                         {
                             sound_spinlock_pc = addr + 3;
@@ -1026,9 +948,6 @@ static const struct namcos1_slice_timer normal_slice[]={
         public static namcos1_slice_timer[] normal_slice = { null };
 #endif
 
-        /*******************************************************************************
-*	Shadowland / Youkai Douchuuki specific									   *
-*******************************************************************************/
         void init_shadowld()
         {
             namcos1_specific shadowld_specific =
@@ -1041,9 +960,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(shadowld_specific);
         }
 
-        /*******************************************************************************
-        *	Dragon Spirit specific													   *
-        *******************************************************************************/
         void init_dspirit()
         {
             namcos1_specific dspirit_specific =
@@ -1056,9 +972,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(dspirit_specific);
         }
 
-        /*******************************************************************************
-        *	Quester specific														   *
-        *******************************************************************************/
         void init_quester()
         {
             namcos1_specific quester_specific =
@@ -1071,9 +984,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(quester_specific);
         }
 
-        /*******************************************************************************
-        *	Blazer specific 														   *
-        *******************************************************************************/
         void init_blazer()
         {
             namcos1_specific blazer_specific =
@@ -1086,9 +996,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(blazer_specific);
         }
 
-        /*******************************************************************************
-        *	Pac-Mania / Pac-Mania (Japan) specific									   *
-        *******************************************************************************/
         void init_pacmania()
         {
             namcos1_specific pacmania_specific =
@@ -1101,10 +1008,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(pacmania_specific);
         }
 
-        /*******************************************************************************
-        *	Galaga '88 / Galaga '88 (Japan) specific								   *
-        *******************************************************************************/
-        void init_galaga88()
+        public static void init_galaga88()
         {
             namcos1_specific galaga88_specific =
           new namcos1_specific(
@@ -1116,9 +1020,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(galaga88_specific);
         }
 
-        /*******************************************************************************
-        *	World Stadium specific													   *
-        *******************************************************************************/
         void init_ws()
         {
             namcos1_specific ws_specific =
@@ -1131,9 +1032,6 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(ws_specific);
         }
 
-        /*******************************************************************************
-        *	Beraboh Man specific													   *
-        *******************************************************************************/
         static int clk;
         static int[] counter = new int[4];
         static int berabohm_buttons_r(int offset)
@@ -1186,7 +1084,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             return res;
         }
 
-        void init_berabohm()
+        public static void init_berabohm()
         {
             namcos1_specific berabohm_specific =
           new namcos1_specific(
@@ -1199,10 +1097,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             Mame.install_mem_read_handler(3, 0x1400, 0x1401, berabohm_buttons_r);
         }
 
-        /*******************************************************************************
-        *	Alice in Wonderland / Marchen Maze specific 							   *
-        *******************************************************************************/
-        void init_alice()
+        public static void init_alice()
         {
             namcos1_specific alice_specific =
           new namcos1_specific(
@@ -1214,10 +1109,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(alice_specific);
         }
 
-        /*******************************************************************************
-        *	Bakutotsu Kijuutei specific 											   *
-        *******************************************************************************/
-        void init_bakutotu()
+        public static void init_bakutotu()
         {
             namcos1_specific bakutotu_specific =
           new namcos1_specific(
@@ -1229,10 +1121,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(bakutotu_specific);
         }
 
-        /*******************************************************************************
-        *	World Court specific													   *
-        *******************************************************************************/
-        void init_wldcourt()
+        public static void init_wldcourt()
         {
             namcos1_specific worldcourt_specific =
           new namcos1_specific(
@@ -1244,10 +1133,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(worldcourt_specific);
         }
 
-        /*******************************************************************************
-        *	Splatter House specific 												   *
-        *******************************************************************************/
-        void init_splatter()
+        public static void init_splatter()
         {
             namcos1_specific splatter_specific =
           new namcos1_specific(
@@ -1259,10 +1145,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(splatter_specific);
         }
 
-        /*******************************************************************************
-        *	Face Off specific														   *
-        *******************************************************************************/
-        void init_faceoff()
+        public static void init_faceoff()
         {
             namcos1_specific faceoff_specific =
           new namcos1_specific(
@@ -1274,10 +1157,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(faceoff_specific);
         }
 
-        /*******************************************************************************
-        *	Rompers specific														   *
-        *******************************************************************************/
-        void init_rompers()
+        public static void init_rompers()
         {
             namcos1_specific rompers_specific =
           new namcos1_specific(
@@ -1290,10 +1170,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x70] = 0xb6;
         }
 
-        /*******************************************************************************
-        *	Blast Off specific														   *
-        *******************************************************************************/
-        void init_blastoff()
+        public static void init_blastoff()
         {
             namcos1_specific blastoff_specific =
           new namcos1_specific(
@@ -1306,10 +1183,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0] = 0xb7;
         }
 
-        /*******************************************************************************
-        *	World Stadium '89 specific                                                 *
-        *******************************************************************************/
-        void init_ws89()
+        public static void init_ws89()
         {
             namcos1_specific ws89_specific =
           new namcos1_specific(
@@ -1323,10 +1197,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x20] = 0xb8;
         }
 
-        /*******************************************************************************
-        *	Dangerous Seed specific 												   *
-        *******************************************************************************/
-        void init_dangseed()
+        public static void init_dangseed()
         {
             namcos1_specific dangseed_specific =
           new namcos1_specific(
@@ -1338,10 +1209,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             namcos1_driver_init(dangseed_specific);
         }
 
-        /*******************************************************************************
-        *	World Stadium '90 specific                                                 *
-        *******************************************************************************/
-        void init_ws90()
+        public static void init_ws90()
         {
             namcos1_specific ws90_specific =
           new namcos1_specific(
@@ -1356,10 +1224,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x40] = 0x36;
         }
 
-        /*******************************************************************************
-        *	Pistol Daimyo no Bouken specific										   *
-        *******************************************************************************/
-        void init_pistoldm()
+        public static void init_pistoldm()
         {
             namcos1_specific pistoldm_specific =
           new namcos1_specific(
@@ -1374,10 +1239,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x43] = 0x35;
         }
 
-        /*******************************************************************************
-        *	Souko Ban DX specific													   *
-        *******************************************************************************/
-        void init_soukobdx()
+        public static void init_soukobdx()
         {
             namcos1_specific soukobdx_specific =
           new namcos1_specific(
@@ -1392,10 +1254,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x43] = 0x37;
         }
 
-        /*******************************************************************************
-        *	Puzzle Club specific													   *
-        *******************************************************************************/
-        void init_puzlclub()
+        public static void init_puzlclub()
         {
             namcos1_specific puzlclub_specific =
           new namcos1_specific(
@@ -1408,10 +1267,7 @@ static const struct namcos1_slice_timer normal_slice[]={
             key[0x03] = 0x35;
         }
 
-        /*******************************************************************************
-        *	Tank Force specific 													   *
-        *******************************************************************************/
-        void init_tankfrce()
+        public static void init_tankfrce()
         {
             namcos1_specific tankfrce_specific =
           new namcos1_specific(

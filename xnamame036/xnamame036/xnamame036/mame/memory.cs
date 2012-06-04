@@ -432,7 +432,7 @@ namespace xnamame036.mame
                         if (Machine.drv.cpu[cpu].memory_write[mwa].end >= size && 
                             Machine.drv.cpu[cpu].memory_write[mwa].start < lowest) 
                             lowest = Machine.drv.cpu[cpu].memory_write[mwa].start;
-                    System.Console.WriteLine("lowest={0}" + lowest.ToString("x"));
+                    
                     /* done if nothing found */
                     if (lowest == 0x7fffffff)
                         break;
@@ -1070,35 +1070,35 @@ namespace xnamame036.mame
             hw = cur_mrhard[(uint)address >> (ABITS2_20 + ABITS_MIN_20)];
             if (TYPE_8BIT == TYPE_8BIT && hw == HT_RAM)
                 return cpu_bankbase[HT_RAM][address];
-            else if (TYPE_8BIT != TYPE_8BIT && hw <= HT_BANKMAX)
-            {
-                if (TYPE_8BIT == TYPE_16BIT_BE)
-                    return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];
-                else if (TYPE_8BIT == TYPE_16BIT_LE)
-                    return cpu_bankbase[hw][BYTE_XOR_LE(address) - memoryreadoffset[hw]];
-            }
+            //else if (TYPE_8BIT != TYPE_8BIT && hw <= HT_BANKMAX)
+            //{
+            //    if (TYPE_8BIT == TYPE_16BIT_BE)
+            //        return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];
+            //    else if (TYPE_8BIT == TYPE_16BIT_LE)
+            //        return cpu_bankbase[hw][BYTE_XOR_LE(address) - memoryreadoffset[hw]];
+            //}
             if (hw >= MH_HARDMAX)
             {
                 hw -= MH_HARDMAX;
                 hw = readhardware[(hw << MH_SBITS) + (((uint)address >> ABITS_MIN_20) & MHMASK(ABITS2_20))];
                 if (TYPE_8BIT == TYPE_8BIT && hw == HT_RAM)
                     return cpu_bankbase[HT_RAM][address];
-                else if (TYPE_8BIT != TYPE_8BIT && hw <= HT_BANKMAX)
-                {
-                    if (TYPE_8BIT == TYPE_16BIT_BE)
-                        return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];
-                    else if (TYPE_8BIT == TYPE_16BIT_LE)
-                        return cpu_bankbase[hw][BYTE_XOR_LE(address) - memoryreadoffset[hw]];
-                }
+                //else if (TYPE_8BIT != TYPE_8BIT && hw <= HT_BANKMAX)
+                //{
+                //    if (TYPE_8BIT == TYPE_16BIT_BE)
+                //        return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];
+                //    else if (TYPE_8BIT == TYPE_16BIT_LE)
+                //        return cpu_bankbase[hw][BYTE_XOR_LE(address) - memoryreadoffset[hw]];
+                //}
             }
             if (TYPE_8BIT == TYPE_8BIT) return memoryreadhandler[hw](address - memoryreadoffset[hw]);
-            else
-            {
-                int shift = (address & 1) << 3;
-                int data = memoryreadhandler[hw]((address & ~1) - memoryreadoffset[hw]);
-                if (TYPE_8BIT == TYPE_16BIT_BE) return (data >> (shift ^ 8)) & 0xff;
-                else if (TYPE_8BIT == TYPE_16BIT_LE) return (data >> shift) & 0xff;
-            }
+            //else
+            //{
+            //    int shift = (address & 1) << 3;
+            //    int data = memoryreadhandler[hw]((address & ~1) - memoryreadoffset[hw]);
+            //    if (TYPE_8BIT == TYPE_16BIT_BE) return (data >> (shift ^ 8)) & 0xff;
+            //    else if (TYPE_8BIT == TYPE_16BIT_LE) return (data >> shift) & 0xff;
+            //}
         }
 
         public static int cpu_readmem201(int address)

@@ -28,7 +28,7 @@ namespace xnamame036.mame
         public class gfx_object
         {
             public int transparency;		/* transparency of gfx */
-            public int transparet_color;	/* transparet color of gfx */
+            public int transparent_color;	/* transparet color of gfx */
             public GfxElement gfx;	/* source gfx , if gfx==0 then not calcrate sx,sy,visible,clip */
             public int code;				/* code of gfx */
             public int color;				/* color of gfx */
