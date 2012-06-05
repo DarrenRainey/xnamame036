@@ -82,11 +82,9 @@ namespace xnamame036.mame
 
         public static GameOptions options = new GameOptions();
 
-        int mame_debug;
         int bailing;
         int settingsloaded;
         static int bitmap_dirty;
-        int ignorecfg;
         bool need_to_clear_bitmap;
 
         public void Run()
@@ -101,7 +99,7 @@ namespace xnamame036.mame
             //main("galaga");
             //main("digdug");
             //main("dkong");
-            //main("mario");//Seems to work, graphics problems
+            //main("mario");
             //main("bombjack"); 
             //main("amidar");
             //main("phoenix");
@@ -124,8 +122,10 @@ namespace xnamame036.mame
             //main("rocnrope");
             //main("galaxian");// sound from samples not good
             //main("ladybug"); 
-
-
+            //main("ldrun");
+            //main("ldrun2");
+            //main("ldrun3");
+            main("ldrun4");
 
 
             //Here are some vector games
@@ -150,13 +150,13 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
 
-            main("ldrun");
+            
 
             //main("galaga88");   //6809,hd63701                    
             //main("marble");//m68010,m6502
             
             
-            //main("ajax"); // does not work. tilemap implementation problems, or konami chip
+            main("ajax"); // does not work. tilemap implementation problems, or konami chip
             //main("kangaroo"); //z80
             //main("irobot");//6809
             
@@ -178,8 +178,7 @@ namespace xnamame036.mame
         {
             int res;
             InitGameDriverList();
-            init_ticker();
-            ignorecfg = 0;
+            init_ticker();            
 
             if (soundcard == 0)
             {    /* silence, this would be -1 if unknown in which case all roms are loaded */

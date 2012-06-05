@@ -554,7 +554,7 @@ namespace xnamame036.mame
             mixer_update_channel(mixer_channel[ch], sound_scalebufferpos((int)samples_this_frame));
             mixer_channel[ch].volume = volume;
         }
-        public static void mixer_play_sample(int ch, _BytePtr data, int len, int freq, bool loop)
+        public static void mixer_play_sample(int ch, byte[] data, int len, int freq, bool loop)
         {
 
             /* skip if sound is off, or if this channel is a stream */

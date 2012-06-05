@@ -255,7 +255,7 @@ namespace xnamame036.mame
             if (use_vesa != 0)
             {
                 /*removed local 'found' */
-                int mode, bits;
+                int bits;
 
                 
                 found = 0;

@@ -370,7 +370,7 @@ double Cap =0.000001;	/* C15 1uF */
             if (deathsampleloaded != 0)
             {
                 if ((data & 1) != 0 && (last_port1 & 1) == 0)
-                    Mame.mixer_play_sample(channelnoise, new _BytePtr(Mame.Machine.samples.sample[1].data),
+                    Mame.mixer_play_sample(channelnoise, Mame.Machine.samples.sample[1].data,
                             Mame.Machine.samples.sample[1].length,
                             Mame.Machine.samples.sample[1].smpfreq,
                             false);
@@ -414,7 +414,7 @@ double Cap =0.000001;	/* C15 1uF */
 #if SAMPLES
                 if (shootsampleloaded != 0)
                 {
-                    Mame.mixer_play_sample(channelshoot, new _BytePtr(Mame.Machine.samples.sample[0].data),
+                    Mame.mixer_play_sample(channelshoot, Mame.Machine.samples.sample[0].data,
                             Mame.Machine.samples.sample[0].length,
                             Mame.Machine.samples.sample[0].smpfreq,
                             false);

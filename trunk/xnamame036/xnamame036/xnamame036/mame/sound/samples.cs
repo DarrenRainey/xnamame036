@@ -36,7 +36,7 @@ namespace xnamame036.mame
             if (Machine.samples.sample[samplenum].resolution == 8)
             {
                 mixer_play_sample(firstchannel + channel,
-                        new _BytePtr(Machine.samples.sample[samplenum].data),
+                       Machine.samples.sample[samplenum].data,
                         Machine.samples.sample[samplenum].length,
                         Machine.samples.sample[samplenum].smpfreq,
                         loop != 0);
