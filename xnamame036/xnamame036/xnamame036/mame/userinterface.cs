@@ -2045,7 +2045,7 @@ namespace xnamame036.mame
             }
             if (setup_selected != 0) setup_selected = setup_menu(setup_selected);
 
-            if (mame_debug == 0 && osd_selected == 0 && input_ui_pressed((int)ports.inptports.IPT_UI_ON_SCREEN_DISPLAY))
+            if (osd_selected == 0 && input_ui_pressed((int)ports.inptports.IPT_UI_ON_SCREEN_DISPLAY))
             {
                 osd_selected = -1;
                 if (setup_selected != 0)
@@ -2152,7 +2152,7 @@ namespace xnamame036.mame
                     }
                     if (setup_selected != 0) setup_selected = setup_menu(setup_selected);
 
-                    if (mame_debug == 0 && osd_selected == 0 && input_ui_pressed((int)ports.inptports.IPT_UI_ON_SCREEN_DISPLAY))
+                    if (osd_selected == 0 && input_ui_pressed((int)ports.inptports.IPT_UI_ON_SCREEN_DISPLAY))
                     {
                         osd_selected = -1;
                         if (setup_selected != 0)

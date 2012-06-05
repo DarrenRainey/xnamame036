@@ -3892,11 +3892,6 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
  /*F*/ 4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
 
-            public const int M6803_DDR1 = 0x00;
-            public const int M6803_DDR2 = 0x01;
-            public const int M6803_PORT1 = 0x100;
-            public const int M6803_PORT2 = 0x101;
-
             public static int m6803_internal_registers_r(int offset)
             {
                 switch (offset)
@@ -4114,6 +4109,14 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
                 abitsmin = ABITS_MIN_16;
                 icount = m6800_ICount;
                 icount[0] = 50000;
+            }
+            public override string cpu_info(object context, int regnum)
+            {
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "M6808";
+                }
+                return base.cpu_info(context, regnum);
             }
         }
         public class cpu_hd63701 : cpu_m6800

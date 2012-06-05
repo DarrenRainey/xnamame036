@@ -676,7 +676,12 @@ namespace xnamame036.mame
 
                 /* convert 8-bit data to signed samples */
                 for (temp32 = 0; temp32 < length; temp32++)
-                    result.data[temp32] ^= unchecked((byte)0x80);
+                {
+                    sbyte b = (sbyte)result.data[temp32];
+                    b ^= unchecked((sbyte)0x80);
+                    result.data[temp32] = (byte)b;
+                }
+                    
             }
             else
             {
