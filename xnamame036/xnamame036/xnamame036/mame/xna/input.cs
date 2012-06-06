@@ -408,7 +408,6 @@ namespace xnamame036.mame
                 stick[0].axis[0].pos = state.ThumbSticks.Left.X;
                 stick[0].axis[1].pos = state.ThumbSticks.Left.Y;
 
-
                 stick[0].axis[1].Pos = state.DPad.Up == ButtonState.Pressed;
                 stick[0].axis[1].Neg = state.DPad.Down == ButtonState.Pressed;
                 stick[0].axis[0].Neg = state.DPad.Right == ButtonState.Pressed;
@@ -417,7 +416,6 @@ namespace xnamame036.mame
                 stick[0].axis[2].Neg = state.DPad.Right == ButtonState.Pressed && state.DPad.Down == ButtonState.Pressed;
                 stick[0].axis[3].Pos = state.DPad.Down == ButtonState.Pressed && state.DPad.Left == ButtonState.Pressed;
                 stick[0].axis[3].Neg = state.DPad.Right == ButtonState.Pressed && state.DPad.Up == ButtonState.Pressed;
-
 
                 button[0].Pressed = state.Buttons.A == ButtonState.Pressed;
                 button[1].Pressed = state.Buttons.B == ButtonState.Pressed;

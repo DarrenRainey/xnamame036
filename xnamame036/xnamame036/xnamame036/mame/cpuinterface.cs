@@ -295,6 +295,10 @@ namespace xnamame036.mame
             int cpunum = (activecpu < 0) ? 0 : activecpu;
             Timer.timer_holdcpu_trigger(cpunum, trigger);
         }
+        public static void cpu_yield()
+        {
+            cpu_yielduntil_trigger(TRIGGER_TIMESLICE);
+        }
         public static void cpu_triggertime(double duration, int trigger)
         {
             Timer.timer_set(duration, trigger, cpu_trigger);

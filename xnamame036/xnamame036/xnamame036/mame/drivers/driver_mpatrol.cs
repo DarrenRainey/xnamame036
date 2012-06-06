@@ -197,8 +197,8 @@ namespace xnamame036.mame.drivers
                 video_attributes = Mame.VIDEO_TYPE_RASTER;
                 sound_attributes = 0;
 
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem_ay8910_interface));
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem_msm5205_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem.irem_ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
             }
             public override void init_machine()
             {

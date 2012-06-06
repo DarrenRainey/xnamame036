@@ -8,8 +8,12 @@ Licensing follows MAME license (http://mamedev.org/legal.html)
 
 TODO
 ----
-Sound is mostly noise, and not music.
+Sound from samples are just static.
 Load artwork (set useartwork=true)
+Better tilemap gfxobj handling
+More cpu's
+frontend
+better mapping of keyboard and gamepad
 Implement a game selection pre-system, listing from implemented drivers and available roms.
 Remove the static initialization of cpu/sound drivers to reduce runtime memory overhead.
 

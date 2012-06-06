@@ -69,8 +69,10 @@ namespace xnamame036.mame
         public const byte SOUND_POKEY = 11;
         public const byte SOUND_YM3812 = 12;
         public const byte SOUND_CUSTOM = 13;
-
-        public const byte SOUND_SEGAPCM = 14;
+        public const byte SOUND_MSM5205 = 14;
+        
+        
+        public const byte SOUND_SEGAPCM = 15;
 
         public delegate int CustomSoundStart(MachineSound msound);
         public delegate void CustomSoundHandler();
@@ -120,6 +122,7 @@ namespace xnamame036.mame
                                       new Pokey(),
                                       new YM3812(),
                                       new CustomSoundInterface(),
+                                      new MSM5205(),
                                   };
         int sound_start()
         {

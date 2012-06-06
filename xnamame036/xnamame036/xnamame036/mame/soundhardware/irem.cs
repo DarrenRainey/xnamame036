@@ -36,6 +36,12 @@ namespace xnamame036.mame
 	new Mame.IOWritePort( Mame.cpu_m6803.M6803_PORT2, Mame.cpu_m6803.M6803_PORT2, irem_port2_w ),
 	new Mame.IOWritePort( -1 )	/* end of table */
 };
+        public static AY8910interface irem_ay8910_interface =
+            new AY8910interface(2,910000,new int[]{20,20},new AY8910portRead[]{Mame.soundlatch_r,null},new AY8910portRead[]{null,null},
+                new AY8910portWrite[]{null,null},new AY8910portWrite[]{irem_adpcm_reset_w,null},new AY8910handler[]{null,null});
+
+        public static MSM5205_interface irem_msm5205_interface = new MSM5205_interface(2, 384000, new MSM5205.irqcallback[] { irem_adpcm_int, null }, new int[] { MSM5205.MSM5205_S96_4B, MSM5205.MSM5205_S96_4B }, new int[] { 100, 100 });
+
         public static void irem_sound_cmd_w(int offset, int data)
         {
             if ((data & 0x80) == 0)
@@ -86,5 +92,14 @@ namespace xnamame036.mame
             else return 0xff;
         }
 
+        static void irem_adpcm_reset_w(int offset, int data)
+        {
+            MSM5205.MSM5205_reset_w(0, data & 1);
+            MSM5205.MSM5205_reset_w(1, data & 2);
+        }
+        static void irem_adpcm_int(int data)
+        {
+            Mame.cpu_set_nmi_line(1, Mame.PULSE_LINE);
+        }
     }
 }

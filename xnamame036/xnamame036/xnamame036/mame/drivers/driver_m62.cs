@@ -398,6 +398,9 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 gfxdecodeinfo = ldrun_gfxdecodeinfo;
                 total_colors = 512;
                 color_table_len = 512;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem.irem_ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
+
             }
             public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
             {
@@ -644,6 +647,9 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 gfxdecodeinfo = ldrun2_gfxdecodeinfo;
                 total_colors = 512;
                 color_table_len = 512;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem.irem_ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
+
             }
             public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
             {
@@ -853,6 +859,9 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 gfxdecodeinfo = ldrun3_gfxdecodeinfo;
                 total_colors = 512;
                 color_table_len = 512;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem.irem_ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
+
             }
             public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
             {
@@ -994,8 +1003,8 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
 
     class driver_ldrun4 : driver_m62
     {
-        
-static Mame.MemoryReadAddress[] ldrun4_readmem =
+
+        static Mame.MemoryReadAddress[] ldrun4_readmem =
 {
 	new Mame.MemoryReadAddress( 0x0000, 0x7fff, Mame.MRA_ROM ),
 	new Mame.MemoryReadAddress( 0x8000, 0xbfff, Mame.MRA_BANK1 ),
@@ -1003,7 +1012,7 @@ static Mame.MemoryReadAddress[] ldrun4_readmem =
 	new Mame.MemoryReadAddress( -1 )	/* end of table */
 };
 
-static Mame.MemoryWriteAddress[] ldrun4_writemem =
+        static Mame.MemoryWriteAddress[] ldrun4_writemem =
 {
 	new Mame.MemoryWriteAddress( 0x0000, 0xbfff, Mame.MWA_ROM ),
 	new Mame.MemoryWriteAddress( 0xc000, 0xc0ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size ),
@@ -1028,18 +1037,18 @@ static Mame.MemoryWriteAddress[] ldrun4_writemem =
         {
             driver_m62.irem_background_hscroll_w(offset ^ 1, data);
         }
-        static void ldrun4_bankswitch_w(int offset,int data)
-{
-	int bankaddress;
-	_BytePtr RAM = Mame.memory_region(Mame.REGION_CPU1);
-
-
-	bankaddress = 0x10000 + ((data & 0x01) * 0x4000);
-	Mame.cpu_setbank(1,new _BytePtr( RAM,bankaddress));
-}
-        class machine_driver_ldrun4:Mame.MachineDriver
+        static void ldrun4_bankswitch_w(int offset, int data)
         {
-             public machine_driver_ldrun4()
+            int bankaddress;
+            _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU1);
+
+
+            bankaddress = 0x10000 + ((data & 0x01) * 0x4000);
+            Mame.cpu_setbank(1, new _BytePtr(RAM, bankaddress));
+        }
+        class machine_driver_ldrun4 : Mame.MachineDriver
+        {
+            public machine_driver_ldrun4()
             {
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 4000000, ldrun4_readmem, ldrun4_writemem, driver_ldrun.ldrun_readport, ldrun4_writeport, Mame.interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6803 | Mame.CPU_AUDIO_CPU, 6000000 / 4, irem.irem_sound_readmem, irem.irem_sound_writemem, irem.irem_sound_readport, irem.irem_sound_writeport, null, 0));
@@ -1054,6 +1063,9 @@ static Mame.MemoryWriteAddress[] ldrun4_writemem =
                 gfxdecodeinfo = ldrun4_gfxdecodeinfo;
                 total_colors = 512;
                 color_table_len = 512;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, irem.irem_ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
+
             }
             public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
             {
@@ -1087,110 +1099,110 @@ static Mame.MemoryWriteAddress[] ldrun4_writemem =
                 draw_sprites(bitmap, Mame.Machine.drv.visible_area, Mame.Machine.drv.visible_area);
             }
             static void draw_sprites(Mame.osd_bitmap bitmap,
-					     Mame.rectangle spritevisiblearea,
-					     Mame.rectangle flipspritevisiblearea )
-{
-	int offs;
+                         Mame.rectangle spritevisiblearea,
+                         Mame.rectangle flipspritevisiblearea)
+            {
+                int offs;
 
-	/* sprites must be drawn in this order to get correct priority */
-	for (offs = 0;offs < Generic.spriteram_size[0];offs += 8)
-	{
-		int i,incr,code,col,flipx,flipy,sx,sy;
+                /* sprites must be drawn in this order to get correct priority */
+                for (offs = 0; offs < Generic.spriteram_size[0]; offs += 8)
+                {
+                    int i, incr, code, col, flipx, flipy, sx, sy;
 
 
-		code = Generic.spriteram[offs+4] + ((Generic.spriteram[offs+5] & 0x07) << 8);
-		col = Generic.spriteram[offs+0] & 0x1f;
-		sx = 256 * (Generic.spriteram[offs+7] & 1) + Generic.spriteram[offs+6];
-        sy = 256 + 128 - 15 - (256 * (Generic.spriteram[offs + 3] & 1) + Generic.spriteram[offs + 2]);
-		flipx = Generic.spriteram[offs+5] & 0x40;
-		flipy = Generic.spriteram[offs+5] & 0x80;
+                    code = Generic.spriteram[offs + 4] + ((Generic.spriteram[offs + 5] & 0x07) << 8);
+                    col = Generic.spriteram[offs + 0] & 0x1f;
+                    sx = 256 * (Generic.spriteram[offs + 7] & 1) + Generic.spriteram[offs + 6];
+                    sy = 256 + 128 - 15 - (256 * (Generic.spriteram[offs + 3] & 1) + Generic.spriteram[offs + 2]);
+                    flipx = Generic.spriteram[offs + 5] & 0x40;
+                    flipy = Generic.spriteram[offs + 5] & 0x80;
 
-		i = sprite_height_prom[(code >> 5) & 0x1f];
-		if (i == 1)	/* double height */
-		{
-			code &= ~1;
-			sy -= 16;
-		}
-		else if (i == 2)	/* quadruple height */
-		{
-			i = 3;
-			code &= ~3;
-			sy -= 3*16;
-		}
+                    i = sprite_height_prom[(code >> 5) & 0x1f];
+                    if (i == 1)	/* double height */
+                    {
+                        code &= ~1;
+                        sy -= 16;
+                    }
+                    else if (i == 2)	/* quadruple height */
+                    {
+                        i = 3;
+                        code &= ~3;
+                        sy -= 3 * 16;
+                    }
 
-		if (flipscreen!=0)
-		{
-			sx = 496 - sx;
-			sy = 242 - i*16 - sy;	/* sprites are slightly misplaced by the hardware */
-			flipx = flipx==0?1:0;
-			flipy = flipy==0?1:0;
-		}
+                    if (flipscreen != 0)
+                    {
+                        sx = 496 - sx;
+                        sy = 242 - i * 16 - sy;	/* sprites are slightly misplaced by the hardware */
+                        flipx = flipx == 0 ? 1 : 0;
+                        flipy = flipy == 0 ? 1 : 0;
+                    }
 
-		if (flipy!=0)
-		{
-			incr = -1;
-			code += i;
-		}
-		else incr = 1;
+                    if (flipy != 0)
+                    {
+                        incr = -1;
+                        code += i;
+                    }
+                    else incr = 1;
 
-		do
-		{
-			Mame.drawgfx(bitmap,Mame.Machine.gfx[1],
-					(uint)(code + i * incr),(uint)col,
-					flipx!=0,flipy!=0,
-					sx,sy + 16 * i,
-					flipscreen!=0 ? flipspritevisiblearea : spritevisiblearea,Mame.TRANSPARENCY_PEN,0);
+                    do
+                    {
+                        Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
+                                (uint)(code + i * incr), (uint)col,
+                                flipx != 0, flipy != 0,
+                                sx, sy + 16 * i,
+                                flipscreen != 0 ? flipspritevisiblearea : spritevisiblearea, Mame.TRANSPARENCY_PEN, 0);
 
-			i--;
-		} while (i >= 0);
-	}
-}
+                        i--;
+                    } while (i >= 0);
+                }
+            }
 
 
             void ldrun4_draw_background(Mame.osd_bitmap bitmap)
-{
-	/* for every character in the Video RAM, check if it has been modified */
-	/* since last time and update it accordingly. */
-	for (int offs = Generic.videoram_size[0]-2;offs >= 0;offs -= 2)
-	{
-        if (Generic.dirtybuffer[offs] || Generic.dirtybuffer[offs + 1])
-		{
-			int sx,sy;
+            {
+                /* for every character in the Video RAM, check if it has been modified */
+                /* since last time and update it accordingly. */
+                for (int offs = Generic.videoram_size[0] - 2; offs >= 0; offs -= 2)
+                {
+                    if (Generic.dirtybuffer[offs] || Generic.dirtybuffer[offs + 1])
+                    {
+                        int sx, sy;
 
 
-            Generic.dirtybuffer[offs] = false;
-            Generic.dirtybuffer[offs + 1] = false;
+                        Generic.dirtybuffer[offs] = false;
+                        Generic.dirtybuffer[offs + 1] = false;
 
-			sx = (offs/2) % 64;
-			sy = (offs/2) / 64;
+                        sx = (offs / 2) % 64;
+                        sy = (offs / 2) / 64;
 
-			if (flipscreen!=0)
-			{
-				sx = 63 - sx;
-				sy = 31 - sy;
-			}
+                        if (flipscreen != 0)
+                        {
+                            sx = 63 - sx;
+                            sy = 31 - sy;
+                        }
 
-            Mame.drawgfx(Generic.tmpbitmap, Mame.Machine.gfx[0],
-                    (uint)(Generic.videoram[offs] + ((Generic.videoram[offs + 1] & 0xc0) << 2) + ((Generic.videoram[offs + 1] & 0x20) << 5)),
-                    (uint)(Generic.videoram[offs + 1] & 0x1f),
-					flipscreen!=0,flipscreen!=0,
-					8*sx,8*sy,
-                    null, Mame.TRANSPARENCY_NONE, 0);
-		}
-	}
+                        Mame.drawgfx(Generic.tmpbitmap, Mame.Machine.gfx[0],
+                                (uint)(Generic.videoram[offs] + ((Generic.videoram[offs + 1] & 0xc0) << 2) + ((Generic.videoram[offs + 1] & 0x20) << 5)),
+                                (uint)(Generic.videoram[offs + 1] & 0x1f),
+                                flipscreen != 0, flipscreen != 0,
+                                8 * sx, 8 * sy,
+                                null, Mame.TRANSPARENCY_NONE, 0);
+                    }
+                }
 
 
-	{
-		int scrollx;
+                {
+                    int scrollx;
 
-		if (flipscreen!=null)
-			scrollx = irem_background_hscroll + 2;
-		else
-			scrollx = -irem_background_hscroll + 2;
+                    if (flipscreen != 0)
+                        scrollx = irem_background_hscroll + 2;
+                    else
+                        scrollx = -irem_background_hscroll + 2;
 
-        Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 1, new int[]{scrollx}, 0, null, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
-	}
-}
+                    Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 1, new int[] { scrollx }, 0, null, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
+                }
+            }
 
         }
         public override void driver_init() { }

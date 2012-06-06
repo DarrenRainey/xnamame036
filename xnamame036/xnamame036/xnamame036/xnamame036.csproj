@@ -190,6 +190,7 @@
     <Compile Include="mame\drivers\pleiads.cs" />
     <Compile Include="mame\drivers\driver_speedbal.cs" />
     <Compile Include="mame\drivers\driver_qix.cs" />
+    <Compile Include="mame\drivers\xain.cs" />
     <Compile Include="mame\machine\atari_vg.cs">
       <SubType>Code</SubType>
     </Compile>
