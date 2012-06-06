@@ -306,7 +306,7 @@ namespace xnamame036.mame.drivers
                 /* sprite lookup table */
                 for (int i = 0; i < TOTAL_COLORS(1); i++)
                 {
-                    COLOR(colortable, 1, i, 128 + 32 + (color_prom[cpi]++));
+                    COLOR(colortable, 1, i, 128 + 32 + (color_prom[cpi++]));
                     if (i % 4 == 3) cpi += 4;	/* half of the PROM is unused */
                 }
 
