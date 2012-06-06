@@ -42,6 +42,15 @@ namespace xnamame036.mame
             get { if (bsize != 1) throw new Exception(); return buffer[index + offset]; }
             set { if (bsize != 1) throw new Exception(); buffer[index + offset] = value; }
         }
+        public ushort READ_WORD(int index)
+        {
+            return (ushort)(buffer[offset + 1 + index] << 8 | buffer[offset + index]);
+        }
+            public void WRITE_WORD(int index, ushort value)
+            {
+           buffer[offset + index] = (byte)value;
+            buffer[offset + index  + 1] = (byte)(value >> 8);
+            }
         public ushort read16(int index)
         {
             //return BitConverter.ToUInt16(buffer, (int)(offset + (index * 2)));

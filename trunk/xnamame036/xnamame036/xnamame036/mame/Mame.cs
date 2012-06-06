@@ -91,7 +91,7 @@ namespace xnamame036.mame
         {
             //These driver seems to work OK
            // main("pacman");               
-            //main("invaders");
+            //main("invaders");// sound from samples not good
             //main("1942");
             //main("1943"); 
            // main("zaxxon");
@@ -113,7 +113,7 @@ namespace xnamame036.mame
             //main("frogger"); 
             //main("gunsmoke"); 
             //main("qix"); 
-            //main("mpatrol");  // sound not implemented yet
+            main("mpatrol");  
             //main("pbaction");
             //main("citycon");
             //main("jackal");
@@ -125,7 +125,7 @@ namespace xnamame036.mame
             //main("ldrun");
             //main("ldrun2");
             //main("ldrun3");
-            main("ldrun4");
+            //main("ldrun4");
 
 
             //Here are some vector games
@@ -150,15 +150,16 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
 
-            
+            //main("xsleena");
+            //main("xevious");
 
             //main("galaga88");   //6809,hd63701                    
             //main("marble");//m68010,m6502
             
             
-            main("ajax"); // does not work. tilemap implementation problems, or konami chip
+            //main("ajax"); // does not work. tilemap implementation problems, or konami chip
             //main("kangaroo"); //z80
-            //main("irobot");//6809
+            main("irobot");//6809
             
             //main("gtmr"); // 68000 
             //main("gtmre"); // 68000
@@ -171,7 +172,7 @@ namespace xnamame036.mame
             
            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
-            //main("raiden");  //cpu problems ?
+            main("raiden");  //cpu problems ?
             
         }
         public void main(string game)

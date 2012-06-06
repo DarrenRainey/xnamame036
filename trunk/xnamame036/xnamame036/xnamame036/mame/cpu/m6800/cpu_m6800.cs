@@ -708,9 +708,15 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
                 }; /* HJB 990417 */
 
             }
-            public override void set_nmi_line(int linestate)
+            public override void set_nmi_line(int state)
             {
-                throw new NotImplementedException();
+                if (m6800.nmi_state == state) return;
+                //LOG((errorlog, "M6800#%d set_nmi_line %d ", cpu_getactivecpu(), state));
+                m6800.nmi_state = (byte)state;
+                if (state == CLEAR_LINE) return;
+
+                /* NMI */
+                ENTER_INTERRUPT("M6800#%d take NMI\n", 0xfffc);
             }
             public override void set_op_base(int pc)
             {

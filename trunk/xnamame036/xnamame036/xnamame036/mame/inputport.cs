@@ -672,8 +672,7 @@ int _in;
                 input_analog[port] = 0;
             }
 
-
-            _in = 0;//Machine.input_ports;
+            _in = 0;
 
             if (Machine.input_ports[_in].type == (InputCode)ports.inptports.IPT_END) return; 	/* nothing to do */
 
@@ -698,9 +697,7 @@ int _in;
 
                         if (seq_get_1(seq) != 0 && seq_get_1(seq) != (int)InputCodes.CODE_NONE)
                         {
-                            int joynum, joydir, player;
-
-                            player = 0;
+                            int player = 0;
                             if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER2)
                                 player = 1;
                             else if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER3)
@@ -708,8 +705,8 @@ int _in;
                             else if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER4)
                                 player = 3;
 
-                            joynum = (int)(player * MAX_JOYSTICKS + ((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) / 4);
-                            joydir = (int)(((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) % 4);
+                            int joynum = (int)(player * MAX_JOYSTICKS + ((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) / 4);
+                            int joydir = (int)(((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) % 4);
 
                             if (seq_pressed(seq))
                             {
@@ -728,26 +725,22 @@ int _in;
             }
             update_serial_number += 1;
 
-            _in = 0;//Machine.input_ports;
+            _in = 0;
 
             /* already made sure the InputPort definition is correct */
             _in++;
-
 
             /* scan all the input ports */
             port = 0;
             ib = 0;
             while (Machine.input_ports[_in].type != (InputCode)ports.inptports.IPT_END && port < MAX_INPUT_PORTS)
             {
-                int start;
-
-
                 /* first of all, scan the whole input port definition and build the */
                 /* default value. I must do it before checking for input because otherwise */
                 /* multiple keys associated with the same input bit wouldn't work (the bit */
                 /* would be reset to its default value by the second entry, regardless if */
                 /* the key associated with the first entry was pressed) */
-                start = _in;// Machine.input_ports[_in];
+                int start = _in;
                 while (Machine.input_ports[_in].type != (InputCode)ports.inptports.IPT_END && Machine.input_ports[_in].type != (InputCode)ports.inptports.IPT_PORT)
                 {
                     if ((Machine.input_ports[_in].type & ~ports.IPF_MASK) != (InputCode)ports.inptports.IPT_DIPSWITCH_SETTING &&	/* skip dipswitch definitions */
@@ -764,7 +757,6 @@ int _in;
                      Machine.input_ports[_in].type != (InputCode)ports.inptports.IPT_END && Machine.input_ports[_in].type != (InputCode)ports.inptports.IPT_PORT;
                      _in++, ib++)
                 {
-
                     if ((Machine.input_ports[_in].type & ~ports.IPF_MASK) != (InputCode)ports.inptports.IPT_DIPSWITCH_SETTING &&	/* skip dipswitch definitions */
                             (Machine.input_ports[_in].type & ~ports.IPF_MASK) != (InputCode)ports.inptports.IPT_EXTENSION)		/* skip analog extension fields */
                     {
@@ -779,7 +771,7 @@ int _in;
                         else if (((Machine.input_ports[_in].type & ~ports.IPF_MASK) > (InputCode)ports.inptports.IPT_ANALOG_START)
                               && ((Machine.input_ports[_in].type & ~ports.IPF_MASK) < (InputCode)ports.inptports.IPT_ANALOG_END)) /* LBO 120897 */
                         {
-                            input_analog[port] = _in;// Machine.input_ports[_in];
+                            input_analog[port] = _in;
                             /* reset the analog port on first access */
                             if (input_analog_init[port] != 0)
                             {
@@ -789,9 +781,7 @@ int _in;
                         }
                         else
                         {
-                            InputCode[] seq;
-
-                            seq = input_port_seq(_in);
+                            InputCode[] seq = input_port_seq(_in);
 
                             if (seq_pressed(seq))
                             {
@@ -827,19 +817,15 @@ int _in;
                                         (Machine.input_ports[_in].type & ~ports.IPF_MASK) <= (InputCode)ports.inptports.IPT_JOYSTICKLEFT_RIGHT)
                                 {
 
-                                    int joynum, joydir, mask, player;
-
-
-                                    player = 0;
+                                   int player = 0;
                                     if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER2) player = 1;
                                     else if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER3) player = 2;
                                     else if ((Machine.input_ports[_in].type & ports.IPF_PLAYERMASK) == ports.IPF_PLAYER4) player = 3;
 
-                                    joynum = (int)(player * MAX_JOYSTICKS + ((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) / 4);
-                                    joydir = (int)(((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) % 4);
+                                    int joynum = (int)(player * MAX_JOYSTICKS + ((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) / 4);
+                                    int joydir = (int)(((Machine.input_ports[_in].type & ~ports.IPF_MASK) - (InputCode)ports.inptports.IPT_JOYSTICK_UP) % 4);
 
-                                    mask = Machine.input_ports[_in].mask;
-
+                                    int mask = Machine.input_ports[_in].mask;
 
                                     /* avoid movement in two opposite directions */
                                     if (joyserial[joynum, joydir ^ 1] != 0)
@@ -848,11 +834,9 @@ int _in;
                                     {
                                         int mru_dir = joydir;
                                         int mru_serial = 0;
-                                        int dir;
-
 
                                         /* avoid diagonal movements, use mru button */
-                                        for (dir = 0; dir < 4; dir++)
+                                        for (int dir = 0; dir < 4; dir++)
                                         {
                                             if (joyserial[joynum, dir] > mru_serial)
                                             {
@@ -888,22 +872,6 @@ int _in;
                 port++;
                 if (Machine.input_ports[_in].type == (InputCode)ports.inptports.IPT_PORT) _in++;
             }
-
-            //if (playback)
-            //{
-            //    int i;
-
-            //    for (i = 0; i < MAX_INPUT_PORTS; i ++)
-            //        readword(playback,&input_port_value[i]);
-            //}
-            //if (record)
-            //{
-            //    int i;
-
-            //    for (i = 0; i < MAX_INPUT_PORTS; i ++)
-            //        writeword(record,input_port_value[i]);
-            //}
-
         }
         static uint[] ip_none = SEQ_DEF_1((InputCode)InputCodes.CODE_NONE);
         uint[] input_port_seq(int _in)
@@ -1041,13 +1009,10 @@ int _in;
 
             if ((f = osd_fopen("default", null, OSD_FILETYPE_CONFIG, 1)) != null)
             {
-                int i;
-
-
                 /* write header */
                 osd_fwrite(f, Encoding.Default.GetBytes(MAMEDEFSTRING_V8), 8);
 
-                i = 0;
+                int i = 0;
                 while (inputport_defaults[i].type != (InputCode)ports.inptports.IPT_END)
                 {
                     writeint(f, inputport_defaults[i].type);
@@ -1062,7 +1027,6 @@ int _in;
             }
             for (int i = 0; i < inputport_defaults_backup.Length; i++)
                 inputport_defaults[i] = inputport_defaults_backup[i];
-            //Buffer.BlockCopy(inputport_defaults_backup, 0, inputport_defaults, 0,inputport_defaults_backup.Length);
         }
         static void input_port_write(object f, InputPort _in)
         {
@@ -1083,7 +1047,6 @@ int _in;
                 int _in;
                 int total;
                 int i;
-
 
                 _in = 0;
 
@@ -1139,11 +1102,7 @@ int _in;
         }
         void inputport_vblank_end()
         {
-            int port;
-            int i;
-
-
-            for (port = 0; port < MAX_INPUT_PORTS; port++)
+            for (int port = 0; port < MAX_INPUT_PORTS; port++)
             {
                 if (input_vblank[port] != 0)
                 {
@@ -1156,7 +1115,7 @@ int _in;
             osd_poll_joysticks();
 
             /* update the analog devices */
-            for (i = 0; i < OSD_MAX_JOY_ANALOG; i++)
+            for (int i = 0; i < OSD_MAX_JOY_ANALOG; i++)
             {
                 /* update the analog joystick position */
                 analog_previous_x[i] = analog_current_x[i];
@@ -1164,10 +1123,10 @@ int _in;
                 osd_analogjoy_read(i, ref analog_current_x[i], ref analog_current_y[i]);
 
                 /* update mouse/trackball position */
-                osd_trak_read(i, ref mouse_delta_x[i], ref mouse_delta_y[i]);
+                //osd_trak_read(i, ref mouse_delta_x[i], ref mouse_delta_y[i]);
             }
 
-            for (i = 0; i < MAX_INPUT_PORTS; i++)
+            for (int i = 0; i < MAX_INPUT_PORTS; i++)
             {
                 if (input_analog[i] != 0)
                 {
@@ -1203,7 +1162,6 @@ int _in;
             int player;
 
             /* get input definition */
-            //_in = input_analog[port];
 
             /* if we're not cheating and this is a cheat-only port, bail */
             if (!options.cheat && (Machine.input_ports[input_analog[port]].type & ports.IPF_CHEAT) != 0) return;
@@ -1212,7 +1170,7 @@ int _in;
             decseq = input_port_seq(port );
             incseq = input_port_seq(port + 1);
 
-            keydelta = (int)IP_GET_DELTA(Machine.input_ports, input_analog[port]);// (int)(input_analog[port + +1].type >> 16) & 0xff;//IP_GET_DELTA
+            keydelta = (int)IP_GET_DELTA(Machine.input_ports, input_analog[port]);
 
             switch (type)
             {
@@ -1242,9 +1200,9 @@ int _in;
             }
 
 
-            sensitivity =(int) IP_GET_SENSITIVITY(Machine.input_ports,input_analog[port]);// (int)(input_analog[port + 1].type >> 8) & 0xff;//ip_get_sensitivity
-            min = IP_GET_MIN(Machine.input_ports, input_analog[port]);// (input_analog[port + 1].mask);//IP_GET_MIN
-            max = IP_GET_MAX(Machine.input_ports, input_analog[port]);//(input_analog[port +  1].default_value);//IP_GET_MAX
+            sensitivity =(int) IP_GET_SENSITIVITY(Machine.input_ports,input_analog[port]);
+            min = IP_GET_MIN(Machine.input_ports, input_analog[port]);
+            max = IP_GET_MAX(Machine.input_ports, input_analog[port]);
             default_value = Machine.input_ports[input_analog[port]].default_value * 100 / sensitivity;
             /* extremes can be either signed or unsigned */
             if (min > max)

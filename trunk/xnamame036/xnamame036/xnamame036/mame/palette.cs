@@ -1081,6 +1081,57 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
             palette_change_color(offset, r, g, b);
         }
+        public static void paletteram_xxxxBBBBGGGGRRRR_split1_w(int offset, int data)
+        {
+            paletteram[offset] = (byte)data;
+            changecolor_xxxxBBBBGGGGRRRR(offset, paletteram[offset] | (paletteram_2[offset] << 8));
+        }
+        public static void paletteram_xxxxBBBBGGGGRRRR_split2_w(int offset, int data)
+        {
+            paletteram_2[offset] = (byte)data;
+            changecolor_xxxxBBBBGGGGRRRR(offset, paletteram[offset] | (paletteram_2[offset] << 8));
+        }
+
+        static void palette_increase_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
+        {
+            byte[] flag = new byte[256];
+            //memset(flag,0,256);
+
+            while (num_pens-- != 0)
+            {
+                int pen = pen_data[num_pens];
+                if (flag[pen] == 0)
+                {
+                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
+                    {
+                        var t = pen_visiblecount.read32(Machine.game_colortable.read16(table_offset + pen));
+                        pen_visiblecount.write32(Machine.game_colortable.read16(table_offset + pen), t + 1);
+                    }
+                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
+                        pen_cachedcount[Machine.game_colortable.read16(table_offset + pen)]++;
+                    flag[pen] = 1;
+                }
+            }
+        }
+        static void palette_decrease_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
+        {
+            bool[] flag = new bool[256];
+            //memset(flag,0,256);
+
+            while (num_pens-- != 0)
+            {
+                int pen = pen_data[num_pens];
+                if (!flag[pen] )
+                {
+                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
+                        pen_visiblecount[Machine.game_colortable[table_offset + pen]]--;
+                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
+                        pen_cachedcount[Machine.game_colortable[table_offset + pen]]--;
+                    flag[pen] = true;
+                }
+            }
+        }
+
         public static int paletteram_word_r(int offset)
         {
             return paletteram.read16(offset);
