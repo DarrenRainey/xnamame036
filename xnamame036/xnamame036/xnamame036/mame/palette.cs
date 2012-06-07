@@ -58,6 +58,7 @@ namespace xnamame036.mame
 
         public static ushort palette_transparent_pen;
         public static int palette_transparent_color;
+        public static _BytePtr paletteram = new _BytePtr(1), paletteram_2 = new _BytePtr(1);
 
 
         const int BLACK_PEN = 0;
@@ -978,7 +979,6 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         {
             return paletteram[offset];
         }
-        public static _BytePtr paletteram = new _BytePtr(1), paletteram_2 = new _BytePtr(1);
         static void changecolor_xxxxBBBBGGGGRRRR(int color, int data)
         {
             int r = (data >> 0) & 0x0f;
@@ -1017,12 +1017,9 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         }
         static void changecolor_RRRRGGGGBBBBxxxx(int color, int data)
         {
-            int r, g, b;
-
-
-            r = (data >> 12) & 0x0f;
-            g = (data >> 8) & 0x0f;
-            b = (data >> 4) & 0x0f;
+            int r = (data >> 12) & 0x0f;
+            int g = (data >> 8) & 0x0f;
+            int b = (data >> 4) & 0x0f;
 
             r = (r << 4) | r;
             g = (g << 4) | g;
@@ -1057,27 +1054,23 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         }
         public static void paletteram_BBGGGRRR_w(int offset, int data)
         {
-            byte r, g, b;
-            int bit0, bit1, bit2;
-
-
             paletteram[offset] = (byte)data;
 
             /* red component */
-            bit0 = (data >> 0) & 0x01;
-            bit1 = (data >> 1) & 0x01;
-            bit2 = (data >> 2) & 0x01;
-            r = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+            int bit0 = (data >> 0) & 0x01;
+            int bit1 = (data >> 1) & 0x01;
+            int bit2 = (data >> 2) & 0x01;
+            byte r = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
             /* green component */
             bit0 = (data >> 3) & 0x01;
             bit1 = (data >> 4) & 0x01;
             bit2 = (data >> 5) & 0x01;
-            g = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+           byte  g = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
             /* blue component */
             bit0 = 0;
             bit1 = (data >> 6) & 0x01;
             bit2 = (data >> 7) & 0x01;
-            b = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+            byte b = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
 
             palette_change_color(offset, r, g, b);
         }
@@ -1091,11 +1084,53 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             paletteram_2[offset] = (byte)data;
             changecolor_xxxxBBBBGGGGRRRR(offset, paletteram[offset] | (paletteram_2[offset] << 8));
         }
+        static void palette_decrease_usage_count(int table_offset, uint usage_mask, int color_flags)
+        {
+            /* if we are not dynamically reducing the palette, return immediately. */
+            if (palette_used_colors == null) return;
 
+            while (usage_mask != 0)
+            {
+                if ((usage_mask & 1) != 0)
+                {
+                    ushort index = Machine.game_colortable.read16(table_offset);
+                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
+                        pen_visiblecount.write32(index, pen_visiblecount.read32(index) - 1);
+                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
+                        pen_cachedcount.write32(index, pen_cachedcount.read32(index) - 1);
+                }
+                table_offset++;
+                usage_mask >>= 1;
+            }
+        }
+        static void palette_increase_usage_count(int table_offset, uint usage_mask, int color_flags)
+        {
+            /* if we are not dynamically reducing the palette, return immediately. */
+            if (palette_used_colors == null) return;
+
+            while (usage_mask != 0)
+            {
+                if ((usage_mask & 1) != 0)
+                {
+                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
+                    {
+                        ushort w = Machine.game_colortable.read16(table_offset);
+                        uint dw = pen_visiblecount.read32(w);
+                        pen_visiblecount.write32(w, dw + 1);
+                    }
+                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
+                    {
+                        ushort w = Machine.game_colortable.read16(table_offset);
+                        pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
+                    }
+                }
+                table_offset++;
+                usage_mask >>= 1;
+            }
+        }
         static void palette_increase_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
         {
             byte[] flag = new byte[256];
-            //memset(flag,0,256);
 
             while (num_pens-- != 0)
             {
@@ -1104,11 +1139,14 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        var t = pen_visiblecount.read32(Machine.game_colortable.read16(table_offset + pen));
-                        pen_visiblecount.write32(Machine.game_colortable.read16(table_offset + pen), t + 1);
+                        ushort w = Machine.game_colortable.read16(table_offset + pen);
+                        pen_visiblecount.write32(w,pen_visiblecount.read32(w) + 1);
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
-                        pen_cachedcount[Machine.game_colortable.read16(table_offset + pen)]++;
+                    {
+                        ushort w = Machine.game_colortable.read16(table_offset + pen);
+                        pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
+                    }
                     flag[pen] = 1;
                 }
             }
@@ -1116,7 +1154,6 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         static void palette_decrease_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
         {
             bool[] flag = new bool[256];
-            //memset(flag,0,256);
 
             while (num_pens-- != 0)
             {
@@ -1124,9 +1161,15 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 if (!flag[pen] )
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
-                        pen_visiblecount[Machine.game_colortable[table_offset + pen]]--;
+                    {
+                        ushort w = Machine.game_colortable.read16(table_offset+pen);
+                        pen_visiblecount.write32(w,pen_visiblecount.read32(w)-1);
+                    }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
-                        pen_cachedcount[Machine.game_colortable[table_offset + pen]]--;
+                    {
+                        ushort w = Machine.game_colortable.read16(table_offset+pen);
+                        pen_cachedcount.write32(w,pen_cachedcount.read32(w)-1);
+                    }
                     flag[pen] = true;
                 }
             }
@@ -1134,21 +1177,18 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
         public static int paletteram_word_r(int offset)
         {
-            return paletteram.read16(offset);
+            return paletteram.READ_WORD(offset);// read16(offset);
         }
 
         public static void palette_init_used_colors()
         {
-            int pen;
-
-
             /* if we are not dynamically reducing the palette, return immediately. */
             if (palette_used_colors == null) return;
             for (int i = 0; i < Machine.drv.total_colors; i++)
                 palette_used_colors[i] = PALETTE_COLOR_UNUSED;
             //memset(palette_used_colors,PALETTE_COLOR_UNUSED,Machine.drv.total_colors * sizeof(unsigned char));
 
-            for (pen = 0; pen < Machine.drv.total_colors; pen++)
+            for (int pen = 0; pen < Machine.drv.total_colors; pen++)
             {
                 if (pen_visiblecount.read32(pen) != 0) palette_used_colors[pen] |= PALETTE_COLOR_VISIBLE;
                 if (pen_cachedcount.read32(pen) != 0) palette_used_colors[pen] |= PALETTE_COLOR_CACHED;

@@ -205,7 +205,6 @@ namespace xnamame036.mame
             }
             else
                 Array.Clear(buffer.buffer, buffer.offset, length);
-            //memset (buffer,0,length*sizeof(INT16));
         }
 
         /* timer callback at VCLK low eddge */

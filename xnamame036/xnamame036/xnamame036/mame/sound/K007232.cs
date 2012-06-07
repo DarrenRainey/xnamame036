@@ -29,6 +29,10 @@ namespace xnamame036.mame
         {
             this.name = "007232";
             this.sound_num = Mame.SOUND_K007232;
+            for (int i = 0; i < Mame.MAX_K007232; i++)
+            {
+                kpcm[i] = new kdacApcm();
+            }
         }
 
         public static int K007232_VOL(int LVol, int LPan, int RVol, int RPan) { return ((LVol) | ((LPan) << 8) | ((RVol) << 16) | ((RPan) << 24)); }
@@ -127,7 +131,61 @@ namespace xnamame036.mame
 
         static void KDAC_A_update(int chip, _ShortPtr[] buffer, int buffer_len)
         {
-            throw new Exception();
+            Array.Clear(buffer[0].buffer,buffer[0].offset,buffer_len);
+            Array.Clear(buffer[1].buffer,buffer[1].offset,buffer_len);
+	//memset(buffer[0],0,buffer_len * sizeof(INT16));
+	//memset(buffer[1],0,buffer_len * sizeof(INT16));
+
+	for( int i = 0; i < KDAC_A_PCM_MAX; i++ )
+	{
+		if (kpcm[chip].play[i]!=0)
+		{
+			int volA,volB,j,_out;
+			uint addr, old_addr;
+
+			/**** PCM setup ****/
+			addr = kpcm[chip].start[i] + ((kpcm[chip].addr[i]>>BASE_SHIFT)&0x000fffff);
+			volA = 2 * kpcm[chip].vol[i][0];
+			volB = 2 * kpcm[chip].vol[i][1];
+			for( j = 0; j < buffer_len; j++ )
+			{
+				old_addr = addr;
+				addr = kpcm[chip].start[i] + ((kpcm[chip].addr[i]>>BASE_SHIFT)&0x000fffff);
+				while (old_addr <= addr)
+				{
+					if ((kpcm[chip].pcmbuf[i][old_addr] & 0x80)!=0)
+					{
+						/* end of sample */
+
+						if (kpcm[chip].loop[i]!=0)
+						{
+							/* loop to the beginning */
+							addr = kpcm[chip].start[i];
+							kpcm[chip].addr[i] = 0;
+						}
+						else
+						{
+							/* stop sample */
+							kpcm[chip].play[i] = 0;
+						}
+						break;
+					}
+
+					old_addr++;
+				}
+
+				if (kpcm[chip].play[i] == 0)
+					break;
+
+				kpcm[chip].addr[i] += kpcm[chip].step[i];
+
+				_out = (kpcm[chip].pcmbuf[i][addr] & 0x7f) - 0x40;
+
+				buffer[0].write16(j,(ushort)(buffer[0].read16(j) +_out * volA));
+				buffer[1].write16(j,(ushort)(buffer[1].read16(j)+ _out * volB));
+			}
+		}
+	}
         }
         public override void stop()
         {
@@ -142,6 +200,7 @@ namespace xnamame036.mame
             //nothing
         }
         const byte KDAC_A_PCM_MAX = 2;
+
         class kdacApcm
         {
             public kdacApcm()
@@ -163,6 +222,7 @@ namespace xnamame036.mame
         static int[] pcm_chan = new int[Mame.MAX_K007232];
         static K007232_interface intf;
         const byte BASE_SHIFT = 12;
+
 
         public static void K007232_set_volume(int chip, int channel, int volumeA, int volumeB)
         {
