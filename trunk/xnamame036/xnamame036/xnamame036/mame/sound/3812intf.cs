@@ -225,7 +225,9 @@ namespace xnamame036.mame
             }
         }
         static void YM3812UpdateHandler(int n, _ShortPtr buf, int length)
-        { fm.YM3812UpdateOne(F3812[n], buf, length); }
+        { 
+            fm.YM3812UpdateOne(F3812[n], buf, length); 
+        }
 
         
         public static int YM3812_status_port_0_r(int offset)

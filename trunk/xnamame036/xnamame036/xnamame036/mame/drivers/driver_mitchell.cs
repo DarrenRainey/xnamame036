@@ -39,7 +39,7 @@ namespace xnamame036.mame.drivers
             color_table_len = 2048;
             video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE;
             sound_attributes = 0;
-            //sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295, driver_pang.okim6295_interface));
+            sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295, driver_pang.okim6295_interface));
             //sound.Add(new Mame.MachineSound(Mame.SOUND_YM2413, driver_pang.ym2413_interface));
         }
         public override void init_machine()

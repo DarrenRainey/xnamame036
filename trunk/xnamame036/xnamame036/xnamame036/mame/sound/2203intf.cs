@@ -80,14 +80,14 @@ namespace xnamame036.mame
             int n = param & 0x7f;
             int c = param >> 7;
 
-            Timer[n][c] = 0;
+            Timer[n][c] = null;
             fm.YM2203TimerOver(n, c);
         }
         static void FMTimerInit()
         {
             for (int i = 0; i < MAX_2203; i++)
             {
-                Timer[i][0] = Timer[i][1] = 0;
+                Timer[i][0] = Timer[i][1] = null;
             }
         }
         static void TimerHandler(int n, int c, int count, double stepTime)
@@ -97,7 +97,7 @@ namespace xnamame036.mame
                 if (Timer[n][c]!=null)
                 {
                     Mame.Timer.timer_remove(Timer[n][c]);
-                    Timer[n][c] = 0;
+                    Timer[n][c] = null;
                 }
             }
             else

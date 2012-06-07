@@ -12,7 +12,7 @@ namespace xnamame036.mame.drivers
         static _BytePtr nvram = new _BytePtr(1);
         static int[] nvram_size = new int[1];
 
-        static Mame.osd_bitmap polybitmap1, polybitmap2, polybitmap;
+        static Mame.osd_bitmap polybitmap1, polybitmap2, polybitmapt;
 
 
         static Mame.MemoryReadAddress[] readmem =
@@ -221,12 +221,6 @@ namespace xnamame036.mame.drivers
         }
         static void irobot_statwr_w(int offset, int data)
         {
-            //if (errorlog)
-            //{
-            //    fprintf (errorlog, "write %2x ", data);
-            //    IR_CPU_STATE;
-            //}
-
             irobot_combase = comRAM[data >> 7];
             irobot_combase_mb = comRAM[(data >> 7) ^ 1];
             irobot_bufsel = (byte)(data & 0x02);
@@ -241,13 +235,11 @@ namespace xnamame036.mame.drivers
 #if IR_TIMING
                 if (!irvg_running)
                 {
-                    //if (errorlog) fprintf(errorlog,"vg start ");
                     IR_CPU_STATE();
                     irvg_timer = Mame.Timer.timer_set(Mame.Timer.TIME_IN_MSEC(10), 0, irvg_done_callback);
                 }
                 else
                 {
-                    //if (errorlog) fprintf (errorlog, "vg start [busy!] ");
                     IR_CPU_STATE();
                     Mame.Timer.timer_reset(irvg_timer, Mame.Timer.TIME_IN_MSEC(10));
                 }
@@ -324,15 +316,195 @@ namespace xnamame036.mame.drivers
             if (irobot_outx == 2)
                 irobot_combase[BYTE_XOR_LE(offset & 0xFFF)] = (byte)data;
         }
+        static int ROUND_TO_PIXEL(int x) { return (((x) >> 7) - 128); }
+        static void irobot_draw_pixel(int x, int y, int col)
+        {
+            if (x < ir_xmin || x >= ir_xmax)
+                return;
+            if (y < ir_ymin || y >= ir_ymax)
+                return;
+
+            Mame.plot_pixel(polybitmapt, x, y, col);
+        }
+        static void irobot_draw_line(int x1, int y1, int x2, int y2, int col)
+        {
+            int dx, dy, sx, sy, cx, cy;
+
+            dx = Math.Abs(x1 - x2);
+            dy = Math.Abs(y1 - y2);
+            sx = (x1 <= x2) ? 1 : -1;
+            sy = (y1 <= y2) ? 1 : -1;
+            cx = dx / 2;
+            cy = dy / 2;
+
+            if (dx >= dy)
+            {
+                for (; ; )
+                {
+                    irobot_draw_pixel(x1, y1, col);
+                    if (x1 == x2) break;
+                    x1 += sx;
+                    cx -= dy;
+                    if (cx < 0)
+                    {
+                        y1 += sy;
+                        cx += dx;
+                    }
+                }
+            }
+            else
+            {
+                for (; ; )
+                {
+                    irobot_draw_pixel(x1, y1, col);
+                    if (y1 == y2) break;
+                    y1 += sy;
+                    cy -= dx;
+                    if (cy < 0)
+                    {
+                        x1 += sx;
+                        cy += dy;
+                    }
+                }
+            }
+        }
+
+
         static void run_video()
         {
-            throw new Exception();
+            int sx, sy, ex, ey, sx2, ey2;
+            int color;
+            uint d1;
+            int lpnt, spnt, spnt2;
+            int shp;
+            int word1, word2;
+
+            //if (errorlog) fprintf(errorlog,"Starting Polygon Generator, Clear=%d\n",irvg_clear);
+
+            if (irobot_bufsel != 0)
+                polybitmapt = polybitmap2;
+            else
+                polybitmapt = polybitmap1;
+
+            //    if (irvg_clear) irobot_poly_clear();
+            lpnt = 0;
+            while (lpnt < 0xFFF)
+            {
+                d1 = irobot_combase.READ_WORD(lpnt);
+                lpnt += 2;
+                if (d1 == 0xFFFF) break;
+                spnt = (int)(d1 & 0x07FF) << 1;
+                shp = (int)(d1 & 0xF000) >> 12;
+
+                /* Pixel */
+                if (shp == 0x8)
+                {
+                    while (spnt < 0xFFE)
+                    {
+                        sx = irobot_combase.READ_WORD(spnt);
+                        if (sx == 0xFFFF) break;
+                        sy = irobot_combase.READ_WORD(spnt + 2);
+                        color = Mame.Machine.pens[sy & 0x3F];
+                        irobot_draw_pixel(ROUND_TO_PIXEL(sx), ROUND_TO_PIXEL(sy), color);
+                        spnt += 4;
+                    }//while object
+                }//if point
+
+                /* Line */
+                if (shp == 0xC)
+                {
+                    while (spnt < 0xFFF)
+                    {
+                        ey = irobot_combase.READ_WORD(spnt);
+                        if (ey == 0xFFFF) break;
+                        ey = ROUND_TO_PIXEL(ey);
+                        sy = irobot_combase.READ_WORD(spnt + 2);
+                        color = Mame.Machine.pens[sy & 0x3F];
+                        sy = ROUND_TO_PIXEL(sy);
+                        sx = irobot_combase.READ_WORD(spnt + 6);
+                        word1 = (short)irobot_combase.READ_WORD(spnt + 4);
+                        ex = sx + word1 * (ey - sy + 1);
+                        irobot_draw_line(ROUND_TO_PIXEL(sx), sy, ROUND_TO_PIXEL(ex), ey, color);
+                        spnt += 8;
+                    }//while object
+                }//if line
+
+                /* Polygon */
+                if (shp == 0x4)
+                {
+                    spnt2 = irobot_combase.READ_WORD(spnt);
+                    spnt2 = (spnt2 & 0x7FF) << 1;
+
+                    sx = irobot_combase.READ_WORD(spnt + 2);
+                    sx2 = irobot_combase.READ_WORD(spnt + 4);
+                    sy = irobot_combase.READ_WORD(spnt + 6);
+                    color = Mame.Machine.pens[sy & 0x3F];
+                    sy = ROUND_TO_PIXEL(sy);
+                    spnt += 8;
+
+                    word1 = (short)irobot_combase.READ_WORD(spnt);
+                    ey = irobot_combase.READ_WORD(spnt + 2);
+                    if (word1 != -1 || ey != 0xFFFF)
+                    {
+                        ey = ROUND_TO_PIXEL(ey);
+                        spnt += 4;
+
+                        sx += word1;
+
+                        word2 = (short)irobot_combase.READ_WORD(spnt2);
+                        ey2 = ROUND_TO_PIXEL(irobot_combase.READ_WORD(spnt2 + 2));
+                        spnt2 += 4;
+
+                        sx2 += word2;
+
+                        while (true)
+                        {
+                            if (sy >= ir_ymin && sy < ir_ymax)
+                            {
+                                int x1 = ROUND_TO_PIXEL(sx);
+                                int x2 = ROUND_TO_PIXEL(sx2);
+                                int temp;
+
+                                if (x1 > x2) { temp = x1; x1 = x2; x2 = temp; }
+                                if (x1 < ir_xmin) x1 = ir_xmin;
+                                if (x2 > ir_xmax) x2 = ir_xmax;
+                                if (x1 <= x2)
+                                    draw_hline(x1, x2, sy, color);
+                            }
+
+                            sy++;
+
+                            if (sy >= ey)
+                            {
+                                word1 = (short)irobot_combase.READ_WORD(spnt);
+                                ey = irobot_combase.READ_WORD(spnt + 2);
+                                if (word1 == -1 && ey == 0xFFFF)
+                                    break;
+                                ey = ROUND_TO_PIXEL(ey);
+                                spnt += 4;
+                            }
+                            else
+                                sx += word1;
+
+                            if (sy >= ey2)
+                            {
+                                word2 = (short)irobot_combase.READ_WORD(spnt2);
+                                ey2 = ROUND_TO_PIXEL(irobot_combase.READ_WORD(spnt2 + 2));
+                                spnt2 += 4;
+                            }
+                            else
+                                sx2 += word2;
+
+                        } //while polygon
+                    }//if at least 2 sides
+                } //if polygon
+            } //while object
         }
         static void irmb_dout(irmb_ops curop, uint d)
         {
             /* Write to video com ram */
             if (curop.ramsel == 3)
-                irobot_combase_mb.write16((int)(irmb_latch << 1) & 0xfff, (ushort)d);
+                irobot_combase_mb.WRITE_WORD((int)(irmb_latch << 1) & 0xfff, (ushort)d);
 
             /* Write to mathox ram */
             if ((curop.flags & 0x04) == 0)
@@ -340,7 +512,7 @@ namespace xnamame036.mame.drivers
                 uint ad = curop.diradd | (irmb_latch & curop.latchmask);
 
                 if (curop.diren != 0 || (irmb_latch & 0x6000) == 0)
-                    mbRAM.write16((int)(ad << 1) & 0x1fff, (ushort)d); /* MB RAM write */
+                    mbRAM.WRITE_WORD((int)(ad << 1) & 0x1fff, (ushort)d); /* MB RAM write */
             }
         }
 
@@ -503,7 +675,7 @@ namespace xnamame036.mame.drivers
                     case 0x1a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
                     case 0x13:
                     case 0x1b: mbops[curop].breg[0] = zresult; Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x14: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (cflag!=0) curop = mbops[curop].nxtop; else curop++; ; break;
+                    case 0x14: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
                     case 0x15: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
                     case 0x16: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
                     case 0x17: mbops[curop].breg[0] = zresult << 1; Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
@@ -630,6 +802,22 @@ namespace xnamame036.mame.drivers
             }
 
         }
+        delegate void _drawfunc(int x1, int x2, int y, int col);
+        static _drawfunc[] hline_8_table ={draw_hline_8, draw_hline_8_fx, draw_hline_8_fy, draw_hline_8_fx_fy,draw_hline_8_swap, draw_hline_8_swap_fx, draw_hline_8_swap_fy, draw_hline_8_swap_fx_fy};
+        static _drawfunc[] hline_16_table = {
+                                     };
+        static void draw_hline_8(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[y], x1); int dx = 1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_fx(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[y], ir_xmax - x1); int dx = -1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[ir_ymax - y], x1); int dx = 1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_fx_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[ir_ymax - y], ir_xmax - x1); int dx = -1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+
+        static void draw_hline_8_swap(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[x1], y); int dx = polybitmapt.line[1].offset - polybitmapt.line[0].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_swap_fx(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[x1], ir_ymax - y); int dx = polybitmapt.line[1].offset - polybitmapt.line[0].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_swap_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[ir_xmax - x1], y); int dx = polybitmapt.line[0].offset - polybitmapt.line[1].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+        static void draw_hline_8_swap_fx_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmapt.line[ir_xmax - x1], ir_ymax - y); int dx = polybitmapt.line[0].offset - polybitmapt.line[1].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
+
+
+        static _drawfunc draw_hline;
         class machine_driver_irobot : Mame.MachineDriver
         {
             public machine_driver_irobot()
@@ -779,25 +967,7 @@ namespace xnamame036.mame.drivers
             {
                 //
             }
-            delegate void _drawfunc(int x1, int x2, int y, int col);
-            _drawfunc[] hline_8_table ={
-                                  draw_hline_8, draw_hline_8_fx, draw_hline_8_fy, draw_hline_8_fx_fy,
-	draw_hline_8_swap, draw_hline_8_swap_fx, draw_hline_8_swap_fy, draw_hline_8_swap_fx_fy
-                                       };
-            _drawfunc[] hline_16_table = {
-                                     };
-            static void draw_hline_8(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[y], x1); int dx = 1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_fx(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[y], ir_xmax - x1); int dx = -1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[ir_ymax - y], x1); int dx = 1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_fx_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[ir_ymax - y], ir_xmax - x1); int dx = -1; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
 
-            static void draw_hline_8_swap(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[x1], y); int dx = polybitmap.line[1].offset - polybitmap.line[0].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_swap_fx(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[x1], ir_ymax - y); int dx = polybitmap.line[1].offset - polybitmap.line[0].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_swap_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[ir_xmax - x1], y); int dx = polybitmap.line[0].offset - polybitmap.line[1].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-            static void draw_hline_8_swap_fx_fy(int x1, int x2, int y, int col) { _BytePtr dest = new _BytePtr(polybitmap.line[ir_xmax - x1], ir_ymax - y); int dx = polybitmap.line[0].offset - polybitmap.line[1].offset; for (; x1 <= x2; x1++, dest.offset += dx) dest[0] = (byte)col; }
-
-
-            _drawfunc draw_hline;
         }
         static void scanline_callback(int scanline)
         {

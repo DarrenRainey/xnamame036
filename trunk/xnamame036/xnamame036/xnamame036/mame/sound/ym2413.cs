@@ -228,11 +228,11 @@ namespace xnamame036.mame
         }
         public override int chips_clock(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return ((YM2413interface)msound.sound_interface).baseclock; 
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return (( YM2413interface)msound.sound_interface).num; 
         }
         public override int start(Mame.MachineSound msound)
         {
@@ -259,11 +259,11 @@ namespace xnamame036.mame
         }
         public override void reset()
         {
-            throw new NotImplementedException();
+            //none
         }
         public override void update()
         {
-            throw new NotImplementedException();
+            //none
         }
     }
 }

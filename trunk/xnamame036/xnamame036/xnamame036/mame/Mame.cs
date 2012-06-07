@@ -113,12 +113,12 @@ namespace xnamame036.mame
             //main("frogger"); 
             //main("gunsmoke"); 
             //main("qix"); 
-            main("mpatrol");  
+            //main("mpatrol");  
             //main("pbaction");
             //main("citycon");
             //main("jackal");
             //main("speedbal"); 
-            //main("gyruss"); 
+            main("gyruss"); 
             //main("rocnrope");
             //main("galaxian");// sound from samples not good
             //main("ladybug"); 
@@ -150,8 +150,10 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
 
-            //main("xsleena");
+            main("xsleena");
             //main("xevious");
+            main("gaplus");
+            main("cobracom");
 
             //main("galaga88");   //6809,hd63701                    
             //main("marble");//m68010,m6502

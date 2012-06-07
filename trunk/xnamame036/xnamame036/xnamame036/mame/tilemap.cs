@@ -145,12 +145,13 @@ namespace xnamame036.mame
         {
             return ((((XY) >> 1) | ((XY) << 1)) & 3);
         }
+        public static int TILE_FLIPYX(int YX) { return YX; }
         public static void SET_TILE_INFO(int GFX, int CODE, int COLOR)
         {
             GfxElement gfx = Machine.gfx[(GFX)];
             int _code = (int)((CODE) % gfx.total_elements);
             tile_info.pen_data = new _BytePtr(gfx.gfxdata, _code * gfx.char_modulo);
-            tile_info.pal_data = new _ShortPtr(gfx.colortable, gfx.color_granularity * (COLOR)*2);
+            tile_info.pal_data = new _ShortPtr(gfx.colortable, gfx.color_granularity * (COLOR));
             tile_info.pen_usage = gfx.pen_usage != null ? gfx.pen_usage[_code] : 0;
         }
         void tilemap_init()
@@ -199,7 +200,17 @@ namespace xnamame036.mame
         }
         static void dispose_tile_info(tilemap tilemap)
         {
-            throw new Exception();
+            tilemap.pendata=null;
+            tilemap.maskdata=null;
+            tilemap.paldata=null;
+            tilemap.pen_usage=null;
+            tilemap.priority=null;
+            tilemap.visible=null;
+            tilemap.dirty_vram=null;
+            tilemap.dirty_pixels=null;
+            tilemap.flags=null;
+            tilemap.priority_row=null;
+            tilemap.visible_row=null;
         }
         void tilemap_close()
         {
@@ -1757,47 +1768,6 @@ namespace xnamame036.mame
                         tile_index++;
                     } /* next col */
                 } /* next row */
-            }
-        }
-
-        static void palette_increase_usage_count(int table_offset, uint usage_mask, int color_flags)
-        {
-            /* if we are not dynamically reducing the palette, return immediately. */
-            if (palette_used_colors == null) return;
-
-            while (usage_mask != 0)
-            {
-                if ((usage_mask & 1) != 0)
-                {
-                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
-                        pen_visiblecount.write32(Machine.game_colortable.read16(table_offset), pen_visiblecount.read32(Machine.game_colortable.read16(table_offset)) + 1);
-                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
-                        pen_cachedcount.write32(Machine.game_colortable.read16(table_offset), pen_cachedcount.read32(Machine.game_colortable.read16(table_offset)) + 1);
-                }
-                table_offset++;
-                usage_mask >>= 1;
-            }
-        }
-
-        static void palette_decrease_usage_count(int table_offset, uint usage_mask, int color_flags)
-        {
-            /* if we are not dynamically reducing the palette, return immediately. */
-            if (palette_used_colors == null) return;
-
-            while (usage_mask != 0)
-            {
-                if ((usage_mask & 1) != 0)
-                {
-                    ushort index = Machine.game_colortable.read16(table_offset);
-                    if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
-                        pen_visiblecount.write32(index, pen_visiblecount.read32(index) - 1);
-                    //[Machine.game_colortable[table_offset]]--;
-                    if ((color_flags & PALETTE_COLOR_CACHED) != 0)
-                        pen_cachedcount.write32(index, pen_cachedcount.read32(index) - 1);
-                    //pen_cachedcount[Machine.game_colortable[table_offset]]--;
-                }
-                table_offset++;
-                usage_mask >>= 1;
             }
         }
         public static void tilemap_draw(osd_bitmap dest, tilemap _tilemap, int priority)

@@ -4,107 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace xnamame036.mame.drivers
-{
-    class machine_driver_gtmr : Mame.MachineDriver
-    {
-        public machine_driver_gtmr()
-        {
-            cpu.Add(new Mame.MachineCPU(Mame.CPU_M68000, 16000000, driver_gtmr.gtmr_readmem, driver_gtmr.gtmr_writemem, null, null, driver_gtmr.gtmr_interrupt, driver_gtmr.GTMR_INTERRUPTS_NUM));
-            frames_per_second = 60;
-            vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
-            cpu_slices_per_frame = 1;
-            screen_width = 320;
-            screen_height = 240;
-            visible_area = new Mame.rectangle(0, 320 - 1, 0, 240 - 1);
-            gfxdecodeinfo = driver_gtmr.gtmr_gfxdecodeinfo;
-            total_colors = 0x10000 / 2;
-            color_table_len = 0x10000 / 2;
-            video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE | Mame.VIDEO_UPDATE_AFTER_VBLANK;
-            sound_attributes = 0;
-            sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295, driver_gtmr.gtmr_okim6295_interface));
-        }
-        public override void init_machine()
-        {
-            driver_gtmr.kaneko16_bgram = new _BytePtr(driver_gtmr.kaneko16_fgram, 0x1000);
-            driver_gtmr.kaneko16_spritetype = 1;	// "standard" sprites
-            for (int i = 0; i < 8; i++) driver_gtmr.gtmr_mcu_com[i] = 0;
-            //memset(gtmr_mcu_com, 0, 8);
-        }
-        public override void nvram_handler(object file, int read_or_write)
-        {
-            throw new NotImplementedException();
-        }
-        public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
-        {
-            //nothing
-        }
-        public override int vh_start()
-        {
-            driver_gtmr.bg_tilemap = Mame.tilemap_create(driver_gtmr.get_bg_tile_info,
-                                 Mame.TILEMAP_TRANSPARENT, /* to handle the optional hi-color bg */
-                                 16, 16,
-                                 driver_gtmr.BG_NX, driver_gtmr.BG_NY);
-
-            driver_gtmr.fg_tilemap = Mame.tilemap_create(driver_gtmr.get_fg_tile_info,
-                                        Mame.TILEMAP_TRANSPARENT,
-                                        16, 16,
-                                        driver_gtmr.FG_NX, driver_gtmr.FG_NY);
-
-            if (driver_gtmr.bg_tilemap != null && driver_gtmr.fg_tilemap != null)
-            {
-                /*
-                gtmr background:
-                        flipscreen off: write (x)-$33
-                        [x=fetch point (e.g. scroll *left* with incresing x)]
-
-                        flipscreen on:  write (x+320)+$33
-                        [x=fetch point (e.g. scroll *right* with incresing x)]
-
-                        W = 320+$33+$33 = $1a6 = 422
-
-                berlwall background:
-                6940 off	1a5 << 6
-                5680 on		15a << 6
-                */
-                int xdim = Mame.Machine.drv.screen_width;
-                int ydim = Mame.Machine.drv.screen_height;
-                int dx, dy;
-
-                //		dx   = (422 - xdim) / 2;
-                switch (xdim)
-                {
-                    case 320: dx = 0x33; dy = 0; break;
-                    case 256: dx = 0x5b; dy = -8; break;
-
-                    default: dx = dy = 0; break;
-                }
-
-                Mame.tilemap_set_scrolldx(driver_gtmr.bg_tilemap, -dx, xdim + dx - 1);
-                Mame.tilemap_set_scrolldx(driver_gtmr.fg_tilemap, -(dx + 2), xdim + (dx + 2) - 1);
-
-                Mame.tilemap_set_scrolldy(driver_gtmr.bg_tilemap, -dy, ydim + dy - 1);
-                Mame.tilemap_set_scrolldy(driver_gtmr.fg_tilemap, -dy, ydim + dy - 1);
-
-                driver_gtmr.bg_tilemap.transparent_pen = 0;
-                driver_gtmr.fg_tilemap.transparent_pen = 0;
-                return 0;
-            }
-            else
-                return 1;
-        }
-        public override void vh_stop()
-        {
-            throw new NotImplementedException();
-        }
-        public override void vh_eof_callback()
-        {
-           //nothing
-        }
-        public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
-        {
-            throw new NotImplementedException();
-        }
-    }
+{    
     class driver_gtmr : Mame.GameDriver
     {
         public static int shogwarr_mcu_status, shogwarr_mcu_command_offset;
@@ -494,6 +394,107 @@ new OKIM6295interface(
     new int[] { 50, 50 }
 );
 
+        class machine_driver_gtmr : Mame.MachineDriver
+        {
+            public machine_driver_gtmr()
+            {
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_M68000, 16000000, gtmr_readmem, gtmr_writemem, null, null, gtmr_interrupt, driver_gtmr.GTMR_INTERRUPTS_NUM));
+                frames_per_second = 60;
+                vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
+                cpu_slices_per_frame = 1;
+                screen_width = 320;
+                screen_height = 240;
+                visible_area = new Mame.rectangle(0, 320 - 1, 0, 240 - 1);
+                gfxdecodeinfo = gtmr_gfxdecodeinfo;
+                total_colors = 0x10000 / 2;
+                color_table_len = 0x10000 / 2;
+                video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE | Mame.VIDEO_UPDATE_AFTER_VBLANK;
+                sound_attributes = 0;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295, gtmr_okim6295_interface));
+            }
+            public override void init_machine()
+            {
+                kaneko16_bgram = new _BytePtr(kaneko16_fgram, 0x1000);
+                kaneko16_spritetype = 1;	// "standard" sprites
+
+                Array.Clear(gtmr_mcu_com.buffer, gtmr_mcu_com.offset, 8);
+            }
+            public override void nvram_handler(object file, int read_or_write)
+            {
+                throw new NotImplementedException();
+            }
+            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            {
+                //nothing
+            }
+            public override int vh_start()
+            {
+                bg_tilemap = Mame.tilemap_create(get_bg_tile_info,
+                                     Mame.TILEMAP_TRANSPARENT, /* to handle the optional hi-color bg */
+                                     16, 16,
+                                     BG_NX, BG_NY);
+
+                fg_tilemap = Mame.tilemap_create(driver_gtmr.get_fg_tile_info,
+                                            Mame.TILEMAP_TRANSPARENT,
+                                            16, 16,
+                                            FG_NX, FG_NY);
+
+                if (bg_tilemap != null && fg_tilemap != null)
+                {
+                    /*
+                    gtmr background:
+                            flipscreen off: write (x)-$33
+                            [x=fetch point (e.g. scroll *left* with incresing x)]
+
+                            flipscreen on:  write (x+320)+$33
+                            [x=fetch point (e.g. scroll *right* with incresing x)]
+
+                            W = 320+$33+$33 = $1a6 = 422
+
+                    berlwall background:
+                    6940 off	1a5 << 6
+                    5680 on		15a << 6
+                    */
+                    int xdim = Mame.Machine.drv.screen_width;
+                    int ydim = Mame.Machine.drv.screen_height;
+                    int dx, dy;
+
+                    //		dx   = (422 - xdim) / 2;
+                    switch (xdim)
+                    {
+                        case 320: dx = 0x33; dy = 0; break;
+                        case 256: dx = 0x5b; dy = -8; break;
+
+                        default: dx = dy = 0; break;
+                    }
+
+                    Mame.tilemap_set_scrolldx(driver_gtmr.bg_tilemap, -dx, xdim + dx - 1);
+                    Mame.tilemap_set_scrolldx(driver_gtmr.fg_tilemap, -(dx + 2), xdim + (dx + 2) - 1);
+
+                    Mame.tilemap_set_scrolldy(driver_gtmr.bg_tilemap, -dy, ydim + dy - 1);
+                    Mame.tilemap_set_scrolldy(driver_gtmr.fg_tilemap, -dy, ydim + dy - 1);
+
+                    driver_gtmr.bg_tilemap.transparent_pen = 0;
+                    driver_gtmr.fg_tilemap.transparent_pen = 0;
+                    return 0;
+                }
+                else
+                    return 1;
+            }
+            public override void vh_stop()
+            {
+                throw new NotImplementedException();
+            }
+            public override void vh_eof_callback()
+            {
+                //nothing
+            }
+            public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         void kaneko16_unscramble_tiles(int region)
         {
             _BytePtr RAM = Mame.memory_region(region);
@@ -666,7 +667,8 @@ new OKIM6295interface(
         }
         public driver_gtmre()
         {
-            drv = new machine_driver_gtmr();
+            throw new Exception();
+            //drv = new machine_driver_gtmr();
             year = "1994";
             name = "gtmre";
             description = "Great 1000 Miles Rally (Evolution Model)";
