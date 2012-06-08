@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs />   <Content type="html">   
+<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs />   
 
-<![CDATA[ <script  type="text/javascript"
+<Content type="html">   
+
+<![CDATA[
+<script  type="text/javascript"
         src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js">
     </script>
 
@@ -23,4 +26,5 @@
 </div>
 
   ]]>
-  </Content> </Module>
+  </Content> 
+</Module>
