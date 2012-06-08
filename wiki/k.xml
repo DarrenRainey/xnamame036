@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs title="hello world example" />   <Content type="html">    <script  type="text/javascript"
+<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs title="hello world example" />   <Content type="html">   
+ <script  type="text/javascript"
         src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js">
     </script>
 
@@ -18,6 +19,6 @@
   </script>
 
  <![CDATA[ 
-       Hello, world!
-     ]]>
+ <img src="http://2.bp.blogspot.com/_pP4JIb2v5LA/TH9nWQ4VwCI/AAAAAAAABTQ/PFM1X6LB-ug/s1600/Smiley.png" alt="smile" id="imgSmile"></img
+>  ]]>
   </Content> </Module>
