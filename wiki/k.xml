@@ -1,4 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs title="hello world example" />   <Content type="html">     <![CDATA[ 
+<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs title="hello world example" />   <Content type="html">    <script  type="text/javascript"
+        src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js">
+    </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+       $('#imgSmile').width(200);
+       $('#imgSmile').mouseover(function()
+       {
+          $(this).css("cursor","pointer");
+       });
+       $("#imgSmile").toggle(function()
+          {$(this).animate({width: "500px"}, 'slow');}, 
+          function()
+          {$(this).animate({width: "200px"}, 'slow');
+       });
+    });
+  </script>
+
+ <![CDATA[ 
        Hello, world!
      ]]>
   </Content> </Module>
