@@ -1,1 +1,1 @@
-<wiki:gadget url="http://xnamame036.googlecode.com/svn/wiki/k.xml" width="400"/>
+<wiki:gadget url="http://xnamame036.googlecode.com/svn/wiki/k.xml" width="800"/>
