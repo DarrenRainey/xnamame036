@@ -1084,6 +1084,12 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             paletteram_2[offset] = (byte)data;
             changecolor_xxxxBBBBGGGGRRRR(offset, paletteram[offset] | (paletteram_2[offset] << 8));
         }
+        public static void paletteram_xxxxBBBBGGGGRRRR_swap_w(int offset, int data)
+        {
+            paletteram[offset] = (byte)data;
+            changecolor_xxxxBBBBGGGGRRRR(offset / 2, paletteram[offset | 1] | (paletteram[offset & ~1] << 8));
+        }
+
         static void palette_decrease_usage_count(int table_offset, uint usage_mask, int color_flags)
         {
             /* if we are not dynamically reducing the palette, return immediately. */

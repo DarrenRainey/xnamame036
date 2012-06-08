@@ -94,7 +94,7 @@ namespace xnamame036.mame
             //main("invaders");// sound from samples not good
             //main("1942");
             //main("1943"); 
-           // main("zaxxon");
+            //main("zaxxon");
             //main("szaxxon");
             //main("galaga");
             //main("digdug");
@@ -108,32 +108,34 @@ namespace xnamame036.mame
             //main("phozon"); 
             //main("mappy"); 
             //main("gunfight");
-            ////main("boothill");
+            //main("boothill");
             //main("arkanoid");
             //main("frogger"); 
             //main("gunsmoke"); 
             //main("qix"); 
-            //main("mpatrol");  
-            //main("pbaction");
-            //main("citycon");
-            //main("jackal");
-            //main("speedbal"); 
+            //main("mpatrol");  //last imaged
+            main("pbaction");
+            main("citycon");
+            main("jackal");
+            main("speedbal"); 
             main("gyruss"); 
-            //main("rocnrope");
-            //main("galaxian");// sound from samples not good
-            //main("ladybug"); 
-            //main("ldrun");
-            //main("ldrun2");
-            //main("ldrun3");
-            //main("ldrun4");
-
+            main("rocnrope");
+            main("galaxian");// sound from samples not good
+            main("ladybug"); 
+            main("ldrun");
+            main("ldrun2");
+            main("ldrun3");
+            main("ldrun4");
+            main("galaga3");
+            main("gaplus");
+            main("cobracom");
 
             //Here are some vector games
-            //main("zektor");
-            //main("tacscan");
-            //main("asteroid");
-            //main("llander");//artwork/overlay not implemented
-            //main("speedfrk"); //ccpu (vector game)
+            main("zektor");
+            main("tacscan");
+            main("asteroid");
+            main("llander");//artwork/overlay not implemented
+            main("speedfrk"); //ccpu (vector game)
 
             //-------------------------------------------------
             //These drivers have problems that should be fixable
@@ -150,10 +152,9 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
 
-            main("xsleena");
+            //main("xsleena");
             //main("xevious");
-            main("gaplus");
-            main("cobracom");
+
 
             //main("galaga88");   //6809,hd63701                    
             //main("marble");//m68010,m6502

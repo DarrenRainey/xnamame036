@@ -85,7 +85,7 @@ namespace xnamame036.mame.drivers
                     /* some games need bit 0 to pulse */
                     return (counter++) & 1;
                 }
-                Mame.printf("%04x: read unknown 051937 address %x\n", Mame.cpu_get_pc(), offset);
+                //Mame.printf("%04x: read unknown 051937 address %x\n", Mame.cpu_get_pc(), offset);
                 return 0;
             }
         }
@@ -125,7 +125,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
 #if false
 	usrintf_showmessage("%04x: write %02x to 051937 address %x",cpu_get_pc(),data,offset);
 #endif
-                Mame.printf("%04x: write %02x to unknown 051937 address %x\n", Mame.cpu_get_pc(), data, offset);
+                //Mame.printf("%04x: write %02x to unknown 051937 address %x\n", Mame.cpu_get_pc(), data, offset);
             }
         }
 
@@ -170,7 +170,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
             }
             else
             {
-                Mame.printf("%04x: read 051316 ROM offset %04x but reg 0x0c bit 0 not clear\n", Mame.cpu_get_pc(), offset);
+                //Mame.printf("%04x: read 051316 ROM offset %04x but reg 0x0c bit 0 not clear\n", Mame.cpu_get_pc(), offset);
                 return 0;
             }
         }
@@ -195,7 +195,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
         public static void K051316_ctrl_w(int chip, int offset, int data)
         {
             K051316_ctrlram[chip][offset] = (byte)data;
-            Mame.printf("%04x: write %02x to 051316 reg %x\n", Mame.cpu_get_pc(), data, offset);
+            //Mame.printf("%04x: write %02x to 051316 reg %x\n", Mame.cpu_get_pc(), data, offset);
         }
 
         public static void K051316_ctrl_0_w(int offset, int data)
@@ -434,7 +434,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
             }
             else
             {
-                Mame.printf("K051316_vh_start supports only 4 or 7 bpp\n");
+                //Mame.printf("K051316_vh_start supports only 4 or 7 bpp\n");
                 return 1;
             }
 
@@ -509,8 +509,8 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
                     { /* B y scroll */	}
                     else if (offset >= 0x3a00 && offset < 0x3c00)
                     { /* B x scroll */	}
-                    else
-                        Mame.printf("%04x: read from unknown 052109 address %04x\n", Mame.cpu_get_pc(), offset);
+                    //else
+                        //Mame.printf("%04x: read from unknown 052109 address %04x\n", Mame.cpu_get_pc(), offset);
                 }
 
                 return K052109_ram[offset];
@@ -563,7 +563,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
 #if false
 usrintf_showmessage("scrollcontrol = %02x",data);
 #endif
-                        Mame.printf("%04x: rowscrollcontrol = %02x\n", Mame.cpu_get_pc(), data);
+                        //Mame.printf("%04x: rowscrollcontrol = %02x\n", Mame.cpu_get_pc(), data);
                         K052109_scrollctrl = (byte)data;
                     }
                 }
@@ -601,12 +601,12 @@ if (errorlog) fprintf(errorlog,"%04x: 052109 register 1d00 = %02x\n",cpu_get_pc(
                 }
                 else if (offset == 0x1e00)
                 {
-                    Mame.printf("%04x: 052109 register 1e00 = %02x\n", Mame.cpu_get_pc(), data);
+                    //Mame.printf("%04x: 052109 register 1e00 = %02x\n", Mame.cpu_get_pc(), data);
                     K052109_romsubbank = (byte)data;
                 }
                 else if (offset == 0x1e80)
                 {
-                    Mame.printf("%04x: 052109 register 1e80 = %02x\n", Mame.cpu_get_pc(), data);
+                    //Mame.printf("%04x: 052109 register 1e80 = %02x\n", Mame.cpu_get_pc(), data);
                     Mame.tilemap_set_flip(K052109_tilemap[0], (data & 1) != 0 ? (Mame.TILEMAP_FLIPY | Mame.TILEMAP_FLIPX) : 0);
                     Mame.tilemap_set_flip(K052109_tilemap[1], (data & 1) != 0 ? (Mame.TILEMAP_FLIPY | Mame.TILEMAP_FLIPX) : 0);
                     Mame.tilemap_set_flip(K052109_tilemap[2], (data & 1) != 0 ? (Mame.TILEMAP_FLIPY | Mame.TILEMAP_FLIPX) : 0);
@@ -644,8 +644,8 @@ if (errorlog) fprintf(errorlog,"%04x: 052109 register 1d00 = %02x\n",cpu_get_pc(
                 { /* B y scroll */	}
                 else if (offset >= 0x3a00 && offset < 0x3c00)
                 { /* B x scroll */	}
-                else
-                    Mame.printf("%04x: write %02x to unknown 052109 address %04x\n", Mame.cpu_get_pc(), data, offset);
+                //else
+                    //Mame.printf("%04x: write %02x to unknown 052109 address %04x\n", Mame.cpu_get_pc(), data, offset);
             }
         }
         public static void K052109_set_RMRD_line(int state)

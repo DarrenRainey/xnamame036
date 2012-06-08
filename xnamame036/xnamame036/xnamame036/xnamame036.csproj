@@ -150,12 +150,14 @@
     <Compile Include="mame\drivers\driver_centipede.cs" />
     <Compile Include="mame\drivers\driver_cinemat.cs" />
     <Compile Include="mame\drivers\driver_citycon.cs" />
+    <Compile Include="mame\drivers\driver_dec8.cs" />
     <Compile Include="mame\drivers\driver_digdug.cs" />
     <Compile Include="mame\drivers\driver_dkong.cs" />
     <Compile Include="mame\drivers\driver_frogger.cs" />
     <Compile Include="mame\drivers\driver_galaga.cs" />
     <Compile Include="mame\drivers\driver_galaxian.cs" />
     <Compile Include="mame\drivers\driver_8080bw.cs" />
+    <Compile Include="mame\drivers\driver_gaplus.cs" />
     <Compile Include="mame\drivers\driver_kaneko16.cs" />
     <Compile Include="mame\drivers\driver_kyugo.cs" />
     <Compile Include="mame\drivers\driver_locomotn.cs" />
@@ -177,6 +179,7 @@
     </Compile>
     <Compile Include="mame\drivers\driver_tp84.cs" />
     <Compile Include="mame\drivers\driver_williams.cs" />
+    <Compile Include="mame\drivers\driver_xevious.cs" />
     <Compile Include="mame\drivers\driver_zaxxon.cs" />
     <Compile Include="mame\drivers\driver_gunsmoke.cs" />
     <Compile Include="mame\drivers\driver_irobot.cs" />
