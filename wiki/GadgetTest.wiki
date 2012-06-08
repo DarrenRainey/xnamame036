@@ -1,3 +1,1 @@
-<wiki:gadget url="http://xnamame036.googlecode.com/svn/wiki/k.xml" 
-
-/>
+<wiki:gadget url="http://xnamame036.googlecode.com/svn/wiki/k.xml" />
