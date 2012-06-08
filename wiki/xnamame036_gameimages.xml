@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs />   
+
+<Content type="html">   
+
+<![CDATA[
+<script  type="text/javascript"
+        src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.2.min.js">
+    </script>
+
+ <script type="text/javascript">
+  $(document).ready(function(){
+       $('#_pacman').width(200);
+       $('#_pacman').mouseover(function()
+       {
+          $(this).css("cursor","pointer");
+       });
+       $("#_pacman").toggle(function()
+          {$(this).animate({width: "500px"}, 'slow');}, 
+          function()
+          {$(this).animate({width: "200px"}, 'slow');
+       });
+       $('#_invaders').width(200);
+       $('#_invaders').mouseover(function()
+       {
+          $(this).css("cursor","pointer");
+       });
+       $("#_invaders").toggle(function()
+          {$(this).animate({width: "500px"}, 'slow');}, 
+          function()
+          {$(this).animate({width: "200px"}, 'slow');
+       });
+    });
+    </script>
+<div>
+<table>
+<tr><td>Pacman</td><td><img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_pacman.png" alt="pacman" id="_pacman"></img></td></tr>
+<tr><td>Space Invaders</td><td><img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_invaders.png" alt="pacman" id="_invaders"></img></td></tr>
+<tr><td>1942</td><td><img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_1942.png" alt="1942" id="_1942"></img></td></tr>
+<tr><td>1943</td><td><img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_1943.png" alt="1943" id="_1943"></img></td></tr>
+
+</table>
+</div>
+
+  ]]>
+  </Content> 
+</Module>
