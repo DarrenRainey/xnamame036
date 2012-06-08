@@ -1,4 +1,7 @@
 #summary Changes done sorted descending on date
+===2012.06.08===
+  * Added a list of gameplay pictures of some of the running games, more will come later.
+  * Added new drivers gaplus, galaga3 and cobracom.
 
 ===2012.06.06===
   * Added implementation of MSM5205 sound driver, so Moon Patrol and Lode Runner drivers now have sound.
