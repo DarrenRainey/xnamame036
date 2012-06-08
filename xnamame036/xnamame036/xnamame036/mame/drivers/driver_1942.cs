@@ -231,7 +231,7 @@ namespace xnamame036.mame.drivers
 
                 screen_width = 32 * 8;
                 screen_height = 32 * 8;
-                visible_area = new Mame.rectangle(0* 8, 32 * 8 - 1, 0 * 8, 32 * 8 - 1);
+                visible_area = new Mame.rectangle(0* 8, 32 * 8 - 1, 2 * 8, 30 * 8 - 1);
                 gfxdecodeinfo = driver_1942.gfxdecodeinfo;
                 total_colors = 256;
                 color_table_len = 64 * 4 + 4 * 32 * 8 + 16 * 16;
