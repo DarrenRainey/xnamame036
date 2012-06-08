@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs title="hello world example" />   <Content type="html">   
 
  <![CDATA[ 
- <div style="text-align:center"><a
-      id="Riggs" title="My Photo Album" target="_blank" 
-      href="http://picasaweb.google.com/doc.examples/ShelfBoy">      <img border="0" alt="Photo" src="http://doc.examples.googlepages.com/Riggsie-OP.jpg"       title="Click Here."></a>    </div>
+ <di<script type="text/javascript">
+  $(document).ready(function(){
+       $('#imgSmile').width(200);
+       $('#imgSmile').mouseover(function()
+       {
+          $(this).css("cursor","pointer");
+       });
+       $("#imgSmile").toggle(function()
+          {$(this).animate({width: "500px"}, 'slow');}, 
+          function()
+          {$(this).animate({width: "200px"}, 'slow');
+       });
+    });
+    </script>
+
+<img src="http://2.bp.blogspot.com/_pP4JIb2v5LA/TH9nWQ4VwCI/AAAAAAAABTQ/PFM1X6LB-ug/s1600/Smiley.png" alt="smile" id="imgSmile"></img>
 
 
   ]]>
