@@ -247,7 +247,7 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
             }
             public override void exit()
             {
-                throw new NotImplementedException();
+                //nothing
             }
             public override int execute(int cycles)
             {
