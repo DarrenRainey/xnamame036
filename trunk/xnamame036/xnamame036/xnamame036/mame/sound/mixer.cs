@@ -309,7 +309,7 @@ namespace xnamame036.mame
 
                     /* if we're looping, wrap to the beginning */
                     else
-                        throw new Exception();// source.offset -= (INT16*)source_end - (INT16*)channel.data_start;
+                        source.offset-=source_end;// source.offset -= (INT16*)source_end - (INT16*)channel.data_start;
                 }
             }
 
