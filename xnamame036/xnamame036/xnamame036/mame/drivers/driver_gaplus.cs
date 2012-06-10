@@ -915,7 +915,7 @@ namespace xnamame036.mame.drivers
             }
         }
 
-        public static void  gaplus_vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        public static void  gaplus_vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint pi = 0, cpi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -1165,7 +1165,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 gaplus_vh_init_palette(palette, colortable, color_prom);
             }
@@ -1455,7 +1455,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 driver_gaplus.gaplus_vh_init_palette(palette, colortable, color_prom);
             }

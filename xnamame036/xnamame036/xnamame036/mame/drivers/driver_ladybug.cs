@@ -131,7 +131,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 for (int i = 0; i < 32; i++)
                 {
@@ -149,10 +149,10 @@ namespace xnamame036.mame.drivers
                 /* characters */
                 for (int i = 0; i < 8; i++)
                 {
-                    colortable.write16(4 * i, 0);
-                    colortable.write16(4 * i + 1, (ushort)(i + 0x08));
-                    colortable.write16(4 * i + 2, (ushort)(i + 0x10));
-                    colortable.write16(4 * i + 3, (ushort)(i + 0x18));
+                    colortable[4 * i]= 0;
+                    colortable[4 * i + 1] =(ushort)(i + 0x08);
+                    colortable[4 * i + 2] =(ushort)(i + 0x10);
+                    colortable[4 * i + 3] =(ushort)(i + 0x18);
                 }
 
                 /* sprites */
@@ -163,14 +163,14 @@ namespace xnamame036.mame.drivers
                     int bit1 = (color_prom[i + 32] >> 2) & 0x01;
                     int bit2 = (color_prom[i + 32] >> 1) & 0x01;
                     int bit3 = (color_prom[i + 32] >> 0) & 0x01;
-                    colortable.write16(i + 4 * 8, (ushort)(1 * bit0 + 2 * bit1 + 4 * bit2 + 8 * bit3));
+                    colortable[i + 4 * 8]= (ushort)(1 * bit0 + 2 * bit1 + 4 * bit2 + 8 * bit3);
 
                     /* high 4 bits are for sprite n + 8 */
                     bit0 = (color_prom[i + 32] >> 7) & 0x01;
                     bit1 = (color_prom[i + 32] >> 6) & 0x01;
                     bit2 = (color_prom[i + 32] >> 5) & 0x01;
                     bit3 = (color_prom[i + 32] >> 4) & 0x01;
-                    colortable.write16(i + 4 * 16, (ushort)(1 * bit0 + 2 * bit1 + 4 * bit2 + 8 * bit3));
+                    colortable[i + 4 * 16]= (ushort)(1 * bit0 + 2 * bit1 + 4 * bit2 + 8 * bit3);
                 }
             }
             public override int vh_start()

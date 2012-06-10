@@ -374,7 +374,7 @@ new Mame.GfxLayout(
                 Mame.cpu_set_halt_line(1, Mame.CLEAR_LINE);
                 Mame.cpu_set_halt_line(2, Mame.CLEAR_LINE);
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
                 //	#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
@@ -410,12 +410,10 @@ new Mame.GfxLayout(
 
                 /* characters */
                 for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
-                    colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, (ushort)(color_prom[cpi++] & 0x0f));
-                //COLOR(0,i) = (color_prom[cpi++] & 0x0f);
+                COLOR(colortable,0,i, (color_prom[cpi++] & 0x0f));
                 /* sprites */
                 for (int i = 0; i < Mame.Machine.gfx[2].total_colors * Mame.Machine.gfx[2].color_granularity; i++)
-                    colortable.write16(Mame.Machine.drv.gfxdecodeinfo[2].color_codes_start + i, (ushort)((color_prom[cpi++] & 0x0f) + 0x10));
-                //COLOR(2,i) = (color_prom[cpi++] & 0x0f) + 0x10;
+                COLOR(colortable,2,i, (color_prom[cpi++] & 0x0f) + 0x10);
             }
             public override int vh_start()
             {

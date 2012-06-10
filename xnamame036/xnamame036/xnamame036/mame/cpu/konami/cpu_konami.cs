@@ -155,9 +155,74 @@ namespace xnamame036.mame
             {
                 konami.irq_callback = callback;
             }
-            public override void set_irq_line(int irqline, int linestate)
+            void PUSHBYTE(byte b)
             {
-                throw new NotImplementedException();
+                --konami.s.wl;
+                cpu_writemem16((int)konami.s.d, b);
+            }
+            void PUSHWORD(PAIR w)
+            {
+                --konami.s.wl;
+                cpu_writemem16((int)konami.s.d, w.bl);
+                --konami.s.wl;
+                cpu_writemem16((int)konami.s.d, w.bh);
+            }
+            public override void set_irq_line(int irqline, int state)
+            {
+                konami.irq_state[irqline] = (byte)state;
+                if (state == CLEAR_LINE) return;
+                if (konami.irq_state[KONAMI_IRQ_LINE] != CLEAR_LINE ||
+         konami.irq_state[KONAMI_FIRQ_LINE] != CLEAR_LINE)
+                    konami.int_state &= unchecked((byte)~16); /* clear SYNC flag */
+                if (konami.irq_state[KONAMI_FIRQ_LINE] != CLEAR_LINE && (konami.cc & 0x40) == 0)
+                {
+                    /* fast IRQ */
+                    /* state already saved by CWAI? */
+                    if ((konami.int_state & 8) != 0)
+                    {
+                        konami.int_state &= unchecked((byte)~8);  /* clear CWAI */
+                        konami.extra_cycles += 7;		 /* subtract +7 cycles */
+                    }
+                    else
+                    {
+                        konami.cc &= unchecked((byte)~0x80);				/* save 'short' state */
+                        PUSHWORD(konami.ppc);
+                        PUSHBYTE(konami.cc);
+                        konami.extra_cycles += 10;	/* subtract +10 cycles */
+                    }
+                    konami.cc |= 0x40 | 0x10;			/* inhibit FIRQ and IRQ */
+                    konami.pc.d = RM16(0xfff6);
+                    change_pc(konami.pc.wl);					/* TS 971002 */
+                    konami.irq_callback(KONAMI_FIRQ_LINE);
+                }
+                else
+                    if (konami.irq_state[KONAMI_IRQ_LINE] != CLEAR_LINE && (konami.cc & 0x10) == 0)
+                    {
+                        /* standard IRQ */
+                        /* state already saved by CWAI? */
+                        if ((konami.int_state & 8) != 0)
+                        {
+                            konami.int_state &= unchecked((byte)~8);  /* clear CWAI flag */
+                            konami.extra_cycles += 7;		 /* subtract +7 cycles */
+                        }
+                        else
+                        {
+                            konami.cc |= 0x80; 				/* save entire state */
+                            PUSHWORD(konami.ppc);
+                            PUSHWORD(konami.u);
+                            PUSHWORD(konami.y);
+                            PUSHWORD(konami.x);
+                            PUSHBYTE(konami.dp.bh);
+                            PUSHBYTE(konami.d.bl);
+                            PUSHBYTE(konami.d.bh);
+                            PUSHBYTE(konami.cc);
+                            konami.extra_cycles += 19;	 /* subtract +19 cycles */
+                        }
+                        konami.cc |= 0x10;					/* inhibit IRQ */
+                        konami.pc.d = RM16(0xfff8);
+                        change_pc(konami.pc.wl);					/* TS 971002 */
+                        konami.irq_callback(KONAMI_IRQ_LINE);
+                    }
             }
             public override void set_nmi_line(int linestate)
             {

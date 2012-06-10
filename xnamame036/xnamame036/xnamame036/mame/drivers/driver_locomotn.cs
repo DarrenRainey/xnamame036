@@ -7,50 +7,50 @@ namespace xnamame036.mame.drivers
 {
     class driver_locomotn : Mame.GameDriver
     {
-        
-static Mame.GfxLayout charlayout =
-new Mame.GfxLayout(
-	8,8,	/* 8*8 characters */
-	512,	/* 512 characters (256 in Jungler) */
-	2,	/* 2 bits per pixel */
-	new uint[]{ 4, 0 },
-	new uint[]{ 8*8+0,8*8+1,8*8+2,8*8+3, 0, 1, 2, 3 },
-	new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8 },
-	16*8	/* every char takes 16 consecutive bytes */
-);
 
-static Mame.GfxLayout spritelayout =
-new Mame.GfxLayout(
-	16,16,	/* 16*16 sprites */
-	128,	/* 128 sprites (64 in Jungler) */
-	2,	/* 2 bits per pixel */
-	new uint[]{ 4, 0 },
-	new uint[]{ 8*8, 8*8+1, 8*8+2, 8*8+3, 0, 1, 2, 3,
+        static Mame.GfxLayout charlayout =
+        new Mame.GfxLayout(
+            8, 8,	/* 8*8 characters */
+            512,	/* 512 characters (256 in Jungler) */
+            2,	/* 2 bits per pixel */
+            new uint[] { 4, 0 },
+            new uint[] { 8 * 8 + 0, 8 * 8 + 1, 8 * 8 + 2, 8 * 8 + 3, 0, 1, 2, 3 },
+            new uint[] { 0 * 8, 1 * 8, 2 * 8, 3 * 8, 4 * 8, 5 * 8, 6 * 8, 7 * 8 },
+            16 * 8	/* every char takes 16 consecutive bytes */
+        );
+
+        static Mame.GfxLayout spritelayout =
+        new Mame.GfxLayout(
+            16, 16,	/* 16*16 sprites */
+            128,	/* 128 sprites (64 in Jungler) */
+            2,	/* 2 bits per pixel */
+            new uint[] { 4, 0 },
+            new uint[]{ 8*8, 8*8+1, 8*8+2, 8*8+3, 0, 1, 2, 3,
 			24*8+0, 24*8+1, 24*8+2, 24*8+3, 16*8+0, 16*8+1, 16*8+2, 16*8+3 },
-	new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
+            new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
 			32*8, 33*8, 34*8, 35*8, 36*8, 37*8, 38*8, 39*8 },
-	64*8	/* every sprite takes 64 consecutive bytes */
-);
+            64 * 8	/* every sprite takes 64 consecutive bytes */
+        );
 
-static Mame.GfxLayout dotlayout =
-new Mame.GfxLayout(
-    4, 4,	/* 4*4 characters */
-    8,	/* 8 characters */
-    2,	/* 2 bits per pixel */
-    new uint[] { 6, 7 },
-    new uint[] { 3 * 8, 2 * 8, 1 * 8, 0 * 8 },
-    new uint[] { 3 * 32, 2 * 32, 1 * 32, 0 * 32 },
-    16 * 8	/* every char takes 16 consecutive bytes */
-);
+        static Mame.GfxLayout dotlayout =
+        new Mame.GfxLayout(
+            4, 4,	/* 4*4 characters */
+            8,	/* 8 characters */
+            2,	/* 2 bits per pixel */
+            new uint[] { 6, 7 },
+            new uint[] { 3 * 8, 2 * 8, 1 * 8, 0 * 8 },
+            new uint[] { 3 * 32, 2 * 32, 1 * 32, 0 * 32 },
+            16 * 8	/* every char takes 16 consecutive bytes */
+        );
 
-static Mame.GfxDecodeInfo[] gfxdecodeinfo =
+        static Mame.GfxDecodeInfo[] gfxdecodeinfo =
 {
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX1, 0, charlayout,      0, 64 ),
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX1, 0, spritelayout,    0, 64 ),
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX2, 0, dotlayout,    64*4,  1 ),
 };
-        
-static Mame.MemoryReadAddress[] readmem =
+
+        static Mame.MemoryReadAddress[] readmem =
 {
 	new Mame.MemoryReadAddress( 0x0000, 0x7fff, Mame.MRA_ROM ),
 	new Mame.MemoryReadAddress( 0x8000, 0x8fff, Mame.MRA_RAM ),
@@ -61,8 +61,8 @@ static Mame.MemoryReadAddress[] readmem =
 	new Mame.MemoryReadAddress( 0xa180, 0xa180, Mame.input_port_3_r ),	/* DSW */
 	new Mame.MemoryReadAddress( -1 )	/* end of table */
 };
-        
-static Mame.MemoryWriteAddress[] writemem =
+
+        static Mame.MemoryWriteAddress[] writemem =
 {
 	new Mame.MemoryWriteAddress( 0x0000, 0x7fff, Mame.MWA_ROM ),
 	new Mame.MemoryWriteAddress( 0x8000, 0x83ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size ),
@@ -89,19 +89,19 @@ static Mame.MemoryWriteAddress[] writemem =
 	new Mame.MemoryWriteAddress( 0x8820, 0x883f, Mame.MWA_RAM, rallyx.rallyx_radary ),
 	new Mame.MemoryWriteAddress( -1 )	/* end of table */
 };
-static void coin_1_w(int offset, int data)
-{
-    Mame.coin_counter_w(0, data & 1);
-}
-static void coin_2_w(int offset, int data)
-{
-    Mame.coin_counter_w(1, data & 1);
-}
+        static void coin_1_w(int offset, int data)
+        {
+            Mame.coin_counter_w(0, data & 1);
+        }
+        static void coin_2_w(int offset, int data)
+        {
+            Mame.coin_counter_w(1, data & 1);
+        }
         class machine_driver_locomotn : Mame.MachineDriver
         {
             public machine_driver_locomotn()
             {
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80,18432000 / 6, readmem, writemem, null, null, Mame.nmi_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 18432000 / 6, readmem, writemem, null, null, Mame.nmi_interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80 | Mame.CPU_AUDIO_CPU, 14318180 / 8, timeplt.timeplt_sound_readmem, timeplt.timeplt_sound_writemem, null, null, Mame.ignore_interrupt, 1));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
@@ -123,47 +123,44 @@ static void coin_2_w(int offset, int data)
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
-	//#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
-	//#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
-
                 uint cpi = 0, pi = 0;
-	for (int i = 0;i < Mame.Machine.drv.total_colors;i++)
-	{
-		int bit0,bit1,bit2;
+                for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
+                {
+                    int bit0, bit1, bit2;
 
 
-		/* red component */
-        bit0 = (color_prom[cpi] >> 0) & 0x01;
-        bit1 = (color_prom[cpi] >> 1) & 0x01;
-        bit2 = (color_prom[cpi] >> 2) & 0x01;
-		palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
-		/* green component */
-        bit0 = (color_prom[cpi] >> 3) & 0x01;
-        bit1 = (color_prom[cpi] >> 4) & 0x01;
-        bit2 = (color_prom[cpi] >> 5) & 0x01;
-        palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
-		/* blue component */
-        bit0 = (color_prom[cpi] >> 6) & 0x01;
-		bit1 = (color_prom[cpi] >> 7) & 0x01;
-        palette[pi++] = (byte)(0x50 * bit0 + 0xab * bit1);
+                    /* red component */
+                    bit0 = (color_prom[cpi] >> 0) & 0x01;
+                    bit1 = (color_prom[cpi] >> 1) & 0x01;
+                    bit2 = (color_prom[cpi] >> 2) & 0x01;
+                    palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+                    /* green component */
+                    bit0 = (color_prom[cpi] >> 3) & 0x01;
+                    bit1 = (color_prom[cpi] >> 4) & 0x01;
+                    bit2 = (color_prom[cpi] >> 5) & 0x01;
+                    palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+                    /* blue component */
+                    bit0 = (color_prom[cpi] >> 6) & 0x01;
+                    bit1 = (color_prom[cpi] >> 7) & 0x01;
+                    palette[pi++] = (byte)(0x50 * bit0 + 0xab * bit1);
 
-		cpi++;
-	}
+                    cpi++;
+                }
 
-	/* color_prom now points to the beginning of the lookup table */
+                /* color_prom now points to the beginning of the lookup table */
 
-	/* character lookup table */
-	/* sprites use the same color lookup table as characters */
-	/* characters use colors 0-15 */
-	for (int i = 0;i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity;i++)
-                colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start +i, (ushort)(color_prom[cpi++] & 0x0f));
+                /* character lookup table */
+                /* sprites use the same color lookup table as characters */
+                /* characters use colors 0-15 */
+                for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
+                    colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i] = (ushort)(color_prom[cpi++] & 0x0f);
 
-	/* radar dots lookup table */
-	/* they use colors 16-19 */
-    for (int i = 0; i < 4; i++) colortable.write16(Mame.Machine.drv.gfxdecodeinfo[2].color_codes_start + i, (ushort)(16 + i));
-	
+                /* radar dots lookup table */
+                /* they use colors 16-19 */
+                for (int i = 0; i < 4; i++) colortable[Mame.Machine.drv.gfxdecodeinfo[2].color_codes_start + i] = (ushort)(16 + i);
+
             }
             public override int vh_start()
             {
@@ -189,9 +186,9 @@ static void coin_2_w(int offset, int data)
                         int sx = offs % 32;
                         int sy = offs / 32;
                         /* not a mistake, one bit selects both  flips */
-                        flipx = (rallyx.rallyx_colorram2[offs] & 0x80)!=0;
-                        flipy = (rallyx.rallyx_colorram2[offs] & 0x80)!=0;
-                        if (rallyx.flipscreen!=0)
+                        flipx = (rallyx.rallyx_colorram2[offs] & 0x80) != 0;
+                        flipy = (rallyx.rallyx_colorram2[offs] & 0x80) != 0;
+                        if (rallyx.flipscreen != 0)
                         {
                             sx = 31 - sx;
                             sy = 31 - sy;
@@ -220,8 +217,8 @@ static void coin_2_w(int offset, int data)
                         int sx = (offs % 32) ^ 4;
                         int sy = offs / 32 - 2;
                         /* not a mistake, one bit selects both  flips */
-                        flipx = (Generic.colorram[offs] & 0x80)!=0;
-                        flipy = (Generic.colorram[offs] & 0x80)!=0;
+                        flipx = (Generic.colorram[offs] & 0x80) != 0;
+                        flipy = (Generic.colorram[offs] & 0x80) != 0;
                         if (rallyx.flipscreen != 0)
                         {
                             sx = 7 - sx;
@@ -245,7 +242,7 @@ static void coin_2_w(int offset, int data)
                     int scrollx, scrolly;
 
 
-                    if (rallyx.flipscreen!=0)
+                    if (rallyx.flipscreen != 0)
                     {
                         scrollx = (rallyx.rallyx_scrollx[0]) + 32;
                         scrolly = (rallyx.rallyx_scrolly[0] + 16) - 32;
@@ -256,13 +253,13 @@ static void coin_2_w(int offset, int data)
                         scrolly = -(rallyx.rallyx_scrolly[0] + 16);
                     }
 
-                    Mame.copyscrollbitmap(bitmap, rallyx.tmpbitmap1, 1, new int[]{scrollx}, 1, new int[]{scrolly}, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
+                    Mame.copyscrollbitmap(bitmap, rallyx.tmpbitmap1, 1, new int[] { scrollx }, 1, new int[] { scrolly }, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
                 }
 
 
                 /* radar */
-                if (rallyx.flipscreen!=0)
-                    Mame.copybitmap(bitmap, Generic.tmpbitmap, false,false, 0, 0, rallyx.radarvisibleareaflip, Mame.TRANSPARENCY_NONE, 0);
+                if (rallyx.flipscreen != 0)
+                    Mame.copybitmap(bitmap, Generic.tmpbitmap, false, false, 0, 0, rallyx.radarvisibleareaflip, Mame.TRANSPARENCY_NONE, 0);
                 else
                     Mame.copybitmap(bitmap, Generic.tmpbitmap, false, false, 28 * 8, 0, rallyx.radarvisiblearea, Mame.TRANSPARENCY_NONE, 0);
 
@@ -272,7 +269,7 @@ static void coin_2_w(int offset, int data)
                 {
                     int sx = Generic.spriteram[offs + 1] - 1;
                     int sy = 224 - Generic.spriteram_2[offs];
-                    if (rallyx.flipscreen!=0) sx += 32;
+                    if (rallyx.flipscreen != 0) sx += 32;
 
                     Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                             (uint)(((Generic.spriteram[offs] & 0x7c) >> 2) + 0x20 * (Generic.spriteram[offs] & 0x01) + ((Generic.spriteram[offs] & 0x80) >> 1)),
@@ -296,21 +293,21 @@ static void coin_2_w(int offset, int data)
                     */
 
                     x = rallyx.rallyx_radarx[offs] + ((~rallyx.rallyx_radarattr[offs & 0x0f] & 0x08) << 5);
-                    if (rallyx.flipscreen!=0) x += 32;
+                    if (rallyx.flipscreen != 0) x += 32;
                     y = 237 - rallyx.rallyx_radary[offs];
 
                     Mame.drawgfx(bitmap, Mame.Machine.gfx[2],
                             (uint)((rallyx.rallyx_radarattr[offs & 0x0f] & 0x07) ^ 0x07),
                             0,
-                            rallyx.flipscreen!=0, rallyx.flipscreen!=0,
+                            rallyx.flipscreen != 0, rallyx.flipscreen != 0,
                             x, y,
                         //				&Machine.drv.visible_area,TRANSPARENCY_PEN,3);
-                            rallyx.flipscreen!=0 ? rallyx.spritevisibleareaflip : rallyx.spritevisiblearea, Mame.TRANSPARENCY_PEN, 3);
+                            rallyx.flipscreen != 0 ? rallyx.spritevisibleareaflip : rallyx.spritevisiblearea, Mame.TRANSPARENCY_PEN, 3);
                 }
             }
             public override void vh_eof_callback()
             {
-               //none
+                //none
             }
         }
         public override void driver_init()

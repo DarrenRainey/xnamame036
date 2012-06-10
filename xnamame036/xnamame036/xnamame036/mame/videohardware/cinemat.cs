@@ -79,7 +79,7 @@ namespace xnamame036.mame
         }
 
 
-        public static void cinemat_init_colors(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        public static void cinemat_init_colors(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i, j, k, nextcol;
             string filename = "";

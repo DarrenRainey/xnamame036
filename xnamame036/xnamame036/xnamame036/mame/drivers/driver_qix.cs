@@ -329,7 +329,7 @@ namespace xnamame036.mame.drivers
                         for (int i = 0; i < nvram_size[0]; i++) nvram[i] = 0;
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort [] colortable, _BytePtr color_prom)
             {
                 //nothing
             }

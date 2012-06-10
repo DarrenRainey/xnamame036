@@ -389,7 +389,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
                 //#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
@@ -415,7 +415,7 @@ namespace xnamame036.mame.drivers
                 /* characters */
                 for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
                 {
-                    colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, (ushort)(15 - (color_prom[cpi++] & 0x0f)));
+                    colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i]= (ushort)(15 - (color_prom[cpi++] & 0x0f));
                 }
                 cpi += 128;
 
@@ -423,11 +423,11 @@ namespace xnamame036.mame.drivers
                 for (int i = 0; i < Mame.Machine.gfx[1].total_colors * Mame.Machine.gfx[1].color_granularity; i++)
                 {
                     if (i % 4 == 0)
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i, 0);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i]= 0;
                     //COLOR(1,i) = 0;	/* preserve transparency */
                     else
                         //COLOR(1, i) = 15 - ((color_prom[cpi] & 0x0f)) + 0x10;
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i, (ushort)(15 - (color_prom[cpi] & 0x0f) + 0x10));
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i]= (ushort)(15 - (color_prom[cpi] & 0x0f) + 0x10);
 
                     cpi++;
                 }

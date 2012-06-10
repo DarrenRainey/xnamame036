@@ -76,7 +76,7 @@ namespace xnamame036.mame
                 palette[3 * i + 2] = (byte)((rgb & BLUE) != 0 ? inten : 0);
             }
         }
-        static void avg_init_palette(int paltype, _BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        static void avg_init_palette(int paltype, _BytePtr palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i, j, k;
 
@@ -177,7 +177,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-        public static void avg_init_palette_white(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        public static void avg_init_palette_white(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
         {
             avg_init_palette(VEC_PAL_WHITE, palette, colortable, color_prom);
         }

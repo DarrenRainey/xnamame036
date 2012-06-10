@@ -258,7 +258,7 @@ namespace xnamame036.mame.drivers
         {
             return 0xc8 / 4;	/* VBL */
         }
-        static YM3812interface ym3812_interface = new YM3812interface(1, 4318180 / 4, new int[] { 50 }, new handlerdelegate[]{Seibu.seibu_ym3812_irqhandler});
+        static YM3812interface ym3812_interface = new YM3812interface(1, 4318180 / 4, new int[] { 50 }, new handlerdelegate[] { Seibu.seibu_ym3812_irqhandler });
         static OKIM6295interface okim6295_interface = new OKIM6295interface(1, new int[] { 8000 }, new int[] { Mame.REGION_SOUND1 }, new int[] { 40 });
 
         class machine_driver_raiden : Mame.MachineDriver
@@ -273,13 +273,13 @@ namespace xnamame036.mame.drivers
                 cpu_slices_per_frame = 70;
                 screen_width = 32 * 8;
                 screen_height = 32 * 8;
-                visible_area = new Mame.rectangle(0*8,32*8-1,2*8,30*8-1);
+                visible_area = new Mame.rectangle(0 * 8, 32 * 8 - 1, 2 * 8, 30 * 8 - 1);
                 gfxdecodeinfo = raiden_gfxdecodeinfo;
                 total_colors = 2048;
                 color_table_len = 2048;
-                video_attributes = Mame.VIDEO_TYPE_RASTER|Mame.VIDEO_MODIFIES_PALETTE|Mame.VIDEO_BUFFERS_SPRITERAM;
+                video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE | Mame.VIDEO_BUFFERS_SPRITERAM;
                 sound_attributes = 0;
-                sound.Add(new Mame.MachineSound(Mame.SOUND_YM3812,ym3812_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_YM3812, ym3812_interface));
                 //sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295,okim6295_interface));
             }
             public override void init_machine()
@@ -290,7 +290,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //nothing
             }
@@ -311,13 +311,13 @@ namespace xnamame036.mame.drivers
                 );
 
                 /* Weird - Raiden (Alternate) has different char format! */
-                if (Mame.Machine.gamedrv.name.CompareTo( "raiden")==0)
+                if (Mame.Machine.gamedrv.name.CompareTo("raiden") == 0)
                     ALTERNATE = 0;
                 else
                     ALTERNATE = 1;
 
                 /* Weird - Raiden (Alternate) has different char format! */
-                if (ALTERNATE==0)
+                if (ALTERNATE == 0)
                     text_layer = Mame.tilemap_create(
                         get_text_tile_info,
                         Mame.TILEMAP_TRANSPARENT,
@@ -350,99 +350,102 @@ namespace xnamame036.mame.drivers
             }
             public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
             {
-               int color,offs,sprite;
-	int[] colmask=new int[16];
-    int i, pal_base;
+                int color, offs, sprite;
+                int[] colmask = new int[16];
+                int i, pal_base;
 
-	/* Setup the tilemaps, alternate version has different scroll positions */
-	if (ALTERNATE==0) {
-		Mame.tilemap_set_scrollx( background_layer,0, ((raiden_scroll_ram[1]<<8)+raiden_scroll_ram[0]) );
-		Mame.tilemap_set_scrolly( background_layer,0, ((raiden_scroll_ram[3]<<8)+raiden_scroll_ram[2]) );
-		Mame.tilemap_set_scrollx( foreground_layer,0, ((raiden_scroll_ram[5]<<8)+raiden_scroll_ram[4]) );
-		Mame.tilemap_set_scrolly( foreground_layer,0, ((raiden_scroll_ram[7]<<8)+raiden_scroll_ram[6]) );
-	}
-	else {
-		Mame.tilemap_set_scrolly( background_layer,0, ((raiden_scroll_ram[0x02]&0x30)<<4)+((raiden_scroll_ram[0x04]&0x7f)<<1)+((raiden_scroll_ram[0x04]&0x80)>>7) );
-		Mame.tilemap_set_scrollx( background_layer,0, ((raiden_scroll_ram[0x12]&0x30)<<4)+((raiden_scroll_ram[0x14]&0x7f)<<1)+((raiden_scroll_ram[0x14]&0x80)>>7) );
-		Mame.tilemap_set_scrolly( foreground_layer,0, ((raiden_scroll_ram[0x22]&0x30)<<4)+((raiden_scroll_ram[0x24]&0x7f)<<1)+((raiden_scroll_ram[0x24]&0x80)>>7) );
-		Mame.tilemap_set_scrollx( foreground_layer,0, ((raiden_scroll_ram[0x32]&0x30)<<4)+((raiden_scroll_ram[0x34]&0x7f)<<1)+((raiden_scroll_ram[0x34]&0x80)>>7) );
-	}
+                /* Setup the tilemaps, alternate version has different scroll positions */
+                if (ALTERNATE == 0)
+                {
+                    Mame.tilemap_set_scrollx(background_layer, 0, ((raiden_scroll_ram[1] << 8) + raiden_scroll_ram[0]));
+                    Mame.tilemap_set_scrolly(background_layer, 0, ((raiden_scroll_ram[3] << 8) + raiden_scroll_ram[2]));
+                    Mame.tilemap_set_scrollx(foreground_layer, 0, ((raiden_scroll_ram[5] << 8) + raiden_scroll_ram[4]));
+                    Mame.tilemap_set_scrolly(foreground_layer, 0, ((raiden_scroll_ram[7] << 8) + raiden_scroll_ram[6]));
+                }
+                else
+                {
+                    Mame.tilemap_set_scrolly(background_layer, 0, ((raiden_scroll_ram[0x02] & 0x30) << 4) + ((raiden_scroll_ram[0x04] & 0x7f) << 1) + ((raiden_scroll_ram[0x04] & 0x80) >> 7));
+                    Mame.tilemap_set_scrollx(background_layer, 0, ((raiden_scroll_ram[0x12] & 0x30) << 4) + ((raiden_scroll_ram[0x14] & 0x7f) << 1) + ((raiden_scroll_ram[0x14] & 0x80) >> 7));
+                    Mame.tilemap_set_scrolly(foreground_layer, 0, ((raiden_scroll_ram[0x22] & 0x30) << 4) + ((raiden_scroll_ram[0x24] & 0x7f) << 1) + ((raiden_scroll_ram[0x24] & 0x80) >> 7));
+                    Mame.tilemap_set_scrollx(foreground_layer, 0, ((raiden_scroll_ram[0x32] & 0x30) << 4) + ((raiden_scroll_ram[0x34] & 0x7f) << 1) + ((raiden_scroll_ram[0x34] & 0x80) >> 7));
+                }
 
-    Mame.tilemap_update(Mame.ALL_TILEMAPS);
+                Mame.tilemap_update(Mame.ALL_TILEMAPS);
 
-	/* Build the dynamic palette */
-    Mame.palette_init_used_colors();
+                /* Build the dynamic palette */
+                Mame.palette_init_used_colors();
 
-	/* Sprites */
-    pal_base = Mame.Machine.drv.gfxdecodeinfo[3].color_codes_start;
-	for (color = 0;color < 16;color++) colmask[color] = 0;
-	for (offs = 0;offs <0x1000;offs += 8)
-	{
-		color = Generic.buffered_spriteram[offs+1]&0xf;
-		sprite = Generic.buffered_spriteram[offs+2]+(Generic.buffered_spriteram[offs+3]<<8);
-		sprite &= 0x0fff;
-        colmask[color] |= (int)Mame.Machine.gfx[3].pen_usage[sprite];
-	}
-	for (color = 0;color < 16;color++)
-	{
-		for (i = 0;i < 15;i++)
-		{
-			if ((colmask[color] & (1 << i))!=0)
-                Mame.palette_used_colors[pal_base + 16 * color + i] = Mame.PALETTE_COLOR_USED;
-		}
-	}
+                /* Sprites */
+                pal_base = Mame.Machine.drv.gfxdecodeinfo[3].color_codes_start;
+                for (color = 0; color < 16; color++) colmask[color] = 0;
+                for (offs = 0; offs < 0x1000; offs += 8)
+                {
+                    color = Generic.buffered_spriteram[offs + 1] & 0xf;
+                    sprite = Generic.buffered_spriteram[offs + 2] + (Generic.buffered_spriteram[offs + 3] << 8);
+                    sprite &= 0x0fff;
+                    colmask[color] |= (int)Mame.Machine.gfx[3].pen_usage[sprite];
+                }
+                for (color = 0; color < 16; color++)
+                {
+                    for (i = 0; i < 15; i++)
+                    {
+                        if ((colmask[color] & (1 << i)) != 0)
+                            Mame.palette_used_colors[pal_base + 16 * color + i] = Mame.PALETTE_COLOR_USED;
+                    }
+                }
 
-    if (Mame.palette_recalc() != null)
-        Mame.tilemap_mark_all_pixels_dirty(Mame.ALL_TILEMAPS);
+                if (Mame.palette_recalc() != null)
+                    Mame.tilemap_mark_all_pixels_dirty(Mame.ALL_TILEMAPS);
 
-    Mame.tilemap_render(Mame.ALL_TILEMAPS);
-    Mame.tilemap_draw(bitmap, background_layer, 0);
+                Mame.tilemap_render(Mame.ALL_TILEMAPS);
+                Mame.tilemap_draw(bitmap, background_layer, 0);
 
-	/* Draw sprites underneath foreground */
-	draw_sprites(bitmap,0x40);
-    Mame.tilemap_draw(bitmap, foreground_layer, 0);
+                /* Draw sprites underneath foreground */
+                draw_sprites(bitmap, 0x40);
+                Mame.tilemap_draw(bitmap, foreground_layer, 0);
 
-	/* Rest of sprites */
-	draw_sprites(bitmap,0x80);
+                /* Rest of sprites */
+                draw_sprites(bitmap, 0x80);
 
-	/* Text layer */
-    Mame.tilemap_draw(bitmap, text_layer, 0);
+                /* Text layer */
+                Mame.tilemap_draw(bitmap, text_layer, 0);
             }
-            static void draw_sprites(Mame.osd_bitmap bitmap,int pri_mask)
-{
-	int offs,fx,fy,x,y,color,sprite;
+            static void draw_sprites(Mame.osd_bitmap bitmap, int pri_mask)
+            {
+                int offs, fx, fy, x, y, color, sprite;
 
-	for (offs = 0x1000-8;offs >= 0;offs -= 8)
-	{
-		/* Don't draw empty sprite table entries */
-		if (Generic.buffered_spriteram[offs+7]!=0xf) continue;
-        if (Generic.buffered_spriteram[offs + 0] == 0x0f) continue;
-        if ((pri_mask & Generic.buffered_spriteram[offs + 5])==0) continue;
+                for (offs = 0x1000 - 8; offs >= 0; offs -= 8)
+                {
+                    /* Don't draw empty sprite table entries */
+                    if (Generic.buffered_spriteram[offs + 7] != 0xf) continue;
+                    if (Generic.buffered_spriteram[offs + 0] == 0x0f) continue;
+                    if ((pri_mask & Generic.buffered_spriteram[offs + 5]) == 0) continue;
 
-        fx = Generic.buffered_spriteram[offs + 1] & 0x20;
-        fy = Generic.buffered_spriteram[offs + 1] & 0x40;
-        y = Generic.buffered_spriteram[offs + 0];
-        x = Generic.buffered_spriteram[offs + 4];
+                    fx = Generic.buffered_spriteram[offs + 1] & 0x20;
+                    fy = Generic.buffered_spriteram[offs + 1] & 0x40;
+                    y = Generic.buffered_spriteram[offs + 0];
+                    x = Generic.buffered_spriteram[offs + 4];
 
-        if ((Generic.buffered_spriteram[offs + 5] & 1)!=0) x = 0 - (0x100 - x);
+                    if ((Generic.buffered_spriteram[offs + 5] & 1) != 0) x = 0 - (0x100 - x);
 
-        color = Generic.buffered_spriteram[offs + 1] & 0xf;
-        sprite = Generic.buffered_spriteram[offs + 2] + (Generic.buffered_spriteram[offs + 3] << 8);
-		sprite &= 0x0fff;
+                    color = Generic.buffered_spriteram[offs + 1] & 0xf;
+                    sprite = Generic.buffered_spriteram[offs + 2] + (Generic.buffered_spriteram[offs + 3] << 8);
+                    sprite &= 0x0fff;
 
-		if (flipscreen!=0) {
-			x=240-x;
-			y=240-y;
-			if (fx!=0) fx=0; else fx=1;
-			if (fy!=0) fy=0; else fy=1;
-		}
+                    if (flipscreen != 0)
+                    {
+                        x = 240 - x;
+                        y = 240 - y;
+                        if (fx != 0) fx = 0; else fx = 1;
+                        if (fy != 0) fy = 0; else fy = 1;
+                    }
 
-        Mame.drawgfx(bitmap, Mame.Machine.gfx[3],
-				(uint)sprite,
-                (uint)color, fx!=0, fy!=0, x, y,
-                Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_PEN, 15);
-	}
-}
+                    Mame.drawgfx(bitmap, Mame.Machine.gfx[3],
+                            (uint)sprite,
+                            (uint)color, fx != 0, fy != 0, x, y,
+                            Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_PEN, 15);
+                }
+            }
             public override void vh_eof_callback()
             {
                 Generic.buffer_spriteram_w(0, 0); /* Could be a memory location instead */

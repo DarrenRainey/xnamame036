@@ -13,7 +13,7 @@ namespace xnamame036.mame.drivers
         static int pflastindex = -1, pflastcolor = -1;
         static bool flipscreen;
 
-        static void digdug_vh_convert_color_prom(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        static void digdug_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
         {
             for (int i = 0; i < 32; i++)
             {
@@ -34,15 +34,15 @@ namespace xnamame036.mame.drivers
             /* characters */
             for (int i = 0; i < 8; i++)
             {
-                colortable.write16(i * 2 + 0,  0);
-                colortable.write16(i * 2 + 1,(ushort)( 31 - i * 2));
+                colortable[i * 2 + 0]=  0;
+                colortable[i * 2 + 1]=(ushort)( 31 - i * 2);
             }
             /* sprites */
             for (int i = 0 * 4; i < 64 * 4; i++)
-                colortable.write16(8 * 2 + i, (ushort)(31 - ((color_prom[i + 32] & 0x0f) + 0x10)));
+                colortable[8 * 2 + i]= (ushort)(31 - ((color_prom[i + 32] & 0x0f) + 0x10));
             /* playfield */
             for (int i = 64 * 4; i < 128 * 4; i++)
-                colortable.write16(8 * 2 + i,  (ushort)(31 - (color_prom[i + 32] & 0x0f)));
+                colortable[8 * 2 + i]=  (ushort)(31 - (color_prom[i + 32] & 0x0f));
         }
         static int digdug_vh_start()
         {

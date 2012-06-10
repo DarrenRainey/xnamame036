@@ -354,7 +354,7 @@ new Mame.GfxLayout(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint pi = 0, cpi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -379,11 +379,11 @@ new Mame.GfxLayout(
 
                 /* characters */
                 for (int i = 0 * 4; i < 64 * 4; i++)
-                    colortable.write16(i, (ushort)((color_prom[cpi + (uint)(i ^ 3)] & 0x0f) + 0x10));
+                    colortable[i]= (ushort)((color_prom[cpi + (uint)(i ^ 3)] & 0x0f) + 0x10);
 
                 /* sprites */
                 for (int i = 64 * 4; i < Mame.Machine.drv.color_table_len; i++)
-                    colortable.write16(i, (ushort)(color_prom[cpi + (uint)i] & 0x0f));
+                    colortable[i]= (ushort)(color_prom[cpi + (uint)i] & 0x0f);
             }
             static int common_vh_start()
             {

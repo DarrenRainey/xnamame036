@@ -2294,7 +2294,7 @@ namespace xnamame036.mame
                                 table_offs = (int)(Machine.gfx[bank].colortable.offset - Machine.remapped_colortable.offset
                                         + Machine.gfx[bank].color_granularity * color);
                                 for (i = 0; i < Machine.gfx[bank].color_granularity; i++)
-                                    palette_used_colors[Machine.game_colortable.read16(table_offs + i)] = PALETTE_COLOR_USED;
+                                    palette_used_colors[Machine.game_colortable[table_offs + i]] = PALETTE_COLOR_USED;
                                 palette_recalc();	/* do it twice in case of previous overflow */
                                 palette_recalc();	/*(we redraw the screen only when it changes) */
                             }
