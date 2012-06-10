@@ -1,4 +1,7 @@
 #summary Changes done sorted descending on date
+===2012.06.10===
+Refactoring, changed colortable from _ShortPtr to ushort[]
+
 ===2012.06.08===
   * Added a list of gameplay pictures of some of the running games, more will come later.
   * Added new drivers gaplus, galaga3 and cobracom.
