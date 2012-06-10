@@ -273,7 +273,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0, pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -304,23 +304,23 @@ namespace xnamame036.mame.drivers
                 /* color_prom now points to the beginning of the lookup table */
 
                 /* characters use colors 128-255 */
-                for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity / 8; i++)
+                for (int i = 0; i < TOTAL_COLORS(0)/ 8; i++)
                 {
                     for (int j = 0; j < 8; j++)
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i + 256 * j, (ushort)(color_prom[cpi] + 128 + 16 * j));//COLOR(0,i+256*j) = color_prom[cpi] + 128 + 16*j;
+                        COLOR(colortable,0, i + 256 * j, (ushort)(color_prom[cpi] + 128 + 16 * j));
 
                     cpi++;
                 }
 
                 /* sprites use colors 0-127 */
-                for (int i = 0; i < Mame.Machine.gfx[1].total_colors * Mame.Machine.gfx[1].color_granularity / 8; i++)
+                for (int i = 0; i < TOTAL_COLORS(1) / 8; i++)
                 {
                     for (int j = 0; j < 8; j++)
                     {
                         if (color_prom[cpi] != 0)
-                            colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i + 256 * j, (ushort)(color_prom[cpi] + 16 * j));
+                            COLOR(colortable,1, i + 256 * j,(ushort)(color_prom[cpi] + 16 * j));
                         else
-                            colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + i + 256 * j, 0);	/* preserve transparency */
+                            COLOR(colortable, 1, i + 256 * j, 0);	/* preserve transparency */
                     }
 
                     cpi++;
@@ -360,12 +360,12 @@ namespace xnamame036.mame.drivers
                         Mame.drawgfx(Generic.tmpbitmap, Mame.Machine.gfx[0],
                                 (uint)(Generic.videoram[offs] + ((Generic.colorram[offs] & 0x30) << 4)),
                                 (uint)((Generic.colorram[offs] & 0x0f) + coloffset),
-                                (Generic.colorram[offs] & 0x40)!=0,( Generic.colorram[offs] & 0x80)!=0,
+                                (Generic.colorram[offs] & 0x40) != 0, (Generic.colorram[offs] & 0x80) != 0,
                                 8 * sx, 8 * sy,
                                 null, Mame.TRANSPARENCY_NONE, 0);
                     }
 
-                    if (dirtybuffer2[offs]!=0)
+                    if (dirtybuffer2[offs] != 0)
                     {
                         dirtybuffer2[offs] = 0;
 
@@ -377,7 +377,7 @@ namespace xnamame036.mame.drivers
                             Mame.drawgfx(tmpbitmap2, Mame.Machine.gfx[0],
                                     (uint)(tp84_videoram2[offs] + ((tp84_colorram2[offs] & 0x30) << 4)),
                                     (uint)((tp84_colorram2[offs] & 0x0f) + coloffset),
-                                    (tp84_colorram2[offs] & 0x40)!=0, (tp84_colorram2[offs] & 0x80)!=0,
+                                    (tp84_colorram2[offs] & 0x40) != 0, (tp84_colorram2[offs] & 0x80) != 0,
                                     8 * sx, 8 * sy,
                                     Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
                     }
@@ -389,21 +389,21 @@ namespace xnamame036.mame.drivers
                     int scrollx = -tp84_scrollx[0];
                     int scrolly = -tp84_scrolly[0];
 
-                    Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 1, new int[]{scrollx}, 1,new int[]{scrolly}, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
+                    Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 1, new int[] { scrollx }, 1, new int[] { scrolly }, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
                 }
 
                 /* Draw the sprites. */
                 coloffset = ((col0 & 0x07) << 4);
                 for (int offs = Generic.spriteram_size[0] - 4; offs >= 0; offs -= 4)
                 {
-                    int  sx, sy;
+                    int sx, sy;
                     bool flipx, flipy;
 
 
                     sx = Generic.spriteram[offs + 0];
                     sy = 240 - Generic.spriteram[offs + 3];
-                    flipx = (Generic.spriteram[offs + 2] & 0x40)==0;
-                    flipy = (Generic.spriteram[offs + 2] & 0x80)!=0;
+                    flipx = (Generic.spriteram[offs + 2] & 0x40) == 0;
+                    flipy = (Generic.spriteram[offs + 2] & 0x80) != 0;
 
                     Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                             (uint)Generic.spriteram[offs + 1],

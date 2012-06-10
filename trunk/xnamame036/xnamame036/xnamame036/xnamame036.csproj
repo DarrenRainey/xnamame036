@@ -138,68 +138,144 @@
     <Compile Include="mame\DataFile.cs" />
     <Compile Include="mame\DrawGfx.cs" />
     <Compile Include="mame\driver.cs" />
+    <Compile Include="mame\drivers\driver_1942.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_1943.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_8080bw.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\drivers\driver_ajax.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_asteroid.cs" />
-    <Compile Include="mame\drivers\driver_1942.cs" />
-    <Compile Include="mame\drivers\driver_1943.cs" />
-    <Compile Include="mame\drivers\driver_amidar.cs" />
-    <Compile Include="mame\drivers\driver_arkanoid.cs" />
-    <Compile Include="mame\drivers\driver_bombjack.cs" />
-    <Compile Include="mame\drivers\driver_centipede.cs" />
-    <Compile Include="mame\drivers\driver_cinemat.cs" />
-    <Compile Include="mame\drivers\driver_citycon.cs" />
-    <Compile Include="mame\drivers\driver_dec8.cs" />
-    <Compile Include="mame\drivers\driver_digdug.cs" />
-    <Compile Include="mame\drivers\driver_dkong.cs" />
-    <Compile Include="mame\drivers\driver_frogger.cs" />
-    <Compile Include="mame\drivers\driver_galaga.cs" />
-    <Compile Include="mame\drivers\driver_galaxian.cs" />
-    <Compile Include="mame\drivers\driver_8080bw.cs" />
-    <Compile Include="mame\drivers\driver_gaplus.cs" />
-    <Compile Include="mame\drivers\driver_kaneko16.cs" />
-    <Compile Include="mame\drivers\driver_kyugo.cs" />
-    <Compile Include="mame\drivers\driver_locomotn.cs" />
-    <Compile Include="mame\drivers\driver_mappy.cs" />
-    <Compile Include="mame\drivers\driver_mario.cs" />
+    <Compile Include="mame\drivers\driver_amidar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_arkanoid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_asteroid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_bombjack.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_centipede.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_cinemat.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_citycon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_dec8.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_digdug.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_dkong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_frogger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_galaga.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_galaxian.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_gaplus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_gunsmoke.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_gyruss.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_irobot.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_jackal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_kyugo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_ladybug.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_locomotn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_m62.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_mappy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_mario.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\drivers\driver_mitchell.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_mpatrol.cs" />
-    <Compile Include="mame\drivers\driver_namcos1.cs" />
-    <Compile Include="mame\drivers\driver_pacman.cs" />
-    <Compile Include="mame\drivers\driver_phoenix.cs" />
-    <Compile Include="mame\drivers\driver_phozon.cs" />
+    <Compile Include="mame\drivers\driver_mpatrol.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_pacman.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_pbaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_phoenix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_phozon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_qix.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\drivers\driver_raiden.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_rocnrope.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\drivers\driver_sega.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_tp84.cs" />
-    <Compile Include="mame\drivers\driver_williams.cs" />
-    <Compile Include="mame\drivers\driver_xevious.cs" />
-    <Compile Include="mame\drivers\driver_zaxxon.cs" />
-    <Compile Include="mame\drivers\driver_gunsmoke.cs" />
-    <Compile Include="mame\drivers\driver_irobot.cs" />
-    <Compile Include="mame\drivers\driver_pbaction.cs" />
-    <Compile Include="mame\drivers\driver_rocnrope.cs" />
-    <Compile Include="mame\drivers\driver_jackal.cs" />
-    <Compile Include="mame\drivers\gottlieb.cs" />
-    <Compile Include="mame\drivers\driver_gyruss.cs" />
-    <Compile Include="mame\drivers\driver_ladybug.cs" />
-    <Compile Include="mame\drivers\driver_m62.cs" />
-    <Compile Include="mame\drivers\pleiads.cs" />
-    <Compile Include="mame\drivers\driver_speedbal.cs" />
-    <Compile Include="mame\drivers\driver_qix.cs" />
-    <Compile Include="mame\drivers\xain.cs" />
+    <Compile Include="mame\drivers\driver_speedbal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_tp84.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_williams.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_xain.cs" />
+    <Compile Include="mame\drivers\driver_xevious.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\driver_zaxxon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mame\drivers\pleiads.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\machine\atari_vg.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\machine\namcos1.cs" />
     <Compile Include="mame\machine\segacrpt.cs" />
-    <Compile Include="mame\machine\williams.cs" />
     <Compile Include="mame\png.cs" />
     <Compile Include="mame\soundhardware\Seibu.cs" />
     <Compile Include="mame\soundhardware\williams.cs" />
@@ -268,18 +344,14 @@
     <Compile Include="mame\userinterface.cs" />
     <Compile Include="mame\vector.cs" />
     <Compile Include="mame\Version.cs" />
-    <Compile Include="mame\videohardware\1942.cs" />
-    <Compile Include="mame\videohardware\8080bw.cs" />
     <Compile Include="mame\videohardware\avgdvg.cs" />
     <Compile Include="mame\videohardware\digdug.cs" />
     <Compile Include="mame\videohardware\dkong.cs" />
-    <Compile Include="mame\videohardware\frogger.cs" />
     <Compile Include="mame\videohardware\Generic.cs" />
     <Compile Include="mame\videohardware\konamiic.cs" />
     <Compile Include="mame\videohardware\pengo.cs" />
     <Compile Include="mame\blit.cs" />
     <Compile Include="mame\videohardware\rallyx.cs" />
-    <Compile Include="mame\videohardware\williams.cs" />
     <Compile Include="mame\xna\config.cs" />
     <Compile Include="mame\xna\Crc32.cs" />
     <Compile Include="mame\xna\dirty.cs" />

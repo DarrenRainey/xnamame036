@@ -39,4 +39,20 @@ namespace xnamame036.mame
         }
 
     }
+    public class UShortSubArray
+    {
+        ushort[] buffer;
+        int offset;
+
+        public UShortSubArray(ushort[] buffer, int offset = 0)
+        {
+            this.buffer = buffer;
+            this.offset = offset;
+        }
+        public ushort this[int index]
+        {
+            get { return buffer[index + offset]; }
+            set { buffer[index + offset] = value; }
+        }
+    }
 }

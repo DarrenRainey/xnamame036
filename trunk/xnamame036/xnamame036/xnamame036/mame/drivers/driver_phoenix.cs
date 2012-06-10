@@ -216,10 +216,8 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
-                //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
-                //#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
                 int cpi = 0;
                 int pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -242,10 +240,10 @@ namespace xnamame036.mame.drivers
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8, (ushort)(i + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 1, (ushort)(8 + i + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 2, (ushort)(2 * 8 + i + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 3, (ushort)(3 * 8 + i + j * 64));
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8]= (ushort)(i + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 1]= (ushort)(8 + i + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 2]= (ushort)(2 * 8 + i + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + 4 * i + j * 4 * 8 + 3]= (ushort)(3 * 8 + i + j * 64);
                     }
                 }
 
@@ -254,10 +252,10 @@ namespace xnamame036.mame.drivers
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8, (ushort)(i + 32 + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 1, (ushort)(8 + i + 32 + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 2, (ushort)(2 * 8 + i + 32 + j * 64));
-                        colortable.write16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 3, (ushort)(3 * 8 + i + 32 + j * 64));
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8]= (ushort)(i + 32 + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 1]= (ushort)(8 + i + 32 + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 2]= (ushort)(2 * 8 + i + 32 + j * 64);
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + 4 * i + j * 4 * 8 + 3]= (ushort)(3 * 8 + i + 32 + j * 64);
                     }
                 }
             }

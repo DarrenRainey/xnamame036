@@ -67,7 +67,7 @@ namespace xnamame036.mame.drivers
 	0xff,0xff,0xff, /* WHITE */
 };
 
-        public static void init_palette(_BytePtr game_palette, _ShortPtr game_colortable, _BytePtr color_prom)
+        public static void init_palette(_BytePtr game_palette, ushort[] game_colortable, _BytePtr color_prom)
         {
             Buffer.BlockCopy(invaders_palette, 0, game_palette.buffer, (int)game_palette.offset, invaders_palette.Length);
             //memcpy(game_palette,invaders_palette,sizeof(invaders_palette));
@@ -335,7 +335,7 @@ new Mame.Samplesinterface(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 driver_8080bw.init_palette(palette, colortable, color_prom);
             }
@@ -596,7 +596,7 @@ new Mame.Samplesinterface(
             {
                 //none
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 init_palette(palette, colortable, color_prom);
             }
@@ -724,7 +724,7 @@ new Mame.Samplesinterface(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 driver_invaders.init_palette(palette, colortable, color_prom);
             }

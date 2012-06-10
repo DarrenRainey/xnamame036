@@ -121,7 +121,7 @@ namespace xnamame036.mame
 
                 return Generic.generic_vh_start();
             }
-            public static int pacman_vh_convert_color_prom(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public static int pacman_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 int i;
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
@@ -156,7 +156,7 @@ namespace xnamame036.mame
                 /* character lookup table */
                 /* sprites use the same color lookup table as characters */
                 for (i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
-                    colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, (ushort)((color_prom[cpi++]) & 0x0f));
+                    colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i]=(ushort)((color_prom[cpi++]) & 0x0f);
 
                 return 0;
             }

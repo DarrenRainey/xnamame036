@@ -217,7 +217,7 @@ new Mame.GfxLayout(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0, pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)

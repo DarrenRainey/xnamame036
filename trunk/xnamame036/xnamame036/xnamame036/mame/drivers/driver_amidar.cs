@@ -150,54 +150,54 @@ namespace xnamame036.mame.drivers
 
             amidar_attributesram[offset] = (byte)data;
         }
-        
-/* The timer clock which feeds the upper 4 bits of    					*/
-/* AY-3-8910 port A is based on the same clock        					*/
-/* feeding the sound CPU Z80.  It is a divide by      					*/
-/* 5120, formed by a standard divide by 512,        					*/
-/* followed by a divide by 10 using a 4 bit           					*/
-/* bi-quinary count sequence. (See LS90 data sheet    					*/
-/* for an example).                                   					*/
-/*																		*/
-/* Bit 4 comes from the output of the divide by 1024  					*/
-/*       0, 1, 0, 1, 0, 1, 0, 1, 0, 1									*/
-/* Bit 5 comes from the QC output of the LS90 producing a sequence of	*/
-/* 		 0, 0, 1, 1, 0, 0, 1, 1, 1, 0									*/
-/* Bit 6 comes from the QD output of the LS90 producing a sequence of	*/
-/*		 0, 0, 0, 0, 1, 0, 0, 0, 0, 1									*/
-/* Bit 7 comes from the QA output of the LS90 producing a sequence of	*/
-/*		 0, 0, 0, 0, 0, 1, 1, 1, 1, 1			 						*/
 
-static int [] scramble_timer ={0x00, 0x10, 0x20, 0x30, 0x40, 0x90, 0xa0, 0xb0, 0xa0, 0xd0};
+        /* The timer clock which feeds the upper 4 bits of    					*/
+        /* AY-3-8910 port A is based on the same clock        					*/
+        /* feeding the sound CPU Z80.  It is a divide by      					*/
+        /* 5120, formed by a standard divide by 512,        					*/
+        /* followed by a divide by 10 using a 4 bit           					*/
+        /* bi-quinary count sequence. (See LS90 data sheet    					*/
+        /* for an example).                                   					*/
+        /*																		*/
+        /* Bit 4 comes from the output of the divide by 1024  					*/
+        /*       0, 1, 0, 1, 0, 1, 0, 1, 0, 1									*/
+        /* Bit 5 comes from the QC output of the LS90 producing a sequence of	*/
+        /* 		 0, 0, 1, 1, 0, 0, 1, 1, 1, 0									*/
+        /* Bit 6 comes from the QD output of the LS90 producing a sequence of	*/
+        /*		 0, 0, 0, 0, 1, 0, 0, 0, 0, 1									*/
+        /* Bit 7 comes from the QA output of the LS90 producing a sequence of	*/
+        /*		 0, 0, 0, 0, 0, 1, 1, 1, 1, 1			 						*/
 
-static int clock;
-static int last_totalcycles = 0;
-static int scramble_portB_r(int offset)
-{
-	/* need to protect from totalcycles overflow */
+        static int[] scramble_timer = { 0x00, 0x10, 0x20, 0x30, 0x40, 0x90, 0xa0, 0xb0, 0xa0, 0xd0 };
 
-	/* number of Z80 clock cycles to count */
+        static int clock;
+        static int last_totalcycles = 0;
+        static int scramble_portB_r(int offset)
+        {
+            /* need to protect from totalcycles overflow */
 
-	int current_totalcycles;
+            /* number of Z80 clock cycles to count */
 
-	current_totalcycles = Mame.cpu_gettotalcycles();
-	clock = (clock + (current_totalcycles-last_totalcycles)) % 5120;
+            int current_totalcycles;
 
-	last_totalcycles = current_totalcycles;
+            current_totalcycles = Mame.cpu_gettotalcycles();
+            clock = (clock + (current_totalcycles - last_totalcycles)) % 5120;
 
-	return scramble_timer[clock/512];
-}
-static int last;
-static void scramble_sh_irqtrigger_w(int offset, int data)
-{
-	if (last == 0 && (data & 0x08) != 0)
-	{
-		/* setting bit 3 low then high triggers IRQ on the sound CPU */
-		Mame.cpu_cause_interrupt(1, Mame.cpu_Z80.Z80_IRQ_INT);
-	}
+            last_totalcycles = current_totalcycles;
 
-	last = data & 0x08;
-}
+            return scramble_timer[clock / 512];
+        }
+        static int last;
+        static void scramble_sh_irqtrigger_w(int offset, int data)
+        {
+            if (last == 0 && (data & 0x08) != 0)
+            {
+                /* setting bit 3 low then high triggers IRQ on the sound CPU */
+                Mame.cpu_cause_interrupt(1, Mame.cpu_Z80.Z80_IRQ_INT);
+            }
+
+            last = data & 0x08;
+        }
 
         static AY8910interface ay8910_interface =
         new AY8910interface(
@@ -236,44 +236,41 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
-	//#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
-	//#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
-
                 uint pi = 0, cpi = 0;
-	for (int i = 0;i < Mame.Machine.drv.total_colors;i++)
-	{
-		int bit0,bit1,bit2;
+                for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
+                {
+                    int bit0, bit1, bit2;
 
 
-		/* red component */
-		bit0 = (color_prom[cpi] >> 0) & 0x01;
-		bit1 = (color_prom[cpi] >> 1) & 0x01;
-		bit2 = (color_prom[cpi] >> 2) & 0x01;
-		palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
-		/* green component */
-		bit0 = (color_prom[cpi] >> 3) & 0x01;
-		bit1 = (color_prom[cpi] >> 4) & 0x01;
-		bit2 = (color_prom[cpi] >> 5) & 0x01;
-        palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
-		/* blue component */
-		bit0 = (color_prom[cpi] >> 6) & 0x01;
-		bit1 = (color_prom[cpi] >> 7) & 0x01;
-        palette[pi++] = (byte)(0x4f * bit0 + 0xa8 * bit1);
+                    /* red component */
+                    bit0 = (color_prom[cpi] >> 0) & 0x01;
+                    bit1 = (color_prom[cpi] >> 1) & 0x01;
+                    bit2 = (color_prom[cpi] >> 2) & 0x01;
+                    palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+                    /* green component */
+                    bit0 = (color_prom[cpi] >> 3) & 0x01;
+                    bit1 = (color_prom[cpi] >> 4) & 0x01;
+                    bit2 = (color_prom[cpi] >> 5) & 0x01;
+                    palette[pi++] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+                    /* blue component */
+                    bit0 = (color_prom[cpi] >> 6) & 0x01;
+                    bit1 = (color_prom[cpi] >> 7) & 0x01;
+                    palette[pi++] = (byte)(0x4f * bit0 + 0xa8 * bit1);
 
-		cpi++;
-	}
+                    cpi++;
+                }
 
 
-	/* characters and sprites use the same palette */
-    for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
-	{
-        if ((i & 3) != 0)
-            colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, (ushort)i);
-        else
-            colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, 0); 	/* 00 is always black, regardless of the contents of the PROM */
-	}
+                /* characters and sprites use the same palette */
+                for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
+                {
+                    if ((i & 3) != 0)
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i] = (ushort)i;
+                    else
+                        colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i] = 0; 	/* 00 is always black, regardless of the contents of the PROM */
+                }
             }
             public override int vh_start()
             {
@@ -299,13 +296,13 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
                         sx = offs % 32;
                         sy = offs / 32;
 
-                        if (flipscreen[0]!=0) sx = 31 - sx;
-                        if (flipscreen[1]!=0) sy = 31 - sy;
+                        if (flipscreen[0] != 0) sx = 31 - sx;
+                        if (flipscreen[1] != 0) sy = 31 - sy;
 
                         Mame.drawgfx(Generic.tmpbitmap, Mame.Machine.gfx[0],
                                 Generic.videoram[offs],
                                 (uint)(amidar_attributesram[2 * (offs % 32) + 1] & 0x07),
-                                flipscreen[0]!=0, flipscreen[1]!=0,
+                                flipscreen[0] != 0, flipscreen[1] != 0,
                                 8 * sx, 8 * sy,
                                 Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
                     }
@@ -313,7 +310,7 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
 
 
                 /* copy the temporary bitmap to the screen */
-                Mame.copybitmap(bitmap,Generic.tmpbitmap, false, false, 0, 0, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
+                Mame.copybitmap(bitmap, Generic.tmpbitmap, false, false, 0, 0, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
 
 
                 /* Draw the sprites. Note that it is important to draw them exactly in this */
@@ -325,15 +322,15 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
 
                     sx = (Generic.spriteram[offs + 3] + 1) & 0xff;	/* ??? */
                     sy = 240 - Generic.spriteram[offs];
-                    flipx = (Generic.spriteram[offs + 1] & 0x40)!=0;
-                    flipy = (Generic.spriteram[offs + 1] & 0x80)!=0;
+                    flipx = (Generic.spriteram[offs + 1] & 0x40) != 0;
+                    flipy = (Generic.spriteram[offs + 1] & 0x80) != 0;
 
-                    if (flipscreen[0]!=0)
+                    if (flipscreen[0] != 0)
                     {
                         sx = 241 - sx;	/* note: 241, not 240 */
                         flipx = !flipx;
                     }
-                    if (flipscreen[1]!=0)
+                    if (flipscreen[1] != 0)
                     {
                         sy = 240 - sy;
                         flipy = !flipy;
@@ -351,7 +348,7 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
                             (uint)(Generic.spriteram[offs + 2] & 0x07),
                             flipx, flipy,
                             sx, sy,
-                            flipscreen[0] !=0? spritevisibleareaflipx : spritevisiblearea, Mame.TRANSPARENCY_PEN, 0);
+                            flipscreen[0] != 0 ? spritevisibleareaflipx : spritevisiblearea, Mame.TRANSPARENCY_PEN, 0);
                 }
             }
             public override void vh_eof_callback()
@@ -361,7 +358,7 @@ static void scramble_sh_irqtrigger_w(int offset, int data)
         }
         public override void driver_init()
         {
-           //none
+            //none
         }
         Mame.InputPortTiny[] input_ports_amidar()
         {

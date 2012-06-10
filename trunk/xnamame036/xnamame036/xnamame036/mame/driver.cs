@@ -71,7 +71,7 @@ namespace xnamame036.mame
             public GfxDecodeInfo[] gfxdecodeinfo;
             public uint total_colors;	/* palette is 3*total_colors bytes long */
             public uint color_table_len;	/* length in shorts of the color lookup table */
-            public abstract void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom);
+            public abstract void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom);
 
             public int video_attributes;	/* ASG 081897 */
 
@@ -113,7 +113,7 @@ namespace xnamame036.mame
             public RomModule[] rom;
             public uint flags;
             public static int TOTAL_COLORS(int gfxn){return (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity);}
-            public static void COLOR(_ShortPtr colortable, int gfxn, int offs, int value) { colortable.write16(Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs, (ushort)value); }
+            public static void COLOR(ushort[] colortable, int gfxn, int offs, int value) { colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs]= (ushort)value; }
         }
         public const ushort ROT0 = 0x0000;
         public const ushort ROT90 = (ORIENTATION_SWAP_XY | ORIENTATION_FLIP_X);	/* rotate clockwise 90 degrees */

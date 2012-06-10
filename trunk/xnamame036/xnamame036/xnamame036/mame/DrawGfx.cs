@@ -684,7 +684,7 @@ namespace xnamame036.mame
         static void blockmove_transcolor8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
         {
             int end;
-            _ShortPtr lookupdata = new _ShortPtr(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset)/2);
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             while (srcheight != 0)
@@ -692,7 +692,7 @@ namespace xnamame036.mame
                 end = (int)(dstdata.offset + srcwidth);
                 while (dstdata.offset < end)
                 {
-                    if (lookupdata.read16(srcdata.buffer[srcdata.offset]) != transcolor)
+                    if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
                         dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
                     srcdata.offset++;
                     dstdata.offset++;
@@ -705,7 +705,7 @@ namespace xnamame036.mame
         static void blockmove_transcolor_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
         {
             int end;
-            _ShortPtr lookupdata = new _ShortPtr(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset)/2);
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
             while (srcheight != 0)
@@ -713,7 +713,7 @@ namespace xnamame036.mame
                 end = (int)(dstdata.offset + srcwidth);
                 while (dstdata.offset < end)
                 {
-                    if (lookupdata.read16(srcdata.buffer[srcdata.offset]) != transcolor)
+                    if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
                         dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
                     srcdata.offset--;
                     dstdata.offset++;
@@ -1658,7 +1658,7 @@ namespace xnamame036.mame
 						for( x=sx; x<ex; x++ )
 						{
 							int c = source[x_index>>16];
-							if( c != transparent_color ) dest[x] = pal[c];
+							if( c != transparent_color ) dest[x] = (byte)pal.read16(c);
 							x_index += dx;
 						}
 

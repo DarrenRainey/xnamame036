@@ -211,7 +211,7 @@ namespace xnamame036.mame.drivers
         {
             throw new NotImplementedException();
         }
-        public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i;
             /* Bits are. Red: 6&5 (0x60), Green: 4&3 (0x18), Blue: 2&1 (0x06) */
@@ -221,7 +221,7 @@ namespace xnamame036.mame.drivers
                 palette[3 * i + 1] = (byte)(85 * ((i >> 3) & 0x3));
                 palette[3 * i + 2] = (byte)(85 * ((i >> 1) & 0x3));
                 /* Set the color table */
-                colortable.write16(i, (ushort)i);
+                colortable[i]= (ushort)i;
             }
             /*
              * Fill in the holes with good anti-aliasing colors.  This is a very good
@@ -243,7 +243,7 @@ namespace xnamame036.mame.drivers
                         palette[3 * i] = (byte)((255 * r) / 6);
                         palette[3 * i + 1] = (byte)((255 * g) / 6);
                         palette[3 * i + 2] = (byte)((255 * b) / 6);
-                        colortable.write16(i, (ushort)i);
+                        colortable[i]= (ushort)i;
                         if (i < 128)
                             i += 2;
                         else

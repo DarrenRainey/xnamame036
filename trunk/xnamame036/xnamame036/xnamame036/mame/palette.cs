@@ -78,10 +78,14 @@ namespace xnamame036.mame
             palette_map = new _ShortPtr((int)(Machine.drv.total_colors * sizeof(ushort)));
             if (Machine.drv.color_table_len != 0)
             {
-                Machine.game_colortable = new _ShortPtr((int)Machine.drv.color_table_len * sizeof(ushort));
+                Machine.game_colortable = new ushort[(int)Machine.drv.color_table_len];
                 Machine.remapped_colortable = new _ShortPtr((int)Machine.drv.color_table_len * sizeof(ushort));
             }
-            else Machine.game_colortable = Machine.remapped_colortable = null;
+            else
+            {
+                Machine.game_colortable = null;
+                Machine.remapped_colortable = null;
+            }
 
             if (Machine.color_depth == 16 || (Machine.gamedrv.flags & GAME_REQUIRES_16BIT) != 0)
             {
@@ -268,7 +272,7 @@ namespace xnamame036.mame
             /* order of the palette. The driver can overwrite this in */
             /* vh_init_palette() */
             for (int i = 0; i < Machine.drv.color_table_len; i++)
-                Machine.game_colortable.write16(i, (ushort)(i % Machine.drv.total_colors));
+                Machine.game_colortable[i]= (ushort)(i % Machine.drv.total_colors);
 
             /* by default we use -1 to identify the transparent color, the driver */
             /* can modify this. */
@@ -447,7 +451,7 @@ namespace xnamame036.mame
 
             for (int i = 0; i < Machine.drv.color_table_len; i++)
             {
-                int color = Machine.game_colortable.read16(i);
+                int color = Machine.game_colortable[i];
 
                 /* check for invalid colors set by Machine.drv.vh_init_palette */
                 if (color < Machine.drv.total_colors)
@@ -851,7 +855,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             {
                 /* rebuild the color lookup table */
                 for (i = 0; i < Machine.drv.color_table_len; i++)
-                    Machine.remapped_colortable.write16(i, Machine.pens.read16(Machine.game_colortable.read16(i)));
+                    Machine.remapped_colortable.write16(i, Machine.pens.read16(Machine.game_colortable[i]));
             }
 
             if (need_refresh != 0)
@@ -1099,7 +1103,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             {
                 if ((usage_mask & 1) != 0)
                 {
-                    ushort index = Machine.game_colortable.read16(table_offset);
+                    ushort index = Machine.game_colortable[table_offset];
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                         pen_visiblecount.write32(index, pen_visiblecount.read32(index) - 1);
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
@@ -1120,13 +1124,13 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset);
+                        ushort w = Machine.game_colortable[table_offset];
                         uint dw = pen_visiblecount.read32(w);
                         pen_visiblecount.write32(w, dw + 1);
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset);
+                        ushort w = Machine.game_colortable[table_offset];
                         pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
                     }
                 }
@@ -1145,12 +1149,12 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset + pen);
+                        ushort w = Machine.game_colortable[table_offset + pen];
                         pen_visiblecount.write32(w,pen_visiblecount.read32(w) + 1);
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset + pen);
+                        ushort w = Machine.game_colortable[table_offset + pen];
                         pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
                     }
                     flag[pen] = 1;
@@ -1168,12 +1172,12 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset+pen);
+                        ushort w = Machine.game_colortable[table_offset+pen];
                         pen_visiblecount.write32(w,pen_visiblecount.read32(w)-1);
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable.read16(table_offset+pen);
+                        ushort w = Machine.game_colortable[table_offset+pen];
                         pen_cachedcount.write32(w,pen_cachedcount.read32(w)-1);
                     }
                     flag[pen] = true;

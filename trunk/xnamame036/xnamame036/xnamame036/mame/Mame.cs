@@ -22,7 +22,7 @@ namespace xnamame036.mame
             /* use this array to get the pen number. For example, */
             /* if you want to use color #6 in the palette, use */
             /* pens[6] instead of just 6. */
-            public _ShortPtr game_colortable;	/* lookup table used to map gfx pen numbers */
+            public ushort[] game_colortable;	/* lookup table used to map gfx pen numbers */
             /* to color numbers */
             public _ShortPtr remapped_colortable;	/* the above, already remapped through */
             /* Machine.pens */
@@ -90,10 +90,10 @@ namespace xnamame036.mame
         public void Run()
         {
             //These driver seems to work OK
-           // main("pacman");               
+            //main("pacman");               
             //main("invaders");// sound from samples not good
             //main("1942");
-            //main("1943"); 
+           // main("1943"); 
             //main("zaxxon");
             //main("szaxxon");
             //main("galaga");
@@ -114,28 +114,28 @@ namespace xnamame036.mame
             //main("gunsmoke"); 
             //main("qix"); 
             //main("mpatrol");  //last imaged
-            main("pbaction");
-            main("citycon");
-            main("jackal");
-            main("speedbal"); 
-            main("gyruss"); 
-            main("rocnrope");
-            main("galaxian");// sound from samples not good
-            main("ladybug"); 
-            main("ldrun");
-            main("ldrun2");
-            main("ldrun3");
-            main("ldrun4");
-            main("galaga3");
-            main("gaplus");
-            main("cobracom");
+            //main("pbaction");
+           // main("citycon");
+            //main("jackal");
+            //main("speedbal"); 
+            //main("gyruss"); 
+            //main("rocnrope");
+            //main("galaxian");// sound from samples not good
+            //main("ladybug"); 
+            //main("ldrun");
+            //main("ldrun2");
+            //main("ldrun3");
+            //main("ldrun4");
+            //main("galaga3");
+            //main("gaplus");
+            //main("cobracom");
 
             //Here are some vector games
-            main("zektor");
-            main("tacscan");
-            main("asteroid");
-            main("llander");//artwork/overlay not implemented
-            main("speedfrk"); //ccpu (vector game)
+            //main("zektor");
+            //main("tacscan");
+            //main("asteroid");
+            //main("llander");//artwork/overlay not implemented
+            //main("speedfrk"); //ccpu (vector game)
 
             //-------------------------------------------------
             //These drivers have problems that should be fixable
@@ -152,7 +152,6 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
 
-            //main("xsleena");
             //main("xevious");
 
 
@@ -160,9 +159,8 @@ namespace xnamame036.mame
             //main("marble");//m68010,m6502
             
             
-            //main("ajax"); // does not work. tilemap implementation problems, or konami chip
+            
             //main("kangaroo"); //z80
-            main("irobot");//6809
             
             //main("gtmr"); // 68000 
             //main("gtmre"); // 68000
@@ -172,10 +170,14 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have major problems
-            
-           //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
+            //main("xsleena");  tilemap problems ?
+            //main("xevious");//tilemap problems ?
+            //main("ajax");tilemap problems ?
+
+           // main("irobot");//6809 graphics missing, 
+            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
-            main("raiden");  //cpu problems ?
+           // main("raiden");  //cpu problems ?
             
         }
         public void main(string game)

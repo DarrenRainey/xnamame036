@@ -263,7 +263,7 @@ new Mame.MemoryWriteAddress( 0x0000, 0x4fff, Mame.MWA_ROM ),
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0;
                 int pi = 0;
@@ -294,7 +294,7 @@ new Mame.MemoryWriteAddress( 0x0000, 0x4fff, Mame.MWA_ROM ),
 
                 /* all gfx elements use the same palette */
                 for (int i = 0; i < Mame.Machine.gfx[0].total_colors * Mame.Machine.gfx[0].color_granularity; i++)
-                    colortable.write16(Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i, (ushort)i);
+                    colortable[Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start + i]= (ushort)i;
             }
             public override int vh_start()
             {
