@@ -152,7 +152,7 @@ new Mame.GfxDecodeInfo( Mame.REGION_GFX1, 0, spritelayout,   0,  8 ),
             {
                 //None
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 for (int i = 0; i < 32; i++)
                 {

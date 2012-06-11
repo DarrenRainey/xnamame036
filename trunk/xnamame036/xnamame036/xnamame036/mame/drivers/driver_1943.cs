@@ -217,7 +217,7 @@ new Mame.GfxLayout(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0, pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -370,7 +370,7 @@ new Mame.GfxLayout(
                         Mame.TRANSPARENCY_NONE, 0);
                 }
                 else 
-                    Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), Mame.Machine.drv.visible_area);
+                    Mame.fillbitmap(bitmap, Mame.Machine.pens[0], Mame.Machine.drv.visible_area);
 
 
                 if (objon != 0)

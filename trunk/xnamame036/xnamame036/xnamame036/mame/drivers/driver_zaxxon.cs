@@ -263,7 +263,7 @@ new Mame.MemoryWriteAddress( 0x0000, 0x4fff, Mame.MWA_ROM ),
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0;
                 int pi = 0;
@@ -489,7 +489,7 @@ new Mame.MemoryWriteAddress( 0x0000, 0x4fff, Mame.MWA_ROM ),
                     }
                 }
                 else
-                    Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), Mame.Machine.drv.visible_area);
+                    Mame.fillbitmap(bitmap, Mame.Machine.pens[0], Mame.Machine.drv.visible_area);
 
                 draw_sprites(bitmap);
 

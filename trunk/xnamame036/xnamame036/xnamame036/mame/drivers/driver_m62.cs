@@ -190,7 +190,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
             Mame.coin_counter_w(0, data & 2);
             Mame.coin_counter_w(1, data & 4);
         }
-        public static void irem_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void irem_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             uint pi = 0, cpi = 0;
             for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -332,7 +332,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
 
                 if (prioritylayer != 0)
                 {
-                    Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 0, null, 1, new int[] { scrolly }, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_PEN, Mame.Machine.pens.read16(0));
+                    Mame.copyscrollbitmap(bitmap, Generic.tmpbitmap, 0, null, 1, new int[] { scrolly }, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_PEN, Mame.Machine.pens[0]);
                 }
                 else
                 {
@@ -402,7 +402,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
 
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 irem_vh_convert_color_prom(palette, colortable, color_prom);
             }
@@ -651,7 +651,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
 
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 irem_vh_convert_color_prom(palette, colortable, color_prom);
             }
@@ -863,7 +863,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
 
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 irem_vh_convert_color_prom(palette, colortable, color_prom);
             }
@@ -1067,7 +1067,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
                 sound.Add(new Mame.MachineSound(Mame.SOUND_MSM5205, irem.irem_msm5205_interface));
 
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 irem_vh_convert_color_prom(palette, colortable, color_prom);
             }

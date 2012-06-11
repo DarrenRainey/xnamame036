@@ -123,7 +123,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0, pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)

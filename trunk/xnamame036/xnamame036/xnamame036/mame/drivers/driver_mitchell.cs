@@ -14,7 +14,7 @@ namespace xnamame036.mame.drivers
         public static int flipscreen;
         public static int video_bank;
         public static Mame.tilemap bg_tilemap;
-        public static int nvram_size ;
+        public static int nvram_size;
         public static _BytePtr nvram;
         public static int init_eeprom_count;
         public static YM2413interface ym2413_interface =
@@ -359,7 +359,7 @@ new Mame.GfxLayout(
     }
     class machine_driver_pang : Mame.MachineDriver
     {
- 
+
         public machine_driver_pang()
         {
             cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 8000000, driver_mitchell.readmem, driver_mitchell.writemem, driver_mitchell.readport, driver_mitchell.writeport, Mame.interrupt, 2));
@@ -404,7 +404,7 @@ new Mame.GfxLayout(
                     driver_mitchell.init_eeprom_count = 1000;	/* for Super Pang */
             }
         }
-        public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             //none
         }

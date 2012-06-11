@@ -62,7 +62,7 @@ namespace xnamame036.mame
         const byte BLUE = 0x01;
         const byte WHITE = RED | GREEN | BLUE;
 
-        static void shade_fill(_BytePtr palette, int rgb, int start_index, int end_index, int start_inten, int end_inten)
+        static void shade_fill(byte[] palette, int rgb, int start_index, int end_index, int start_inten, int end_inten)
         {
             int i, inten, index_range, inten_range;
 
@@ -76,7 +76,7 @@ namespace xnamame036.mame
                 palette[3 * i + 2] = (byte)((rgb & BLUE) != 0 ? inten : 0);
             }
         }
-        static void avg_init_palette(int paltype, _BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        static void avg_init_palette(int paltype, byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i, j, k;
 
@@ -177,7 +177,7 @@ namespace xnamame036.mame
                     break;
             }
         }
-        public static void avg_init_palette_white(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void avg_init_palette_white(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             avg_init_palette(VEC_PAL_WHITE, palette, colortable, color_prom);
         }

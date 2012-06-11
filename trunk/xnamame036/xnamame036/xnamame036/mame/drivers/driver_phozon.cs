@@ -374,7 +374,7 @@ new Mame.GfxLayout(
                 Mame.cpu_set_halt_line(1, Mame.CLEAR_LINE);
                 Mame.cpu_set_halt_line(2, Mame.CLEAR_LINE);
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
                 //	#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])

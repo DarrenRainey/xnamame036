@@ -13,7 +13,7 @@ namespace xnamame036.mame.drivers
         static int pflastindex = -1, pflastcolor = -1;
         static bool flipscreen;
 
-        static void digdug_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        static void digdug_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             for (int i = 0; i < 32; i++)
             {

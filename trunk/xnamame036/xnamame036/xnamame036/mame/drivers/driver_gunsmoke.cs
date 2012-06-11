@@ -208,7 +208,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 int pi = 0;
 
@@ -351,7 +351,7 @@ namespace xnamame036.mame.drivers
                         Mame.Machine.drv.visible_area,
                         Mame.TRANSPARENCY_NONE, 0);
                 }
-                else Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), Mame.Machine.drv.visible_area);
+                else Mame.fillbitmap(bitmap, Mame.Machine.pens[0], Mame.Machine.drv.visible_area);
 
 
 

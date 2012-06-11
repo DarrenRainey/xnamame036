@@ -405,7 +405,7 @@ namespace xnamame036.mame
             }
         }
 
-        public static void namcos1_vh_convert_color_prom(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+        public static void namcos1_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
             {
@@ -768,7 +768,7 @@ namespace xnamame036.mame
 
             for (int i = 0; i < TILECOLORS; i++)
             {
-                Mame.palette_shadow_table.write16(Mame.Machine.pens.read16(i + SPRITECOLORS), Mame.Machine.pens.read16(i + SPRITECOLORS + TILECOLORS));
+                Mame.palette_shadow_table[Mame.Machine.pens[i + SPRITECOLORS]]= Mame.Machine.pens[i + SPRITECOLORS + TILECOLORS];
             }
 
             return 0;

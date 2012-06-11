@@ -236,7 +236,7 @@ namespace xnamame036.mame.drivers
                         {
                             stars[total_stars].x = x;
                             stars[total_stars].y = y;
-                            stars[total_stars].col = Mame.Machine.pens.read16(color);
+                            stars[total_stars].col = Mame.Machine.pens[color];
                             stars[total_stars].set = set++;
 
                             if (set == 3)
@@ -915,7 +915,7 @@ namespace xnamame036.mame.drivers
             }
         }
 
-        public static void  gaplus_vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void  gaplus_vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint pi = 0, cpi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
@@ -986,7 +986,7 @@ namespace xnamame036.mame.drivers
         }
         public static void gaplus_vh_screenrefresh(Mame.osd_bitmap bitmap, int full_refresh)
         {
-            Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), Mame.Machine.drv.visible_area);
+            Mame.fillbitmap(bitmap, Mame.Machine.pens[0], Mame.Machine.drv.visible_area);
 
             starfield_render(bitmap);
 
@@ -1165,7 +1165,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 gaplus_vh_init_palette(palette, colortable, color_prom);
             }
@@ -1455,7 +1455,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 driver_gaplus.gaplus_vh_init_palette(palette, colortable, color_prom);
             }

@@ -872,7 +872,7 @@ namespace xnamame036.mame.drivers
                         Array.Clear(nvram.buffer, nvram.offset, nvram_size[0]);
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 /* the palette will be initialized by the game. We just set it to some */
                 /* pre-cooked values so the startup copyright notice can be displayed. */

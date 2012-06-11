@@ -979,15 +979,15 @@ if (keyboard_pressed(KEYCODE_F))
                             /* hack to simulate shadow */
                             if ((K051960_ram[offs + 3] & 0x80) != 0)
                             {
-                                int o = K051960_gfx.colortable.read16(16 * color + 15);
-                                K051960_gfx.colortable.write16(16 * color + 15,  Mame.palette_transparent_pen);
+                                int o = K051960_gfx.colortable[(16 * color + 15)];
+                                K051960_gfx.colortable[16 * color + 15]= Mame.palette_transparent_pen;
                                 Mame.drawgfx(bitmap, K051960_gfx,
                                         (uint)c,
                                         (uint)color,
                                         flipx, flipy,
                                         sx & 0x1ff, sy,
                                         Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_PENS, (Mame.cpu_getcurrentframe() & 1) != 0 ? 0x8001 : 0x0001);
-                                K051960_gfx.colortable.write16(16 * color + 15, (ushort)o);
+                                K051960_gfx.colortable[16 * color + 15] =(ushort)o;
                             }
                             else
                                 Mame.drawgfx(bitmap, K051960_gfx,

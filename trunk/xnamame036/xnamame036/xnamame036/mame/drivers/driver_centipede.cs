@@ -224,7 +224,7 @@ namespace xnamame036.mame.drivers
             {
                 atari_vg.atari_vg_earom_handler(file, read_or_write);
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //nothing
             }
@@ -277,12 +277,9 @@ namespace xnamame036.mame.drivers
                     /* bit 1-0 = color to use for pen 01 */
                     /* pen 00 is transparent */
                     int color = Generic.spriteram[offs + 0x30];
-                    Mame.Machine.gfx[1].colortable.write16(3,
-                            Mame.Machine.pens.read16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 4) & 3)));
-                    Mame.Machine.gfx[1].colortable.write16(2,
-                            Mame.Machine.pens.read16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 2) & 3)));
-                    Mame.Machine.gfx[1].colortable.write16(1,
-                            Mame.Machine.pens.read16(Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 0) & 3)));
+                    Mame.Machine.gfx[1].colortable[3]=Mame.Machine.pens[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 4) & 3)];
+                    Mame.Machine.gfx[1].colortable[2]=Mame.Machine.pens[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 2) & 3)];
+                    Mame.Machine.gfx[1].colortable[1]=Mame.Machine.pens[Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start + ((color >> 0) & 3)];
 
                     Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                             (uint)spritenum, 0,

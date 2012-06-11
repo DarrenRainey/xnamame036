@@ -949,7 +949,7 @@ namespace xnamame036.mame
                                 adjusted_palette.r = (byte)(current_palette[3 * i + 0]);// << 3);
                                 adjusted_palette.g = (byte)(current_palette[3 * i + 1]);// << 3);
                                 adjusted_palette.b = (byte)(current_palette[3 * i + 2]);// << 3);
-                                if (i != Machine.uifont.colortable.read16(1))	/* don't adjust the user interface text */
+                                if (i != Machine.uifont.colortable[1])	/* don't adjust the user interface text */
                                 {
                                     adjusted_palette.r = (byte)bright_lookup[adjusted_palette.r];
                                     adjusted_palette.g = (byte)bright_lookup[adjusted_palette.g];
@@ -994,7 +994,7 @@ namespace xnamame036.mame
                                 r = current_palette[3 * i + 0];
                                 g = current_palette[3 * i + 1];
                                 b = current_palette[3 * i + 2];
-                                if (i != Machine.uifont.colortable.read16(1))	/* don't adjust the user interface text */
+                                if (i != Machine.uifont.colortable[1])	/* don't adjust the user interface text */
                                 {
                                     r = (byte)bright_lookup[r];
                                     g = (byte)bright_lookup[g];

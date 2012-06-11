@@ -50,7 +50,7 @@ namespace xnamame036.mame
             o = overlay._artwork;
             height = overlay._artwork.height;
             width = overlay._artwork.width;
-            black = Machine.pens.read16(0);
+            black = Machine.pens[0];
 
             if (dest.depth == 8)
             {
@@ -188,23 +188,21 @@ namespace xnamame036.mame
             {
                 for (j = 0; j < height; j++)
                     for (i = 0; i < width; i++)
-                        back.line[j][i] = (byte)Machine.pens.read16(orig.line[j][i] + offset);
+                        back.line[j][i] = (byte)Machine.pens[orig.line[j][i] + offset];
             }
             else
             {
                 for (j = 0; j < height; j++)
                     for (i = 0; i < width; i++)
-                        back.line[j].write16(i, Machine.pens.read16(orig.line[j].read16(i + offset)));
+                        back.line[j].write16(i, Machine.pens[orig.line[j].read16(i + offset)]);
             }
         }
         static void backdrop_set_palette(artwork a, byte[] palette)
         {
-            int i;
-
             /* Load colors into the palette */
             if ((Machine.drv.video_attributes & VIDEO_MODIFIES_PALETTE) != 0)
             {
-                for (i = 0; i < a.num_pens_used; i++)
+                for (int i = 0; i < a.num_pens_used; i++)
                     palette_change_color(i + a.start_pen, palette[i * 3], palette[i * 3 + 1], palette[i * 3 + 2]);
 
                 palette_recalc();
@@ -442,7 +440,7 @@ namespace xnamame036.mame
 
             return a;
         }
-public static int overlay_set_palette ( artwork a, _BytePtr palette, int num_shades)
+        public static int overlay_set_palette(artwork a, byte[] palette, int num_shades)
 {
     throw new Exception();
 }

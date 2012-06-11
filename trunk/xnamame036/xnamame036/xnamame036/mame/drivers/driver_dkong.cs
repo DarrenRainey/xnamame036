@@ -295,7 +295,7 @@ new Mame.DACinterface(
             }
             return (SND[2048 + (page & 7) * 256 + offset]);
         }
-        public static void dkong_vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void dkong_vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             int pi = 0, cpi = 0;
             for (int i = 0; i < 256; i++)
@@ -446,7 +446,7 @@ new Mame.DACinterface(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 dkong_vh_init_palette(palette, colortable, color_prom);
             }
@@ -792,7 +792,7 @@ new Mame.Samplesinterface(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 driver_dkong.dkong_vh_init_palette(palette, colortable, color_prom);
             }
@@ -877,7 +877,7 @@ new Mame.Samplesinterface(
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 throw new NotImplementedException();
             }
