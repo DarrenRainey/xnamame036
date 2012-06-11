@@ -29,7 +29,11 @@ namespace xnamame036.mame
             while (true)
             {
                 blitHandle.WaitOne();
-                Buffer.BlockCopy(scrbitmap.line[0].buffer, 0, back_buffer, 0, scrbitmap.line[0].buffer.Length);
+                for (int i = 0; i < scrbitmap.height; i++)
+                {
+                    Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset, back_buffer, i * scrbitmap.width, scrbitmap.width);
+                }
+                //Buffer.BlockCopy(scrbitmap.line[0].buffer, scrbitmap.line[0].offset, back_buffer, 0, scrbitmap.line[0].buffer.Length);
                 {
                     int sbi = scrbitmap.line[skiplines].offset + skipcolumns;
                     sbi = 0;

@@ -624,7 +624,7 @@ namespace xnamame036.mame
         {
             memset(dirty_new, dirty, MAX_GFX_WIDTH / 16 * MAX_GFX_HEIGHT / 16);
         }
-        const int safety = 0;
+        const int safety = 16;
         public static void osd_free_bitmap(osd_bitmap bitmap)
         {
             bitmap.line = null;
@@ -633,7 +633,7 @@ namespace xnamame036.mame
         public static osd_bitmap osd_new_bitmap(int width, int height, int depth)       /* ASG 980209 */
         {
             osd_bitmap bitmap;
-
+            //throw new Exception();
             if ((Machine.orientation & ORIENTATION_SWAP_XY) != 0)
             {
                 int temp;
@@ -660,7 +660,7 @@ namespace xnamame036.mame
                 else
                     rowlen = (rdwidth + 2 * safety);
 
-                if ((bm = new _BytePtr((height) * rowlen)) == null)
+                if ((bm = new _BytePtr((height+2*safety) * rowlen)) == null)
                 {
                     bitmap = null;
                     return null;
@@ -669,7 +669,7 @@ namespace xnamame036.mame
                 /* clear ALL bitmap, including safety area, to avoid garbage on right */
                 /* side of screen is width is not a multiple of 4 */
                 memset(bm, 0, (height + 2 * safety) * rowlen);
-
+                //Array.Clear(bm.buffer, bm.offset, (height + 2 * safety) * rowlen);
                 if ((bitmap.line = new _BytePtr[((height + 2 * safety))]) == null)
                 {
                     bm = null;
@@ -682,7 +682,7 @@ namespace xnamame036.mame
                     if (depth == 16)
                         bitmap.line[i] = new _BytePtr(bm, (i * rowlen + 2 * safety));
                     else
-                        bitmap.line[i] = new _BytePtr(bm, (i * rowlen + 2 * safety));
+                        bitmap.line[i] = new _BytePtr(bm, (i * rowlen + safety));
                     bitmap.line[i].offset += safety;
                 }
                 //bitmap.line.offset += safety;

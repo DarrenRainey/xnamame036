@@ -278,7 +278,6 @@
     <Compile Include="mame\machine\segacrpt.cs" />
     <Compile Include="mame\png.cs" />
     <Compile Include="mame\soundhardware\Seibu.cs" />
-    <Compile Include="mame\soundhardware\williams.cs" />
     <Compile Include="mame\sound\1fm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -346,7 +345,6 @@
     <Compile Include="mame\Version.cs" />
     <Compile Include="mame\videohardware\avgdvg.cs" />
     <Compile Include="mame\videohardware\digdug.cs" />
-    <Compile Include="mame\videohardware\dkong.cs" />
     <Compile Include="mame\videohardware\Generic.cs" />
     <Compile Include="mame\videohardware\konamiic.cs" />
     <Compile Include="mame\videohardware\pengo.cs" />
