@@ -160,7 +160,9 @@ namespace xnamame036.mame
             for (value = 0; value < 0x100; value++)
             {
                 data = 0;
-                for (bit = 0; bit < 8; bit++) if (((value >> bit) & 1) != 0) data |= 0x80 >> bit;
+                for (bit = 0; bit < 8; bit++) 
+                    if (((value >> bit) & 1) != 0) 
+                        data |= 0x80 >> bit;
                 flip_bit_table[value] = (byte)data;
             }
             screen_width = Machine.scrbitmap.width;
@@ -353,11 +355,19 @@ namespace xnamame036.mame
         }
         static void draw8x8x8BPP(int xpos, int ypos)
         {
-            int x1 = xpos; int y1 = ypos; int x2 = xpos + blit.source_width;
+            int x1 = xpos; 
+            int y1 = ypos; 
+            int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
-            if (x1 < blit.clip_left) x1 = blit.clip_left; if (x2 > blit.clip_right)
-                x2 = blit.clip_right; if (y1 < blit.clip_top) y1 = blit.clip_top;
-            if (y2 > blit.clip_bottom) y2 = blit.clip_bottom; if (x1 < x2 && y1 < y2)
+            if (x1 < blit.clip_left) 
+                x1 = blit.clip_left; 
+            if (x2 > blit.clip_right)
+                x2 = blit.clip_right; 
+            if (y1 < blit.clip_top)
+                y1 = blit.clip_top;
+            if (y2 > blit.clip_bottom)
+                y2 = blit.clip_bottom; 
+            if (x1 < x2 && y1 < y2)
             { /* do nothing if totally clipped */
                 byte priority = blit.priority;
                 _BytePtr dest_baseaddr;
@@ -405,7 +415,8 @@ namespace xnamame036.mame
                             tile_type = mask_data[column];
                         if (tile_type != prev_tile_type)
                         {
-                            x_end = column * 8; if (x_end < x1) x_end = x1;
+                            x_end = column * 8; 
+                            if (x_end < x1) x_end = x1;
                             if (x_end > x2) x_end = x2;
                             if (prev_tile_type != TILE_TRANSPARENT)
                             {
@@ -415,7 +426,8 @@ namespace xnamame036.mame
                                     _BytePtr mask0 = new _BytePtr(mask_baseaddr, x_start / 8);
                                     _BytePtr source0 = new _BytePtr(source_baseaddr, (x_start & 0xfff8));
                                     _BytePtr dest0 = new _BytePtr(dest_baseaddr, (x_start & 0xfff8));
-                                    int i = y; for (; ; )
+                                    int i = y;
+                                    for (; ; )
                                     {
                                         memcpybitmask8(dest0, source0, mask0, count);
                                         if (++i == y_next) break;
@@ -439,7 +451,8 @@ namespace xnamame036.mame
                                         source0.offset += blit.source_line_offset;
                                     }
                                 }
-                            } x_start = x_end;
+                            } 
+                            x_start = x_end;
                         }
                         prev_tile_type = tile_type;
                     }
@@ -447,7 +460,8 @@ namespace xnamame036.mame
                     dest_baseaddr = dest_next;
                     source_baseaddr = source_next;
                     mask_baseaddr = mask_next; 
-                    y = y_next; y_next += 8;
+                    y = y_next; 
+                    y_next += 8;
                     if (y_next >= y2)
                     {
                         y_next = y2; 

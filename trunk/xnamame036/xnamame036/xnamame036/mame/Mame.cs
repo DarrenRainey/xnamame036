@@ -90,7 +90,7 @@ namespace xnamame036.mame
         public void Run()
         {
             //These driver seems to work OK
-            //main("pacman");               
+            //main("pacman");              
             //main("invaders");// sound from samples not good
             //main("1942");
            // main("1943"); 
@@ -129,7 +129,9 @@ namespace xnamame036.mame
             //main("galaga3");
             //main("gaplus");
             //main("cobracom");
-
+            //main("dkongjr");
+            //
+            //main("dkong3");
             //Here are some vector games
             //main("zektor");
             //main("tacscan");
@@ -141,7 +143,7 @@ namespace xnamame036.mame
             //These drivers have problems that should be fixable
             
              
-            //main("pang"); // needs sound. graphics glitches
+            main("pang"); // needs sound. graphics glitches
 
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
 
@@ -151,8 +153,6 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers I would like to implement
-
-            //main("xevious");
 
 
             //main("galaga88");   //6809,hd63701                    
@@ -170,11 +170,11 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have major problems
-            //main("xsleena");  tilemap problems ?
+            //main("xsleena"); // tilemap problems ?
             //main("xevious");//tilemap problems ?
-            //main("ajax");tilemap problems ?
+            //main("ajax");//tilemap problems ?
 
-           // main("irobot");//6809 graphics missing, 
+           main("irobot");//6809 graphics missing, 
             //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
            // main("raiden");  //cpu problems ?
