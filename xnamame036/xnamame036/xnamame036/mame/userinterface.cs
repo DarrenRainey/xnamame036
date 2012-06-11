@@ -192,7 +192,7 @@ namespace xnamame036.mame
 	};
 #endif
             GfxElement font;
-            byte[] colortable = new byte[2 * 2 * sizeof(ushort)];	/* ASG 980209 */
+            ushort[] colortable = new ushort[2 * 2 ];	/* ASG 980209 */
             int trueorientation;
 
 
@@ -225,7 +225,7 @@ namespace xnamame036.mame
             {
                 /* colortable will be set at run time */
                 //memset(colortable,0,sizeof(colortable));
-                font.colortable = new _ShortPtr(colortable);
+                font.colortable = new UShortSubArray(colortable);
                 font.total_colors = 2;
             }
 
@@ -825,8 +825,8 @@ namespace xnamame036.mame
             leftx += Machine.uixmin;
             topy += Machine.uiymin;
 
-            ushort black = Machine.uifont.colortable.read16(0);
-            ushort white = Machine.uifont.colortable.read16(1);
+            ushort black = Machine.uifont.colortable[0];
+            ushort white = Machine.uifont.colortable[1];
 
             drawhline(leftx, width, topy, white);
             drawhline(leftx, width, topy + height - 1, white);
@@ -2381,7 +2381,7 @@ namespace xnamame036.mame
                                         if (Machine.scrbitmap.depth == 16)
                                             throw new Exception();//Machine.scrbitmap.line[ty].write16(tx, Machine.pens[i + 256*palpage]);
                                         else
-                                            Machine.scrbitmap.line[ty][tx] = (byte)Machine.pens.read16(i + 256 * palpage);
+                                            Machine.scrbitmap.line[ty][tx] = (byte)Machine.pens[i + 256 * palpage];
                                     }
                                 }
                             }

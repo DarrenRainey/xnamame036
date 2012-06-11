@@ -71,7 +71,7 @@ namespace xnamame036.mame
             public GfxDecodeInfo[] gfxdecodeinfo;
             public uint total_colors;	/* palette is 3*total_colors bytes long */
             public uint color_table_len;	/* length in shorts of the color lookup table */
-            public abstract void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom);
+            public abstract void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom);
 
             public int video_attributes;	/* ASG 081897 */
 

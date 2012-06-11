@@ -7,14 +7,14 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
-        public  const int MAX_GFX_PLANES = 8;
-        public  const int MAX_GFX_SIZE = 64;
-        public  const int TRANSPARENCY_NONE = 0;
-        public  const int TRANSPARENCY_PEN = 1;
-        public  const int TRANSPARENCY_PENS = 4;
-        public  const int TRANSPARENCY_COLOR = 2;
-        public  const int TRANSPARENCY_THROUGH = 3;
-        public  const int TRANSPARENCY_PEN_TABLE = 5;
+        public const int MAX_GFX_PLANES = 8;
+        public const int MAX_GFX_SIZE = 64;
+        public const int TRANSPARENCY_NONE = 0;
+        public const int TRANSPARENCY_PEN = 1;
+        public const int TRANSPARENCY_PENS = 4;
+        public const int TRANSPARENCY_COLOR = 2;
+        public const int TRANSPARENCY_THROUGH = 3;
+        public const int TRANSPARENCY_PEN_TABLE = 5;
 
         public const byte DRAWMODE_NONE = 0;
         public const byte DRAWMODE_SOURCE = 1;
@@ -23,12 +23,12 @@ namespace xnamame036.mame
 
         public static byte[] gfx_drawmode_table = new byte[256];
 #if WINDOWS
-         const int BL0 = 0, BL1 = 1, BL2 = 2, BL3 = 3, WL0 = 0, WL1 = 1;
+        const int BL0 = 0, BL1 = 1, BL2 = 2, BL3 = 3, WL0 = 0, WL1 = 1;
 #else
          const int BL0=3,BL1=2,BL2=1,BL3=0,WL0=1,WL1=0;
 #endif
 
-         public class GfxLayout
+        public class GfxLayout
         {
             public GfxLayout() { }
             public GfxLayout(ushort width, ushort height, uint total, ushort planes, uint[] planeoffset, uint[] xoffset, uint[] yoffset, ushort charincrement)
@@ -57,7 +57,7 @@ namespace xnamame036.mame
             public uint total_elements;	/* total number of characters/sprites */
             public int color_granularity;	/* number of colors for each color code */
             /* (for example, 4 for 2 bitplanes gfx) */
-            public _ShortPtr colortable;	/* map color codes to screen pens */
+            public UShortSubArray colortable;	/* map color codes to screen pens */
             /* if this is 0, the function does a verbatim copy */
             public int total_colors;
             public uint[] pen_usage;	/* an array of total_elements ints. */
@@ -251,7 +251,7 @@ namespace xnamame036.mame
                 {
                     for (x = 0; x < gfx.width; x++)
                     {
-                        gfx.pen_usage[num]= (uint)(gfx.pen_usage[num] | (1 << dp[x]));
+                        gfx.pen_usage[num] = (uint)(gfx.pen_usage[num] | (1 << dp[x]));
                     }
                     dp.offset += gfx.line_modulo;
                 }
@@ -445,7 +445,7 @@ namespace xnamame036.mame
                 int sm = gfx.line_modulo;								/* source modulo */
                 _BytePtr dd = new _BytePtr(dest.line[sy], sx);		/* dest data */
                 int dm = (int)(dest.line[1].offset - dest.line[0].offset);	/* dest modulo */
-                _ShortPtr paldata = new _ShortPtr(gfx.colortable, (int)(gfx.color_granularity * color) * sizeof(short));
+                UShortSubArray paldata = new UShortSubArray(gfx.colortable, (int)(gfx.color_granularity * color));
 
                 if (flipx)
                 {
@@ -503,7 +503,7 @@ namespace xnamame036.mame
                 }
             }
         }
-        static void blockmove_opaque8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata)
+        static void blockmove_opaque8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata)
         {
             int end;
             srcmodulo -= srcwidth;
@@ -513,19 +513,19 @@ namespace xnamame036.mame
                 end = (int)(dstdata.offset + srcwidth);
                 while (dstdata.offset <= end - 8)
                 {
-                    dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
-                    dstdata.buffer[dstdata.offset + 1] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 1]);
-                    dstdata.buffer[dstdata.offset + 2] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 2]);
-                    dstdata.buffer[dstdata.offset + 3] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 3]);
-                    dstdata.buffer[dstdata.offset + 4] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 4]);
-                    dstdata.buffer[dstdata.offset + 5] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 5]);
-                    dstdata.buffer[dstdata.offset + 6] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 6]);
-                    dstdata.buffer[dstdata.offset + 7] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 7]);
+                    dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
+                    dstdata.buffer[dstdata.offset + 1] = (byte)paldata[srcdata.buffer[srcdata.offset + 1]];
+                    dstdata.buffer[dstdata.offset + 2] = (byte)paldata[srcdata.buffer[srcdata.offset + 2]];
+                    dstdata.buffer[dstdata.offset + 3] = (byte)paldata[srcdata.buffer[srcdata.offset + 3]];
+                    dstdata.buffer[dstdata.offset + 4] = (byte)paldata[srcdata.buffer[srcdata.offset + 4]];
+                    dstdata.buffer[dstdata.offset + 5] = (byte)paldata[srcdata.buffer[srcdata.offset + 5]];
+                    dstdata.buffer[dstdata.offset + 6] = (byte)paldata[srcdata.buffer[srcdata.offset + 6]];
+                    dstdata.buffer[dstdata.offset + 7] = (byte)paldata[srcdata.buffer[srcdata.offset + 7]];
                     dstdata.offset += 8; srcdata.offset += 8;
                 }
                 while (dstdata.offset < end)
                 {
-                    dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
+                    dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     dstdata.offset++;
                     srcdata.offset++;
                 }
@@ -534,7 +534,7 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_opaque_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata)
+        static void blockmove_opaque_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata)
         {
             int end;
             srcmodulo += srcwidth;
@@ -545,19 +545,19 @@ namespace xnamame036.mame
                 while (dstdata.offset <= end - 8)
                 {
                     srcdata.offset = ((int)srcdata.offset - 8);
-                    dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 8]);
-                    dstdata.buffer[dstdata.offset + 1] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 7]);
-                    dstdata.buffer[dstdata.offset + 2] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 6]);
-                    dstdata.buffer[dstdata.offset + 3] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 5]);
-                    dstdata.buffer[dstdata.offset + 4] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 4]);
-                    dstdata.buffer[dstdata.offset + 5] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 3]);
-                    dstdata.buffer[dstdata.offset + 6] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 2]);
-                    dstdata.buffer[dstdata.offset + 7] = (byte)paldata.read16(srcdata.buffer[srcdata.offset + 1]);
+                    dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset + 8]];
+                    dstdata.buffer[dstdata.offset + 1] = (byte)paldata[srcdata.buffer[srcdata.offset + 7]];
+                    dstdata.buffer[dstdata.offset + 2] = (byte)paldata[srcdata.buffer[srcdata.offset + 6]];
+                    dstdata.buffer[dstdata.offset + 3] = (byte)paldata[srcdata.buffer[srcdata.offset + 5]];
+                    dstdata.buffer[dstdata.offset + 4] = (byte)paldata[srcdata.buffer[srcdata.offset + 4]];
+                    dstdata.buffer[dstdata.offset + 5] = (byte)paldata[srcdata.buffer[srcdata.offset + 3]];
+                    dstdata.buffer[dstdata.offset + 6] = (byte)paldata[srcdata.buffer[srcdata.offset + 2]];
+                    dstdata.buffer[dstdata.offset + 7] = (byte)paldata[srcdata.buffer[srcdata.offset + 1]];
                     dstdata.offset += 8;
                 }
                 while (dstdata.offset < end)
                 {
-                    dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
+                    dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     dstdata.offset++;
                     srcdata.offset--;
                 }
@@ -566,7 +566,7 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_transpen8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transpen)
+        static void blockmove_transpen8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen)
         {
             int end;
             int trans4;
@@ -582,7 +582,7 @@ namespace xnamame036.mame
                     int col = srcdata[0];
                     srcdata.offset++;
                     if (col != transpen)
-                        dstdata[0] = (byte)paldata.read16(col);
+                        dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
                 }
                 sd4 = new _IntPtr(srcdata);
@@ -593,13 +593,13 @@ namespace xnamame036.mame
                     {
                         uint xod4 = (uint)(col4 ^ trans4);
                         if ((xod4 & 0x000000ff) != 0)
-                            dstdata[BL0] = (byte)paldata.read16((int)(col4 & 0xff));
+                            dstdata[BL0] = (byte)paldata[(int)(col4 & 0xff)];
                         if ((xod4 & 0x0000ff00) != 0)
-                            dstdata[BL1] = (byte)paldata.read16((int)((col4 >> 8) & 0xff));
+                            dstdata[BL1] = (byte)paldata[(int)((col4 >> 8) & 0xff)];
                         if ((xod4 & 0x00ff0000) != 0)
-                            dstdata[BL2] = (byte)paldata.read16((int)((col4 >> 16) & 0xff));
+                            dstdata[BL2] = (byte)paldata[(int)((col4 >> 16) & 0xff)];
                         if ((xod4 & 0xff000000) != 0)
-                            dstdata[BL3] = (byte)paldata.read16((int)(col4 >> 24));
+                            dstdata[BL3] = (byte)paldata[(int)(col4 >> 24)];
                     }
                     sd4.offset += 4;
                     dstdata.offset += 4;
@@ -610,7 +610,7 @@ namespace xnamame036.mame
                     int col = srcdata[0];
                     srcdata.offset++;
                     if (col != transpen)
-                        dstdata[0] = (byte)paldata.read16(col);
+                        dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
                 }
                 srcdata.offset += srcmodulo;
@@ -619,7 +619,7 @@ namespace xnamame036.mame
             }
         }
 
-        static void blockmove_transpen_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transpen)
+        static void blockmove_transpen_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen)
         {
             int end;
             _IntPtr sd4 = new _IntPtr(srcdata);
@@ -635,10 +635,10 @@ namespace xnamame036.mame
                     int col = srcdata[3];
                     srcdata.offset--;
                     if (col != transpen)
-                        dstdata[0] = (byte)paldata.read16(col);
+                        dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
                 }
-                sd4.offset = srcdata.offset;// = new _IntPtr(srcdata);
+                sd4.offset = srcdata.offset;
                 while (dstdata.offset <= end - 4)
                 {
                     uint col4;
@@ -646,25 +646,25 @@ namespace xnamame036.mame
                     {
                         uint xod4 = (uint)(col4 ^ trans4);
                         if ((xod4 & 0xff000000) != 0)
-                            dstdata[BL0] = (byte)paldata.read16((int)col4 >> 24);
+                            dstdata[BL0] = (byte)paldata[(int)col4 >> 24];
                         if ((xod4 & 0x00ff0000) != 0)
-                            dstdata[BL1] = (byte)paldata.read16((int)(col4 >> 16) & 0xff);
+                            dstdata[BL1] = (byte)paldata[(int)(col4 >> 16) & 0xff];
                         if ((xod4 & 0x0000ff00) != 0)
-                            dstdata[BL2] = (byte)paldata.read16((int)(col4 >> 8) & 0xff);
+                            dstdata[BL2] = (byte)paldata[(int)(col4 >> 8) & 0xff];
                         if ((xod4 & 0x000000ff) != 0)
-                            dstdata[BL3] = (byte)paldata.read16((int)col4 & 0xff);
+                            dstdata[BL3] = (byte)paldata[((int)col4 & 0xff)];
                     }
                     sd4.offset -= 4;
                     dstdata.offset += 4;
                 }
-                //srcdata = new _BytePtr(sd4);
+
                 srcdata.offset = sd4.offset;
                 while (dstdata.offset < end)
                 {
                     int col = srcdata[3];
                     srcdata.offset--;
                     if (col != transpen)
-                        dstdata[0] = (byte)paldata.read16(col);
+                        dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
 
                 }
@@ -673,18 +673,18 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_transmask8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transmask)
+        static void blockmove_transmask8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
             throw new Exception();
         }
-        static void blockmove_transmask_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transmask)
+        static void blockmove_transmask_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
             throw new Exception();
         }
-        static void blockmove_transcolor8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_transcolor8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset)/2);
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             while (srcheight != 0)
@@ -693,7 +693,7 @@ namespace xnamame036.mame
                 while (dstdata.offset < end)
                 {
                     if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
-                        dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
+                        dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     srcdata.offset++;
                     dstdata.offset++;
                 }
@@ -702,10 +702,10 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_transcolor_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_transcolor_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset)/2);
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
             while (srcheight != 0)
@@ -714,7 +714,7 @@ namespace xnamame036.mame
                 while (dstdata.offset < end)
                 {
                     if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
-                        dstdata.buffer[dstdata.offset] = (byte)paldata.read16(srcdata.buffer[srcdata.offset]);
+                        dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     srcdata.offset--;
                     dstdata.offset++;
                 }
@@ -723,7 +723,7 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_transthrough8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_transthrough8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
             srcmodulo -= srcwidth;
@@ -734,7 +734,7 @@ namespace xnamame036.mame
                 while (dstdata.offset < end)
                 {
                     if (dstdata[0] == transcolor)
-                        dstdata[0] = (byte)paldata.read16(srcdata[0]);
+                        dstdata[0] = (byte)paldata[srcdata[0]];
                     srcdata.offset++;
                     dstdata.offset++;
                 }
@@ -743,7 +743,7 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_transthrough_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_transthrough_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
             srcmodulo += srcwidth;
@@ -755,7 +755,7 @@ namespace xnamame036.mame
                 while (dstdata.offset < end)
                 {
                     if (dstdata[0] == transcolor)
-                        dstdata[0] = (byte)paldata.read16(srcdata[0]);
+                        dstdata[0] = (byte)paldata[srcdata[0]];
                     srcdata.offset--;
                     dstdata.offset++;
                 }
@@ -764,11 +764,11 @@ namespace xnamame036.mame
                 srcheight--;
             }
         }
-        static void blockmove_pen_table8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_pen_table8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             throw new Exception();
         }
-        static void blockmove_pen_table_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor)
+        static void blockmove_pen_table_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             throw new Exception();
         }
@@ -789,12 +789,12 @@ namespace xnamame036.mame
             if (sy > ey) return; osd_mark_dirty(sx, sy, ex, ey, 0); /* ASG 971011 */
             {
                 _BytePtr sd = new _BytePtr(gfx.gfxdata, (int)(code * gfx.char_modulo)); /* source data */
-                int sw = ex - sx + 1; /* source width */ 
+                int sw = ex - sx + 1; /* source width */
                 int sh = ey - sy + 1; /* source height */
                 int sm = gfx.line_modulo; /* source modulo */
-                _ShortPtr dd = new _ShortPtr(dest.line[sy], sx ); /* dest data */
+                _ShortPtr dd = new _ShortPtr(dest.line[sy], sx); /* dest data */
                 int dm = dest.line[1].offset - dest.line[0].offset; /* dest modulo */
-                _ShortPtr paldata = new _ShortPtr(gfx.colortable, (int)((gfx.color_granularity * color) * 2));
+                UShortSubArray paldata = new UShortSubArray(gfx.colortable, (int)((gfx.color_granularity * color)));
                 if (flipx)
                 {
                     sd.offset += gfx.width - 1 - (sx - ox);
@@ -802,7 +802,7 @@ namespace xnamame036.mame
                 else
                     sd.offset += (sx - ox); if (flipy)
                 {
-                    sd.offset += sm * (gfx.height - 1 - (sy - oy)); 
+                    sd.offset += sm * (gfx.height - 1 - (sy - oy));
                     sm = -sm;
                 }
                 else
@@ -842,56 +842,56 @@ namespace xnamame036.mame
                 }
             }
         }
-         static void blockmove_opaque16 ( _BytePtr srcdata,int srcwidth,int srcheight,int srcmodulo, _ShortPtr dstdata,int dstmodulo, _ShortPtr paldata) 
-         {
-             //blockmove_opaque8(srcdata, srcwidth, srcheight, srcmodulo, (_BytePtr)dstdata, dstmodulo, paldata);
-             //return;
-             int end; 
-             srcmodulo -= srcwidth;
-             dstmodulo -= srcwidth;
-             while (srcheight!=0)
-             { 
-                 end = dstdata.offset + srcwidth; 
-                 while (dstdata.offset <= end - 8)
-                 {
-                     dstdata.write16(0,paldata.read16(srcdata[0])); 
-                     dstdata.write16(1,paldata.read16(srcdata[1])); 
-                     dstdata.write16(2,paldata.read16(srcdata[2])); 
-                     dstdata.write16(3,paldata.read16(srcdata[3])); 
-                     dstdata.write16(4,paldata.read16(srcdata[4])); 
-                     dstdata.write16(5,paldata.read16(srcdata[5]));
-                     dstdata.write16(6,paldata.read16(srcdata[6]));
-                     dstdata.write16(7,paldata.read16(srcdata[7]));
-                     dstdata.offset += 8 * 2;
-                     srcdata.offset++;
-                 } 
-                 while (dstdata.offset < end) 
-                 {
-                     dstdata.write16(0,paldata.read16(srcdata[0]));
-                     srcdata.offset++;
-                     dstdata.offset += 2;
-                 }
-                 srcdata.inc(srcmodulo); 
-                 dstdata.inc(dstmodulo); 
-                 srcheight--;
-             } 
-             
-         }
- static void blockmove_opaque_flipx16 ( _BytePtr srcdata,int srcwidth,int srcheight,int srcmodulo, _ShortPtr dstdata,int dstmodulo, _ShortPtr paldata) {throw new Exception();}
- static void blockmove_transpen16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transpen) { throw new Exception(); }
- static void blockmove_transpen_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transpen) { throw new Exception(); }
- static void blockmove_transmask16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transmask) { throw new Exception(); }
- static void blockmove_transmask_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transmask) { throw new Exception(); }
- static void blockmove_transcolor16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_transcolor_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_transthrough16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_transthrough_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_pen_table16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_pen_table_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, _ShortPtr paldata, int transcolor) { throw new Exception(); }
- static void blockmove_opaque_noremap16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo) { throw new Exception(); }
- static void blockmove_opaque_noremap_flipx16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo) { throw new Exception(); }
- static void blockmove_transthrough_noremap16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, int transcolor) { throw new Exception(); }
- static void blockmove_transthrough_noremap_flipx16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, int transcolor) { throw new Exception(); }
+        static void blockmove_opaque16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata)
+        {
+            //blockmove_opaque8(srcdata, srcwidth, srcheight, srcmodulo, (_BytePtr)dstdata, dstmodulo, paldata);
+            //return;
+            int end;
+            srcmodulo -= srcwidth;
+            dstmodulo -= srcwidth;
+            while (srcheight != 0)
+            {
+                end = dstdata.offset + srcwidth;
+                while (dstdata.offset <= end - 8)
+                {
+                    dstdata.write16(0, paldata[srcdata[0]]);
+                    dstdata.write16(1, paldata[srcdata[1]]);
+                    dstdata.write16(2, paldata[srcdata[2]]);
+                    dstdata.write16(3, paldata[srcdata[3]]);
+                    dstdata.write16(4, paldata[srcdata[4]]);
+                    dstdata.write16(5, paldata[srcdata[5]]);
+                    dstdata.write16(6, paldata[srcdata[6]]);
+                    dstdata.write16(7, paldata[srcdata[7]]);
+                    dstdata.offset += 8 * 2;
+                    srcdata.offset++;
+                }
+                while (dstdata.offset < end)
+                {
+                    dstdata.write16(0, paldata[srcdata[0]]);
+                    srcdata.offset++;
+                    dstdata.offset += 2;
+                }
+                srcdata.inc(srcmodulo);
+                dstdata.inc(dstmodulo);
+                srcheight--;
+            }
+
+        }
+        static void blockmove_opaque_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata) { throw new Exception(); }
+        static void blockmove_transpen16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen) { throw new Exception(); }
+        static void blockmove_transpen_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen) { throw new Exception(); }
+        static void blockmove_transmask16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask) { throw new Exception(); }
+        static void blockmove_transmask_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask) { throw new Exception(); }
+        static void blockmove_transcolor16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_transcolor_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_transthrough16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_transthrough_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_pen_table16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_pen_table_flipx16(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor) { throw new Exception(); }
+        static void blockmove_opaque_noremap16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo) { throw new Exception(); }
+        static void blockmove_opaque_noremap_flipx16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo) { throw new Exception(); }
+        static void blockmove_transthrough_noremap16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, int transcolor) { throw new Exception(); }
+        static void blockmove_transthrough_noremap_flipx16(_ShortPtr srcdata, int srcwidth, int srcheight, int srcmodulo, _ShortPtr dstdata, int dstmodulo, int transcolor) { throw new Exception(); }
 
 
         public static void copybitmap(osd_bitmap dest, osd_bitmap src, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color)
@@ -900,7 +900,7 @@ namespace xnamame036.mame
 
             /* if necessary, remap the transparent color */
             if (transparency == TRANSPARENCY_COLOR)
-                transparent_color = Machine.pens.read16(transparent_color);
+                transparent_color = Machine.pens[transparent_color];
 
             if ((Machine.orientation & ORIENTATION_SWAP_XY) != 0)
             {
@@ -964,8 +964,8 @@ namespace xnamame036.mame
         static void copybitmap_core8(osd_bitmap dest, osd_bitmap src, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color)
         {
             int ox; int oy; int ex; int ey; /* check bounds */
-            ox = sx; 
-            oy = sy; 
+            ox = sx;
+            oy = sy;
             ex = sx + src.width - 1;
             if (sx < 0) sx = 0;
             if (clip != null && sx < clip.min_x) sx = clip.min_x;
@@ -977,49 +977,49 @@ namespace xnamame036.mame
             if (ey >= dest.height) ey = dest.height - 1;
             if (clip != null && ey > clip.max_y) ey = clip.max_y;
             if (sy > ey) return;
-            
-                _BytePtr sd = new _BytePtr(src.line[0]); /* source data */
-                int sw = ex - sx + 1; /* source width */
-                int sh = ey - sy + 1; /* source height */
-                int sm = (int)(src.line[1].offset - src.line[0].offset); /* source modulo */
-                _BytePtr dd = new _BytePtr(dest.line[sy], sx); /* dest data */
-                int dm = (int)(dest.line[1].offset - dest.line[0].offset); /* dest modulo */
-                if (flipx)
-                { 
-                    sd.offset += src.width - 1 - (sx - ox);
-                }
-                else
-                    sd.offset += (sx - ox);
-                if (flipy)
-                { 
-                    sd.offset += sm * (src.height - 1 - (sy - oy));
-                    sm = -sm;
-                }
-                else
-                    sd.offset += (sm * (sy - oy));
 
-                switch (transparency)
-                {
-                    case TRANSPARENCY_NONE:
-                        if (flipx)
-                            blockmove_opaque_noremap_flipx8(sd, sw, sh, sm, dd, dm);
-                        else
-                            blockmove_opaque_noremap8(sd, sw, sh, sm, dd, dm); break;
-                    case TRANSPARENCY_PEN:
-                    case TRANSPARENCY_COLOR:
-                        if (flipx)
-                            blockmove_transpen_noremap_flipx8(sd, sw, sh, sm, dd, dm, transparent_color);
-                        else
-                            blockmove_transpen_noremap8(sd, sw, sh, sm, dd, dm, transparent_color);
-                        break;
-                    case TRANSPARENCY_THROUGH:
-                        if (flipx)
-                            blockmove_transthrough_noremap_flipx8(sd, sw, sh, sm, dd, dm, transparent_color);
-                        else
-                            blockmove_transthrough_noremap8(sd, sw, sh, sm, dd, dm, transparent_color);
-                        break;
-                }
-            
+            _BytePtr sd = new _BytePtr(src.line[0]); /* source data */
+            int sw = ex - sx + 1; /* source width */
+            int sh = ey - sy + 1; /* source height */
+            int sm = (int)(src.line[1].offset - src.line[0].offset); /* source modulo */
+            _BytePtr dd = new _BytePtr(dest.line[sy], sx); /* dest data */
+            int dm = (int)(dest.line[1].offset - dest.line[0].offset); /* dest modulo */
+            if (flipx)
+            {
+                sd.offset += src.width - 1 - (sx - ox);
+            }
+            else
+                sd.offset += (sx - ox);
+            if (flipy)
+            {
+                sd.offset += sm * (src.height - 1 - (sy - oy));
+                sm = -sm;
+            }
+            else
+                sd.offset += (sm * (sy - oy));
+
+            switch (transparency)
+            {
+                case TRANSPARENCY_NONE:
+                    if (flipx)
+                        blockmove_opaque_noremap_flipx8(sd, sw, sh, sm, dd, dm);
+                    else
+                        blockmove_opaque_noremap8(sd, sw, sh, sm, dd, dm); break;
+                case TRANSPARENCY_PEN:
+                case TRANSPARENCY_COLOR:
+                    if (flipx)
+                        blockmove_transpen_noremap_flipx8(sd, sw, sh, sm, dd, dm, transparent_color);
+                    else
+                        blockmove_transpen_noremap8(sd, sw, sh, sm, dd, dm, transparent_color);
+                    break;
+                case TRANSPARENCY_THROUGH:
+                    if (flipx)
+                        blockmove_transthrough_noremap_flipx8(sd, sw, sh, sm, dd, dm, transparent_color);
+                    else
+                        blockmove_transthrough_noremap8(sd, sw, sh, sm, dd, dm, transparent_color);
+                    break;
+            }
+
         }
         static void blockmove_opaque_noremap8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo)
         {
@@ -1064,25 +1064,25 @@ namespace xnamame036.mame
             }
         }
         static void write_dword(_BytePtr address, int data)
-{
-  	if ((address.offset & 3)!=0)
-	{
+        {
+            if ((address.offset & 3) != 0)
+            {
 #if WINDOWS
-    		address[0] = (byte)   data;
-            address[1] = (byte)(data >> 8);
-            address[2] = (byte)(data >> 16);
-            address[3] = (byte)(data >> 24);
+                address[0] = (byte)data;
+                address[1] = (byte)(data >> 8);
+                address[2] = (byte)(data >> 16);
+                address[3] = (byte)(data >> 24);
 #else
     		*((unsigned char *)address+3) =  data;
     		*((unsigned char *)address+2) = (data >> 8);
     		*((unsigned char *)address+1) = (data >> 16);
     		*((unsigned char *)address)   = (data >> 24);
 #endif
-		return;
-  	}
-  	else
-		address.write32(0,(uint)data);
-}
+                return;
+            }
+            else
+                address.write32(0, (uint)data);
+        }
         static void blockmove_transpen_noremap8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, int transpen)
         {
             int end;
@@ -1461,350 +1461,350 @@ namespace xnamame036.mame
                 }
             }
         }
-        static void copybitmapzoom(osd_bitmap dest_bmp,osd_bitmap source_bmp,bool flipx,bool flipy,int sz,int sy,rectangle clip,int transparency,int transparent_color,int scalex,int scaley)
+        static void copybitmapzoom(osd_bitmap dest_bmp, osd_bitmap source_bmp, bool flipx, bool flipy, int sz, int sy, rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
         {
             throw new Exception();
         }
-        public static void drawgfxzoom(  osd_bitmap dest_bmp, GfxElement gfx,
-		uint code,uint color,bool flipx,bool flipy,int sx,int sy,
-		 rectangle clip,int transparency,int transparent_color,int scalex, int scaley)
-{
-	 rectangle myclip=new rectangle();
+        public static void drawgfxzoom(osd_bitmap dest_bmp, GfxElement gfx,
+        uint code, uint color, bool flipx, bool flipy, int sx, int sy,
+         rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
+        {
+            rectangle myclip = new rectangle();
 
 
-	/* only support TRANSPARENCY_PEN and TRANSPARENCY_COLOR */
-	if (transparency != TRANSPARENCY_PEN && transparency != TRANSPARENCY_COLOR)
-		return;
+            /* only support TRANSPARENCY_PEN and TRANSPARENCY_COLOR */
+            if (transparency != TRANSPARENCY_PEN && transparency != TRANSPARENCY_COLOR)
+                return;
 
-	if (transparency == TRANSPARENCY_COLOR)
-		transparent_color = Machine.pens[transparent_color];
-
-
-	/*
-	scalex and scaley are 16.16 fixed point numbers
-	1<<15 : shrink to 50%
-	1<<16 : uniform scale
-	1<<17 : double to 200%
-	*/
+            if (transparency == TRANSPARENCY_COLOR)
+                transparent_color = Machine.pens[transparent_color];
 
 
-	if ((Machine.orientation & ORIENTATION_SWAP_XY)!=0)
-	{
-		int temp;
-
-		temp = sx;
-		sx = sy;
-		sy = temp;
-
-		var tempb = flipx;
-		flipx = flipy;
-		flipy = tempb;
-
-		temp = scalex;
-		scalex = scaley;
-		scaley = temp;
-
-		if (clip!=null)
-		{
-			/* clip and myclip might be the same, so we need a temporary storage */
-			temp = clip.min_x;
-			myclip.min_x = clip.min_y;
-			myclip.min_y = temp;
-			temp = clip.max_x;
-			myclip.max_x = clip.max_y;
-			myclip.max_y = temp;
-			clip = myclip;
-		}
-	}
-	if ((Machine.orientation & ORIENTATION_FLIP_X)!=0)
-	{
-		sx = dest_bmp.width - ((gfx.width * scalex + 0x7fff) >> 16) - sx;
-		if (clip!=null)
-		{
-			int temp;
+            /*
+            scalex and scaley are 16.16 fixed point numbers
+            1<<15 : shrink to 50%
+            1<<16 : uniform scale
+            1<<17 : double to 200%
+            */
 
 
-			/* clip and myclip might be the same, so we need a temporary storage */
-			temp = clip.min_x;
-			myclip.min_x = dest_bmp.width-1 - clip.max_x;
-			myclip.max_x = dest_bmp.width-1 - temp;
-			myclip.min_y = clip.min_y;
-			myclip.max_y = clip.max_y;
-			clip = myclip;
-		}
+            if ((Machine.orientation & ORIENTATION_SWAP_XY) != 0)
+            {
+                int temp;
+
+                temp = sx;
+                sx = sy;
+                sy = temp;
+
+                var tempb = flipx;
+                flipx = flipy;
+                flipy = tempb;
+
+                temp = scalex;
+                scalex = scaley;
+                scaley = temp;
+
+                if (clip != null)
+                {
+                    /* clip and myclip might be the same, so we need a temporary storage */
+                    temp = clip.min_x;
+                    myclip.min_x = clip.min_y;
+                    myclip.min_y = temp;
+                    temp = clip.max_x;
+                    myclip.max_x = clip.max_y;
+                    myclip.max_y = temp;
+                    clip = myclip;
+                }
+            }
+            if ((Machine.orientation & ORIENTATION_FLIP_X) != 0)
+            {
+                sx = dest_bmp.width - ((gfx.width * scalex + 0x7fff) >> 16) - sx;
+                if (clip != null)
+                {
+                    int temp;
+
+
+                    /* clip and myclip might be the same, so we need a temporary storage */
+                    temp = clip.min_x;
+                    myclip.min_x = dest_bmp.width - 1 - clip.max_x;
+                    myclip.max_x = dest_bmp.width - 1 - temp;
+                    myclip.min_y = clip.min_y;
+                    myclip.max_y = clip.max_y;
+                    clip = myclip;
+                }
 #if !PREROTATE_GFX
-		flipx = !flipx;
+                flipx = !flipx;
 #endif
-	}
-	if ((Machine.orientation & ORIENTATION_FLIP_Y)!=0)
-	{
-		sy = dest_bmp.height - ((gfx.height * scaley + 0x7fff) >> 16) - sy;
-		if (clip!=null)
-		{
-			int temp;
+            }
+            if ((Machine.orientation & ORIENTATION_FLIP_Y) != 0)
+            {
+                sy = dest_bmp.height - ((gfx.height * scaley + 0x7fff) >> 16) - sy;
+                if (clip != null)
+                {
+                    int temp;
 
 
-			myclip.min_x = clip.min_x;
-			myclip.max_x = clip.max_x;
-			/* clip and myclip might be the same, so we need a temporary storage */
-			temp = clip.min_y;
-			myclip.min_y = dest_bmp.height-1 - clip.max_y;
-			myclip.max_y = dest_bmp.height-1 - temp;
-			clip =myclip;
-		}
+                    myclip.min_x = clip.min_x;
+                    myclip.max_x = clip.max_x;
+                    /* clip and myclip might be the same, so we need a temporary storage */
+                    temp = clip.min_y;
+                    myclip.min_y = dest_bmp.height - 1 - clip.max_y;
+                    myclip.max_y = dest_bmp.height - 1 - temp;
+                    clip = myclip;
+                }
 #if !PREROTATE_GFX
-		flipy = !flipy;
+                flipy = !flipy;
 #endif
-	}
+            }
 
-	/* KW 991012 -- Added code to force clip to bitmap boundary */
-	if(clip!=null)
-	{
-		myclip.min_x = clip.min_x;
-		myclip.max_x = clip.max_x;
-		myclip.min_y = clip.min_y;
-		myclip.max_y = clip.max_y;
+            /* KW 991012 -- Added code to force clip to bitmap boundary */
+            if (clip != null)
+            {
+                myclip.min_x = clip.min_x;
+                myclip.max_x = clip.max_x;
+                myclip.min_y = clip.min_y;
+                myclip.max_y = clip.max_y;
 
-		if (myclip.min_x < 0) myclip.min_x = 0;
-		if (myclip.max_x >= dest_bmp.width) myclip.max_x = dest_bmp.width-1;
-		if (myclip.min_y < 0) myclip.min_y = 0;
-		if (myclip.max_y >= dest_bmp.height) myclip.max_y = dest_bmp.height-1;
+                if (myclip.min_x < 0) myclip.min_x = 0;
+                if (myclip.max_x >= dest_bmp.width) myclip.max_x = dest_bmp.width - 1;
+                if (myclip.min_y < 0) myclip.min_y = 0;
+                if (myclip.max_y >= dest_bmp.height) myclip.max_y = dest_bmp.height - 1;
 
-		clip=myclip;
-	}
+                clip = myclip;
+            }
 
 
-	/* ASG 980209 -- added 16-bit version */
-	if (dest_bmp.depth != 16)
-	{
-		if( gfx !=null&& gfx.colortable !=null)
-		{
-			_ShortPtr pal = new _ShortPtr(gfx.colortable, (int)(gfx.color_granularity * (color % gfx.total_colors))); /* ASG 980209 */
-			int source_base = (int)((code % gfx.total_elements) * gfx.height);
+            /* ASG 980209 -- added 16-bit version */
+            if (dest_bmp.depth != 16)
+            {
+                if (gfx != null && gfx.colortable != null)
+                {
+                    UShortSubArray pal = new UShortSubArray(gfx.colortable, (int)(gfx.color_granularity * (color % gfx.total_colors))); /* ASG 980209 */
+                    int source_base = (int)((code % gfx.total_elements) * gfx.height);
 
-			int sprite_screen_height = (scaley*gfx.height+0x8000)>>16;
-			int sprite_screen_width = (scalex*gfx.width+0x8000)>>16;
+                    int sprite_screen_height = (scaley * gfx.height + 0x8000) >> 16;
+                    int sprite_screen_width = (scalex * gfx.width + 0x8000) >> 16;
 
-			/* compute sprite increment per screen pixel */
-			int dx = (gfx.width<<16)/sprite_screen_width;
-			int dy = (gfx.height<<16)/sprite_screen_height;
+                    /* compute sprite increment per screen pixel */
+                    int dx = (gfx.width << 16) / sprite_screen_width;
+                    int dy = (gfx.height << 16) / sprite_screen_height;
 
-			int ex = sx+sprite_screen_width;
-			int ey = sy+sprite_screen_height;
+                    int ex = sx + sprite_screen_width;
+                    int ey = sy + sprite_screen_height;
 
-			int x_index_base;
-			int y_index;
+                    int x_index_base;
+                    int y_index;
 
-			if( flipx )
-			{
-				x_index_base = (sprite_screen_width-1)*dx;
-				dx = -dx;
-			}
-			else
-			{
-				x_index_base = 0;
-			}
+                    if (flipx)
+                    {
+                        x_index_base = (sprite_screen_width - 1) * dx;
+                        dx = -dx;
+                    }
+                    else
+                    {
+                        x_index_base = 0;
+                    }
 
-			if( flipy )
-			{
-				y_index = (sprite_screen_height-1)*dy;
-				dy = -dy;
-			}
-			else
-			{
-				y_index = 0;
-			}
+                    if (flipy)
+                    {
+                        y_index = (sprite_screen_height - 1) * dy;
+                        dy = -dy;
+                    }
+                    else
+                    {
+                        y_index = 0;
+                    }
 
-			if( clip!=null )
-			{
-				if( sx < clip.min_x)
-				{ /* clip left */
-					int pixels = clip.min_x-sx;
-					sx += pixels;
-					x_index_base += pixels*dx;
-				}
-				if( sy < clip.min_y )
-				{ /* clip top */
-					int pixels = clip.min_y-sy;
-					sy += pixels;
-					y_index += pixels*dy;
-				}
-				/* NS 980211 - fixed incorrect clipping */
-				if( ex > clip.max_x+1 )
-				{ /* clip right */
-					int pixels = ex-clip.max_x-1;
-					ex -= pixels;
-				}
-				if( ey > clip.max_y+1 )
-				{ /* clip bottom */
-					int pixels = ey-clip.max_y-1;
-					ey -= pixels;
-				}
-			}
+                    if (clip != null)
+                    {
+                        if (sx < clip.min_x)
+                        { /* clip left */
+                            int pixels = clip.min_x - sx;
+                            sx += pixels;
+                            x_index_base += pixels * dx;
+                        }
+                        if (sy < clip.min_y)
+                        { /* clip top */
+                            int pixels = clip.min_y - sy;
+                            sy += pixels;
+                            y_index += pixels * dy;
+                        }
+                        /* NS 980211 - fixed incorrect clipping */
+                        if (ex > clip.max_x + 1)
+                        { /* clip right */
+                            int pixels = ex - clip.max_x - 1;
+                            ex -= pixels;
+                        }
+                        if (ey > clip.max_y + 1)
+                        { /* clip bottom */
+                            int pixels = ey - clip.max_y - 1;
+                            ey -= pixels;
+                        }
+                    }
 
-			if( ex>sx )
-			{ /* skip if inner loop doesn't draw anything */
-				int y;
+                    if (ex > sx)
+                    { /* skip if inner loop doesn't draw anything */
+                        int y;
 
-				/* case 1: TRANSPARENCY_PEN */
-				if (transparency == TRANSPARENCY_PEN)
-				{
-					for( y=sy; y<ey; y++ )
-					{
-						_BytePtr source = new _BytePtr( gfx.gfxdata,  (source_base+(y_index>>16)) * gfx.line_modulo);
-						_BytePtr dest = dest_bmp.line[y];
+                        /* case 1: TRANSPARENCY_PEN */
+                        if (transparency == TRANSPARENCY_PEN)
+                        {
+                            for (y = sy; y < ey; y++)
+                            {
+                                _BytePtr source = new _BytePtr(gfx.gfxdata, (source_base + (y_index >> 16)) * gfx.line_modulo);
+                                _BytePtr dest = dest_bmp.line[y];
 
-						int x, x_index = x_index_base;
-						for( x=sx; x<ex; x++ )
-						{
-							int c = source[x_index>>16];
-							if( c != transparent_color ) dest[x] = (byte)pal.read16(c);
-							x_index += dx;
-						}
+                                int x, x_index = x_index_base;
+                                for (x = sx; x < ex; x++)
+                                {
+                                    int c = source[x_index >> 16];
+                                    if (c != transparent_color) dest[x] = (byte)pal[c];
+                                    x_index += dx;
+                                }
 
-						y_index += dy;
-					}
-				}
+                                y_index += dy;
+                            }
+                        }
 
-				/* case 2: TRANSPARENCY_COLOR */
-				else if (transparency == TRANSPARENCY_COLOR)
-				{
-					for( y=sy; y<ey; y++ )
-					{
-						_BytePtr source = new _BytePtr(gfx.gfxdata , (source_base+(y_index>>16)) * gfx.line_modulo);
-						_BytePtr dest = dest_bmp.line[y];
+                        /* case 2: TRANSPARENCY_COLOR */
+                        else if (transparency == TRANSPARENCY_COLOR)
+                        {
+                            for (y = sy; y < ey; y++)
+                            {
+                                _BytePtr source = new _BytePtr(gfx.gfxdata, (source_base + (y_index >> 16)) * gfx.line_modulo);
+                                _BytePtr dest = dest_bmp.line[y];
 
-						int x, x_index = x_index_base;
-						for( x=sx; x<ex; x++ )
-						{
-							int c = pal[source[x_index>>16]];
-							if( c != transparent_color ) dest[x] = (byte)c;
-							x_index += dx;
-						}
+                                int x, x_index = x_index_base;
+                                for (x = sx; x < ex; x++)
+                                {
+                                    int c = pal[source[x_index >> 16]];
+                                    if (c != transparent_color) dest[x] = (byte)c;
+                                    x_index += dx;
+                                }
 
-						y_index += dy;
-					}
-				}
-			}
+                                y_index += dy;
+                            }
+                        }
+                    }
 
-		}
-	}
+                }
+            }
 
-	/* ASG 980209 -- new 16-bit part */
-	else
-	{
-		if( gfx !=null&& gfx.colortable !=null)
-		{
-			_ShortPtr pal = new _ShortPtr(gfx.colortable, (int)(gfx.color_granularity * (color % gfx.total_colors))); /* ASG 980209 */
-			int source_base = (int)((code % gfx.total_elements) * gfx.height);
+            /* ASG 980209 -- new 16-bit part */
+            else
+            {
+                if (gfx != null && gfx.colortable != null)
+                {
+                    UShortSubArray pal = new UShortSubArray(gfx.colortable, (int)(gfx.color_granularity * (color % gfx.total_colors))); /* ASG 980209 */
+                    int source_base = (int)((code % gfx.total_elements) * gfx.height);
 
-			int sprite_screen_height = (scaley*gfx.height+0x8000)>>16;
-			int sprite_screen_width = (scalex*gfx.width+0x8000)>>16;
+                    int sprite_screen_height = (scaley * gfx.height + 0x8000) >> 16;
+                    int sprite_screen_width = (scalex * gfx.width + 0x8000) >> 16;
 
-			/* compute sprite increment per screen pixel */
-			int dx = (gfx.width<<16)/sprite_screen_width;
-			int dy = (gfx.height<<16)/sprite_screen_height;
+                    /* compute sprite increment per screen pixel */
+                    int dx = (gfx.width << 16) / sprite_screen_width;
+                    int dy = (gfx.height << 16) / sprite_screen_height;
 
-			int ex = sx+sprite_screen_width;
-			int ey = sy+sprite_screen_height;
+                    int ex = sx + sprite_screen_width;
+                    int ey = sy + sprite_screen_height;
 
-			int x_index_base;
-			int y_index;
+                    int x_index_base;
+                    int y_index;
 
-			if( flipx )
-			{
-				x_index_base = (sprite_screen_width-1)*dx;
-				dx = -dx;
-			}
-			else
-			{
-				x_index_base = 0;
-			}
+                    if (flipx)
+                    {
+                        x_index_base = (sprite_screen_width - 1) * dx;
+                        dx = -dx;
+                    }
+                    else
+                    {
+                        x_index_base = 0;
+                    }
 
-			if( flipy )
-			{
-				y_index = (sprite_screen_height-1)*dy;
-				dy = -dy;
-			}
-			else
-			{
-				y_index = 0;
-			}
+                    if (flipy)
+                    {
+                        y_index = (sprite_screen_height - 1) * dy;
+                        dy = -dy;
+                    }
+                    else
+                    {
+                        y_index = 0;
+                    }
 
-			if( clip !=null)
-			{
-				if( sx < clip.min_x)
-				{ /* clip left */
-					int pixels = clip.min_x-sx;
-					sx += pixels;
-					x_index_base += pixels*dx;
-				}
-				if( sy < clip.min_y )
-				{ /* clip top */
-					int pixels = clip.min_y-sy;
-					sy += pixels;
-					y_index += pixels*dy;
-				}
-				/* NS 980211 - fixed incorrect clipping */
-				if( ex > clip.max_x+1 )
-				{ /* clip right */
-					int pixels = ex-clip.max_x-1;
-					ex -= pixels;
-				}
-				if( ey > clip.max_y+1 )
-				{ /* clip bottom */
-					int pixels = ey-clip.max_y-1;
-					ey -= pixels;
-				}
-			}
+                    if (clip != null)
+                    {
+                        if (sx < clip.min_x)
+                        { /* clip left */
+                            int pixels = clip.min_x - sx;
+                            sx += pixels;
+                            x_index_base += pixels * dx;
+                        }
+                        if (sy < clip.min_y)
+                        { /* clip top */
+                            int pixels = clip.min_y - sy;
+                            sy += pixels;
+                            y_index += pixels * dy;
+                        }
+                        /* NS 980211 - fixed incorrect clipping */
+                        if (ex > clip.max_x + 1)
+                        { /* clip right */
+                            int pixels = ex - clip.max_x - 1;
+                            ex -= pixels;
+                        }
+                        if (ey > clip.max_y + 1)
+                        { /* clip bottom */
+                            int pixels = ey - clip.max_y - 1;
+                            ey -= pixels;
+                        }
+                    }
 
-			if( ex>sx )
-			{ /* skip if inner loop doesn't draw anything */
-				int y;
+                    if (ex > sx)
+                    { /* skip if inner loop doesn't draw anything */
+                        int y;
 
-				/* case 1: TRANSPARENCY_PEN */
-				if (transparency == TRANSPARENCY_PEN)
-				{
-					for( y=sy; y<ey; y++ )
-					{
-						_BytePtr source = new _BytePtr(gfx.gfxdata, (source_base+(y_index>>16)) * gfx.line_modulo);
-						_ShortPtr dest = new _ShortPtr(dest_bmp.line[y]);
+                        /* case 1: TRANSPARENCY_PEN */
+                        if (transparency == TRANSPARENCY_PEN)
+                        {
+                            for (y = sy; y < ey; y++)
+                            {
+                                _BytePtr source = new _BytePtr(gfx.gfxdata, (source_base + (y_index >> 16)) * gfx.line_modulo);
+                                _ShortPtr dest = new _ShortPtr(dest_bmp.line[y]);
 
-						int x, x_index = x_index_base;
-						for( x=sx; x<ex; x++ )
-						{
-							int c = source[x_index>>16];
-							if( c != transparent_color ) dest[x] = pal[c];
-							x_index += dx;
-						}
+                                int x, x_index = x_index_base;
+                                for (x = sx; x < ex; x++)
+                                {
+                                    int c = source[x_index >> 16];
+                                    if (c != transparent_color) dest[x] = (byte)pal[c];
+                                    x_index += dx;
+                                }
 
-						y_index += dy;
-					}
-				}
+                                y_index += dy;
+                            }
+                        }
 
-				/* case 2: TRANSPARENCY_COLOR */
-				else if (transparency == TRANSPARENCY_COLOR)
-				{
-					for( y=sy; y<ey; y++ )
-					{
-						_BytePtr source = new _BytePtr(gfx.gfxdata,  (source_base+(y_index>>16)) * gfx.line_modulo);
-						_ShortPtr dest = new _ShortPtr(dest_bmp.line[y]);
+                        /* case 2: TRANSPARENCY_COLOR */
+                        else if (transparency == TRANSPARENCY_COLOR)
+                        {
+                            for (y = sy; y < ey; y++)
+                            {
+                                _BytePtr source = new _BytePtr(gfx.gfxdata, (source_base + (y_index >> 16)) * gfx.line_modulo);
+                                _ShortPtr dest = new _ShortPtr(dest_bmp.line[y]);
 
-						int x, x_index = x_index_base;
-						for( x=sx; x<ex; x++ )
-						{
-							int c = pal[source[x_index>>16]];
-							if( c != transparent_color ) dest.write16(x, (ushort) c);
-							x_index += dx;
-						}
+                                int x, x_index = x_index_base;
+                                for (x = sx; x < ex; x++)
+                                {
+                                    int c = pal[source[x_index >> 16]];
+                                    if (c != transparent_color) dest.write16(x, (ushort)c);
+                                    x_index += dx;
+                                }
 
-						y_index += dy;
-					}
-				}
-			}
-		}
-	}
-}
+                                y_index += dy;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

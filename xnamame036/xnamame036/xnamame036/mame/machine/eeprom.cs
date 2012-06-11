@@ -80,7 +80,7 @@ if (errorlog) fprintf(errorlog,"EEPROM write bit %d\n",bit);
                     eeprom_data_bits = eeprom_data[address];
                 sending = 1;
                 serial_count = 0;
-                Mame.printf("EEPROM read %04x from address %02x\n", eeprom_data_bits, address);
+               // Mame.printf("EEPROM read %04x from address %02x\n", eeprom_data_bits, address);
             }
             else if (intf.cmd_erase != null && serial_count == (intf.cmd_erase.Length + intf.address_bits) &&
                     !strncmp(serial_buffer, intf.cmd_erase, intf.cmd_erase.Length))
@@ -93,7 +93,7 @@ if (errorlog) fprintf(errorlog,"EEPROM write bit %d\n",bit);
                     address <<= 1;
                     if (serial_buffer[i + intf.cmd_erase.Length] == '1') address |= 1;
                 }
-                Mame.printf("EEPROM erase address %02x\n", address);
+               // Mame.printf("EEPROM erase address %02x\n", address);
                 if (locked == 0)
                 {
                     if (intf.data_bits == 16)
@@ -104,8 +104,8 @@ if (errorlog) fprintf(errorlog,"EEPROM write bit %d\n",bit);
                     else
                         eeprom_data[address] = 0x00;
                 }
-                else
-                    Mame.printf("Error: EEPROM is locked\n");
+              //  else
+                   // Mame.printf("Error: EEPROM is locked\n");
                 serial_count = 0;
             }
             else if (intf.cmd_write != null && serial_count == (intf.cmd_write.Length + intf.address_bits + intf.data_bits) &&
@@ -125,7 +125,7 @@ if (errorlog) fprintf(errorlog,"EEPROM write bit %d\n",bit);
                     data <<= 1;
                     if (serial_buffer[i + intf.cmd_write.Length + intf.address_bits] == '1') data |= 1;
                 }
-                Mame.printf("EEPROM write %04x to address %02x\n", data, address);
+                //Mame.printf("EEPROM write %04x to address %02x\n", data, address);
                 if (locked == 0)
                 {
                     if (intf.data_bits == 16)
@@ -136,21 +136,21 @@ if (errorlog) fprintf(errorlog,"EEPROM write bit %d\n",bit);
                     else
                         eeprom_data[address] = (byte)data;
                 }
-                else
-                    Mame.printf("Error: EEPROM is locked\n");
+               // else
+                   // Mame.printf("Error: EEPROM is locked\n");
                 serial_count = 0;
             }
             else if (intf.cmd_lock != null && (serial_count == intf.cmd_lock.Length) &&
                     !strncmp(serial_buffer, intf.cmd_lock, intf.cmd_lock.Length))
             {
-                Mame.printf("EEPROM lock\n");
+                //Mame.printf("EEPROM lock\n");
                 locked = 1;
                 serial_count = 0;
             }
             else if (intf.cmd_unlock != null && (serial_count == intf.cmd_unlock.Length) &&
                     !strncmp(serial_buffer, intf.cmd_unlock, intf.cmd_unlock.Length))
             {
-                Mame.printf("EEPROM unlock\n");
+                //Mame.printf("EEPROM unlock\n");
                 locked = 0;
                 serial_count = 0;
             }

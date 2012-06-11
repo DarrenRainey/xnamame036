@@ -214,7 +214,7 @@ namespace xnamame036.mame.drivers
 	new Mame.GfxDecodeInfo( Mame.REGION_GFX3, 0, spritelayout, 64*4+4*32*8, 16 ),
                                                     };
 
-        public static void c1942_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void c1942_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
 
             uint cpi = 0;
@@ -357,7 +357,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 c1942_vh_convert_color_prom(palette, colortable, color_prom);
             }

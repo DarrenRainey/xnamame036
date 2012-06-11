@@ -54,7 +54,7 @@ namespace xnamame036.mame
 
             public _BytePtr[] pendata;
             public _BytePtr[] maskdata;
-            public _ShortPtr[] paldata;
+            public UShortSubArray[] paldata;
             public uint[] pen_usage;
 
             public byte[] priority;	/* priority for each tile */
@@ -107,7 +107,7 @@ namespace xnamame036.mame
         public class _tile_info
         {
             public _BytePtr pen_data; /* pointer to gfx data */
-            public _ShortPtr pal_data; /* pointer to palette */
+            public UShortSubArray pal_data; /* pointer to palette */
             public _BytePtr mask_data; /* pointer to mask data (for TILEMAP_BITMASK) */
             public uint pen_usage;	/* used pens mask */
             /*
@@ -151,7 +151,7 @@ namespace xnamame036.mame
             GfxElement gfx = Machine.gfx[(GFX)];
             int _code = (int)((CODE) % gfx.total_elements);
             tile_info.pen_data = new _BytePtr(gfx.gfxdata, _code * gfx.char_modulo);
-            tile_info.pal_data = new _ShortPtr(gfx.colortable, gfx.color_granularity * (COLOR));
+            tile_info.pal_data = new UShortSubArray(gfx.colortable, gfx.color_granularity * (COLOR));
             tile_info.pen_usage = gfx.pen_usage != null ? gfx.pen_usage[_code] : 0;
         }
         void tilemap_init()
@@ -975,7 +975,7 @@ namespace xnamame036.mame
 
             _tilemap.pendata = new _BytePtr[num_tiles];
             _tilemap.maskdata = new _BytePtr[num_tiles]; /* needed only for TILEMAP_BITMASK */
-            _tilemap.paldata = new _ShortPtr[num_tiles];
+            _tilemap.paldata = new UShortSubArray[num_tiles];
             _tilemap.pen_usage = new uint[num_tiles];
             _tilemap.priority = new byte[num_tiles];
             _tilemap.visible = new byte[num_tiles];
@@ -1199,7 +1199,7 @@ namespace xnamame036.mame
                 }
             }
         }
-        static void draw_tile(osd_bitmap pixmap, int col, int row, int tile_width, int tile_height, _BytePtr pendata, _ShortPtr paldata, byte flags)
+        static void draw_tile(osd_bitmap pixmap, int col, int row, int tile_width, int tile_height, _BytePtr pendata, UShortSubArray paldata, byte flags)
         {
             int x, sx = tile_width * col;
             int sy, y1, y2, dy;
@@ -1227,7 +1227,7 @@ namespace xnamame036.mame
                         _ShortPtr dest = new _ShortPtr(pixmap.line[sy], sx);
                         for (x = tile_width; x >= 0; x--)
                         {
-                            dest.write16(x, paldata.read16(pendata[0]));
+                            dest.write16(x, paldata[pendata[0]]);
                             pendata.offset++;
                         }
                     }
@@ -1239,7 +1239,7 @@ namespace xnamame036.mame
                         _ShortPtr dest = new _ShortPtr(pixmap.line[sy], sx);
                         for (x = 0; x < tile_width; x++)
                         {
-                            dest.write16(x, paldata.read16(pendata[0]));
+                            dest.write16(x, paldata[pendata[0]]);
                             pendata.offset++;
                         }
                     }
@@ -1266,7 +1266,7 @@ namespace xnamame036.mame
                     for (sy = y1; sy != y2; sy += dy)
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
-                        for (x = tile_width; x >= 0; x--) { dest[x] = (byte)paldata.read16(pendata[0]); pendata.offset++; }
+                        for (x = tile_width; x >= 0; x--) { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
                     }
                 }
                 else
@@ -1274,7 +1274,7 @@ namespace xnamame036.mame
                     for (sy = y1; sy != y2; sy += dy)
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
-                        for (x = 0; x < tile_width; x++) { dest[x] = (byte)paldata.read16(pendata[0]); pendata.offset++; }
+                        for (x = 0; x < tile_width; x++) { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
                     }
                 }
             }
@@ -1523,7 +1523,7 @@ namespace xnamame036.mame
 
                     _BytePtr[] pendata = _tilemap.pendata;
                     _BytePtr[] maskdata = _tilemap.maskdata;
-                    _ShortPtr[] paldata = _tilemap.paldata;
+                    UShortSubArray[] paldata = _tilemap.paldata;
                     uint[] pen_usage = _tilemap.pen_usage;
 
                     int tile_flip = 0;
@@ -1558,7 +1558,7 @@ namespace xnamame036.mame
                             if ((_tilemap.orientation & ORIENTATION_SWAP_XY) != 0) { var temp = col; col = row; row = temp; }// SWAP(col,row)
 
                             {
-                                _ShortPtr the_color = paldata[tile_index];
+                                UShortSubArray the_color = paldata[tile_index];
                                 if (the_color != null)
                                 {
                                     uint old_pen_usage = pen_usage[tile_index];
@@ -1626,7 +1626,7 @@ namespace xnamame036.mame
                 {
                     if (_tilemap.visible[tile_index] == 0)
                     {
-                        _ShortPtr the_color = _tilemap.paldata[tile_index];
+                        UShortSubArray the_color = _tilemap.paldata[tile_index];
                         if (the_color != null)
                         {
                             uint old_pen_usage = _tilemap.pen_usage[tile_index];

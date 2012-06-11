@@ -320,7 +320,7 @@ namespace xnamame036.mame.drivers
                         Mame.osd_fread(file, nvram, nvram_size[0]);
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 namcos1.namcos1_vh_convert_color_prom(palette, colortable, color_prom);
             }

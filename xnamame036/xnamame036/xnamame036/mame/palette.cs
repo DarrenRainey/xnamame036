@@ -25,14 +25,14 @@ namespace xnamame036.mame
 
         static byte[][][] rgb6_to_pen = null;
 
-        static _BytePtr game_palette;	/* RGB palette as set by the driver. */
+        static byte[] game_palette;	/* RGB palette as set by the driver. */
         static _BytePtr new_palette;	/* changes to the palette are stored here before */
         /* being moved to game_palette by palette_recalc() */
         static _BytePtr palette_dirty;
         /* arrays which keep track of colors actually used, to help in the palette shrinking. */
         public static _BytePtr palette_used_colors;
         static _BytePtr old_used_colors;
-        static _IntPtr pen_visiblecount, pen_cachedcount;
+        static IntSubArray pen_visiblecount, pen_cachedcount;
         static _BytePtr just_remapped;	/* colors which have been remapped in this frame, */
         /* returned by palette_recalc() */
 
@@ -42,18 +42,9 @@ namespace xnamame036.mame
         const int PALETTIZED_16BIT = 2;
 
         static int total_shrinked_pens;
-        /// <summary>
-        /// Access as shorts
-        /// </summary>
-        static _ShortPtr shrinked_pens;
+        static ushort[] shrinked_pens;
         static _BytePtr shrinked_palette;
-        /// <summary>
-        /// access as shorts
-        /// </summary>
-        static _ShortPtr palette_map;	/* map indexes from game_palette to shrinked_palette */
-        /// <summary>
-        /// access as shorts
-        /// </summary>
+        static ushort[] palette_map;	/* map indexes from game_palette to shrinked_palette */
         static ushort[] pen_usage_count = new ushort[DYNAMIC_MAX_PENS];
 
         public static ushort palette_transparent_pen;
@@ -67,19 +58,19 @@ namespace xnamame036.mame
 
         const int PALETTE_COLOR_NEEDS_REMAP = 0x80;
 
-        public static _ShortPtr palette_shadow_table;
-        public static _ShortPtr palette_highlight_table;
+        public static UShortSubArray palette_shadow_table;
+        public static UShortSubArray palette_highlight_table;
 
         static int palette_start()
         {
             int num;
 
-            game_palette = new _BytePtr((int)(3 * Machine.drv.total_colors * sizeof(byte)));
-            palette_map = new _ShortPtr((int)(Machine.drv.total_colors * sizeof(ushort)));
+            game_palette = new byte[3 * Machine.drv.total_colors];
+            palette_map = new ushort[Machine.drv.total_colors ];
             if (Machine.drv.color_table_len != 0)
             {
                 Machine.game_colortable = new ushort[(int)Machine.drv.color_table_len];
-                Machine.remapped_colortable = new _ShortPtr((int)Machine.drv.color_table_len * sizeof(ushort));
+                Machine.remapped_colortable = new UShortSubArray((int)Machine.drv.color_table_len );
             }
             else
             {
@@ -113,17 +104,17 @@ namespace xnamame036.mame
                     break;
             }
 
-            shrinked_pens = new _ShortPtr((total_shrinked_pens * sizeof(short)));
+            shrinked_pens = new ushort[total_shrinked_pens];
             shrinked_palette = new _BytePtr((3 * total_shrinked_pens * sizeof(byte)));
 
-            Machine.pens = new _ShortPtr((int)(Machine.drv.total_colors * sizeof(short)));
+            Machine.pens = new ushort[Machine.drv.total_colors];
 
             if ((Machine.drv.video_attributes & VIDEO_MODIFIES_PALETTE) != 0)
             {
                 /* if the palette changes dynamically, */
                 /* we'll need the usage arrays to help in shrinking. */
                 palette_used_colors = new _BytePtr(((int)((1 + 1 + 1 + 3 + 1) * Machine.drv.total_colors * sizeof(byte))));
-                pen_visiblecount = new _IntPtr((int)(2 * Machine.drv.total_colors * sizeof(int)));
+                pen_visiblecount = new IntSubArray((int)(2 * Machine.drv.total_colors ));
 
                 if (palette_used_colors == null || pen_visiblecount == null)
                 {
@@ -138,28 +129,28 @@ namespace xnamame036.mame
                 memset(palette_used_colors, PALETTE_COLOR_USED, (int)Machine.drv.total_colors * sizeof(byte));
                 memset(old_used_colors, PALETTE_COLOR_UNUSED, (int)Machine.drv.total_colors * sizeof(byte));
                 memset(palette_dirty, 0, (int)(Machine.drv.total_colors * sizeof(byte)));
-                pen_cachedcount = new _IntPtr(pen_visiblecount, (int)Machine.drv.total_colors * sizeof(uint));
+                pen_cachedcount = new IntSubArray(pen_visiblecount, (int)Machine.drv.total_colors);
                 for (int i = 0; i < Machine.drv.total_colors; i++)
                 {
-                    pen_visiblecount.write32(i, 0);
-                    pen_cachedcount.write32(i, 0);
+                    pen_visiblecount[i] = 0;
+                    pen_cachedcount[i] = 0;
                 }
             }
             else palette_used_colors = old_used_colors = just_remapped = new_palette = palette_dirty = null;
 
             if (Machine.color_depth == 8) num = 256;
             else num = 65536;
-            palette_shadow_table = new _ShortPtr(2 * num * sizeof(ushort));
+            palette_shadow_table = new UShortSubArray(2 * num );
             if (palette_shadow_table == null)
             {
                 palette_stop();
                 return 1;
             }
-            palette_highlight_table = new _ShortPtr(palette_shadow_table, num * sizeof(short));
+            palette_highlight_table = new UShortSubArray(palette_shadow_table, num );
             for (int i = 0; i < num; i++)
             {
-                palette_shadow_table.write16(i, (ushort)i);
-                palette_highlight_table.write16(i, (ushort)i);
+                palette_shadow_table[i]= (ushort)i;
+                palette_highlight_table[i]= (ushort)i;
             }
 
             if ((Machine.drv.color_table_len != 0 && (Machine.game_colortable == null || Machine.remapped_colortable == null))
@@ -309,7 +300,7 @@ namespace xnamame036.mame
                             /* create some defaults associations of game colors to shrinked pens. */
                             /* They will be dynamically modified at run time. */
                             for (int i = 0; i < Machine.drv.total_colors; i++)
-                                palette_map.write16(i, (ushort)((i & 7) + 8));
+                                palette_map[i]= (ushort)((i & 7) + 8);
 
                             if (osd_allocate_colors((uint)total_shrinked_pens, shrinked_palette, shrinked_pens, 1) != 0)
                                 return 1;
@@ -333,7 +324,7 @@ namespace xnamame036.mame
                                         break;
                                 }
 
-                                palette_map.write16(i, (ushort)j);
+                                palette_map[i]= (ushort)j;
 
                                 if (j == used)
                                 {
@@ -341,7 +332,7 @@ namespace xnamame036.mame
                                     if (used > total_shrinked_pens)
                                     {
                                         used = total_shrinked_pens;
-                                        palette_map.write16(i, (ushort)(total_shrinked_pens - 1));
+                                        palette_map[i]= (ushort)(total_shrinked_pens - 1);
                                         usrintf_showmessage("cannot shrink static palette");
                                         printf("error: ran out of free pens to shrink the palette.\n");
                                     }
@@ -362,9 +353,9 @@ namespace xnamame036.mame
 
 
                         for (int i = 0; i < Machine.drv.total_colors; i++)
-                            Machine.pens.write16(i, shrinked_pens.read16(palette_map.read16(i)));
+                            Machine.pens[i]= shrinked_pens[palette_map[i]];
 
-                        palette_transparent_pen = shrinked_pens.read16(TRANSPARENT_PEN);	/* for dynamic palette games */
+                        palette_transparent_pen = shrinked_pens[TRANSPARENT_PEN];	/* for dynamic palette games */
                     }
                     break;
 
@@ -415,10 +406,10 @@ namespace xnamame036.mame
                             byte g = game_palette[3 * i + 1];
                             byte b = game_palette[3 * i + 2];
 
-                            Machine.pens.write16(i, shrinked_pens.read16(rgbpenindex(r, g, b)));
+                            Machine.pens[i]= shrinked_pens[rgbpenindex(r, g, b)];
                         }
 
-                        palette_transparent_pen = shrinked_pens.read16(0);	/* we are forced to use black for the transparent pen */
+                        palette_transparent_pen = shrinked_pens[0];	/* we are forced to use black for the transparent pen */
                     }
                     break;
 
@@ -442,9 +433,9 @@ namespace xnamame036.mame
                             return 1;
 
                         for (int i = 0; i < Machine.drv.total_colors; i++)
-                            Machine.pens.write16(i, shrinked_pens.read16(i + RESERVED_PENS));
+                            Machine.pens[i]=shrinked_pens[i + RESERVED_PENS];
 
-                        palette_transparent_pen = shrinked_pens.read16(TRANSPARENT_PEN);	/* for dynamic palette games */
+                        palette_transparent_pen = shrinked_pens[TRANSPARENT_PEN];	/* for dynamic palette games */
                     }
                     break;
             }
@@ -455,7 +446,7 @@ namespace xnamame036.mame
 
                 /* check for invalid colors set by Machine.drv.vh_init_palette */
                 if (color < Machine.drv.total_colors)
-                    Machine.remapped_colortable.write16(i, Machine.pens.read16(color));
+                    Machine.remapped_colortable[i]= Machine.pens[color];
                 else
                     usrintf_showmessage("colortable[%d] (=%d) out of range (total_colors = %d)",
                             i, color, Machine.drv.total_colors);
@@ -484,16 +475,16 @@ namespace xnamame036.mame
 
                     j = rgb6_to_pen[r][g][b];
 
-                    if (palette_map.read16(i) != j)
+                    if (palette_map[i] != j)
                     {
                         just_remapped[i] = 1;
 
-                        pen_usage_count[palette_map.read16(i)]--;
-                        if (pen_usage_count[palette_map.read16(i)] == 0)
+                        pen_usage_count[palette_map[i]]--;
+                        if (pen_usage_count[palette_map[i]] == 0)
                             saved++;
-                        palette_map.write16(i, (ushort)j);
-                        pen_usage_count[palette_map.read16(i)]++;
-                        Machine.pens.write16(i, shrinked_pens.read16(palette_map.read16(i)));
+                        palette_map[i]= (ushort)j;
+                        pen_usage_count[palette_map[i]]++;
+                        Machine.pens[i]= shrinked_pens[palette_map[i]];
                     }
                 }
             }
@@ -544,7 +535,7 @@ if (errorlog)
             {
                 if (palette_dirty[color] != 0)
                 {
-                    int pen = palette_map.read16(color);
+                    int pen = palette_map[color];
                     byte r = new_palette[3 * color + 0];
                     byte g = new_palette[3 * color + 1];
                     byte b = new_palette[3 * color + 2];
@@ -560,7 +551,7 @@ if (errorlog)
                         shrinked_palette[3 * pen + 0] = r;
                         shrinked_palette[3 * pen + 1] = g;
                         shrinked_palette[3 * pen + 2] = b;
-                        osd_modify_pen(Machine.pens.read16(color), r, g, b);
+                        osd_modify_pen(Machine.pens[color], r, g, b);
                     }
                     else
                     {
@@ -569,7 +560,7 @@ if (errorlog)
                             /* the color uses a reserved pen, the only thing we can do is remap it */
                             for (i = color; i < Machine.drv.total_colors; i++)
                             {
-                                if (palette_dirty[i] != 0 && palette_map.read16(i) == pen)
+                                if (palette_dirty[i] != 0 && palette_map[i] == pen)
                                 {
                                     palette_dirty[i] = 0;
                                     game_palette[3 * i + 0] = new_palette[3 * i + 0];
@@ -586,7 +577,7 @@ if (errorlog)
                             for (i = 0; i < Machine.drv.total_colors; i++)
                             {
                                 if ((old_used_colors[i] & PALETTE_COLOR_VISIBLE) != 0 &&
-                                        palette_map.read16(i) == pen)
+                                        palette_map[i] == pen)
                                 {
                                     if (palette_dirty[i] == 0 ||
                                             new_palette[3 * i + 0] != r ||
@@ -603,11 +594,11 @@ if (errorlog)
                                 shrinked_palette[3 * pen + 0] = r;
                                 shrinked_palette[3 * pen + 1] = g;
                                 shrinked_palette[3 * pen + 2] = b;
-                                osd_modify_pen(Machine.pens.read16(color), r, g, b);
+                                osd_modify_pen(Machine.pens[color], r, g, b);
 
                                 for (i = color; i < Machine.drv.total_colors; i++)
                                 {
-                                    if (palette_dirty[i] != 0 && palette_map.read16(i) == pen)
+                                    if (palette_dirty[i] != 0 && palette_map[i] == pen)
                                     {
                                         palette_dirty[i] = 0;
                                         game_palette[3 * i + 0] = r;
@@ -622,7 +613,7 @@ if (errorlog)
                                 /* have to remap them. */
                                 for (i = color; i < Machine.drv.total_colors; i++)
                                 {
-                                    if (palette_dirty[i] != 0 && palette_map.read16(i) == pen)
+                                    if (palette_dirty[i] != 0 && palette_map[i] == pen)
                                     {
                                         palette_dirty[i] = 0;
                                         game_palette[3 * i + 0] = new_palette[3 * i + 0];
@@ -676,7 +667,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
                     if ((old_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        pen_usage_count[palette_map.read16(color)]--;
+                        pen_usage_count[palette_map[color]]--;
                         old_used_colors[color] &= unchecked((byte)~PALETTE_COLOR_VISIBLE);
                     }
 
@@ -686,7 +677,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
                     if ((palette_used_colors[color] & PALETTE_COLOR_TRANSPARENT_FLAG) != 0)
                     {
-                        if (palette_map.read16(color) != TRANSPARENT_PEN)
+                        if (palette_map[color] != TRANSPARENT_PEN)
                         {
                             /* use the fixed transparent black for this */
                             did_remap = 1;
@@ -697,10 +688,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                 just_remapped[color] = 1;
                             }
 
-                            palette_map.write16(color, TRANSPARENT_PEN);
+                            palette_map[color]= TRANSPARENT_PEN;
                         }
-                        pen_usage_count[palette_map.read16(color)]++;
-                        Machine.pens.write16(color, shrinked_pens.read16(palette_map.read16(color)));
+                        pen_usage_count[palette_map[color]]++;
+                        Machine.pens[color]= shrinked_pens[palette_map[color]];
                         old_used_colors[color] = palette_used_colors[color];
                     }
                     else
@@ -710,7 +701,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                             i = rgb6_to_pen[r >> 2][g >> 2][b >> 2];
                             if (i != DYNAMIC_MAX_PENS)
                             {
-                                if (palette_map.read16(color) != (ushort)i)
+                                if (palette_map[color] != (ushort)i)
                                 {
                                     did_remap = 1;
                                     if ((old_used_colors[color] & palette_used_colors[color] & PALETTE_COLOR_CACHED) != 0)
@@ -720,10 +711,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                         just_remapped[color] = 1;
                                     }
 
-                                    palette_map.write16(color, (ushort)i);
+                                    palette_map[color]= (ushort)i;
                                 }
-                                pen_usage_count[palette_map.read16(color)]++;
-                                Machine.pens.write16(color, shrinked_pens.read16(palette_map.read16(color)));
+                                pen_usage_count[palette_map[color]]++;
+                                Machine.pens[color]= shrinked_pens[palette_map[color]];
                                 old_used_colors[color] = palette_used_colors[color];
                             }
                         }
@@ -732,9 +723,9 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                         if (old_used_colors[color] != palette_used_colors[color])
                         {
                             /* if possible, reuse the last associated pen */
-                            if (pen_usage_count[palette_map.read16(color)] == 0)
+                            if (pen_usage_count[palette_map[color]] == 0)
                             {
-                                pen_usage_count[palette_map.read16(color)]++;
+                                pen_usage_count[palette_map[color]]++;
                             }
                             else	/* allocate a new pen */
                             {
@@ -752,9 +743,9 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                         just_remapped[color] = 1;
                                     }
 
-                                    palette_map.write16(color, (ushort)first_free_pen);
-                                    pen_usage_count[palette_map.read16(color)]++;
-                                    Machine.pens.write16(color, shrinked_pens.read16(palette_map.read16(color)));
+                                    palette_map[color]= (ushort)first_free_pen;
+                                    pen_usage_count[palette_map[color]]++;
+                                    Machine.pens[color]= shrinked_pens[palette_map[color]];
                                 }
                                 else
                                 {
@@ -788,7 +779,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                             {
                                 int rr, gg, bb;
 
-                                i = palette_map.read16(color);
+                                i = palette_map[color];
                                 rr = shrinked_palette[3 * i + 0] >> 2;
                                 gg = shrinked_palette[3 * i + 1] >> 2;
                                 bb = shrinked_palette[3 * i + 2] >> 2;
@@ -798,7 +789,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                 shrinked_palette[3 * i + 0] = r;
                                 shrinked_palette[3 * i + 1] = g;
                                 shrinked_palette[3 * i + 2] = b;
-                                osd_modify_pen(Machine.pens.read16(color), r, g, b);
+                                osd_modify_pen(Machine.pens[color], r, g, b);
 
                                 r >>= 2;
                                 g >>= 2;
@@ -828,7 +819,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 if ((palette_used_colors[color] & PALETTE_COLOR_VISIBLE) == 0)
                 {
                     if ((old_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0)
-                        pen_usage_count[palette_map.read16(color)]--;
+                        pen_usage_count[palette_map[color]]--;
                     old_used_colors[color] = palette_used_colors[color];
                 }
             }
@@ -855,7 +846,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             {
                 /* rebuild the color lookup table */
                 for (i = 0; i < Machine.drv.color_table_len; i++)
-                    Machine.remapped_colortable.write16(i, Machine.pens.read16(Machine.game_colortable[i]));
+                    Machine.remapped_colortable[i]= Machine.pens[Machine.game_colortable[i]];
             }
 
             if (need_refresh != 0)
@@ -936,7 +927,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 return;
             }
 
-            pen = palette_map.read16(color);
+            pen = palette_map[color];
 
             /* if the color was used, mark it as dirty, we'll change it in palette_recalc() */
             if ((old_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0)
@@ -974,7 +965,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
             /* Machine.pens[color] might have been remapped to transparent_pen, so I */
             /* use shrinked_pens[] directly */
-            osd_modify_pen(shrinked_pens.read16(color + RESERVED_PENS), red, green, blue);
+            osd_modify_pen(shrinked_pens[color + RESERVED_PENS], red, green, blue);
             game_palette[3 * color + 0] = red;
             game_palette[3 * color + 1] = green;
             game_palette[3 * color + 2] = blue;
@@ -1103,11 +1094,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             {
                 if ((usage_mask & 1) != 0)
                 {
-                    ushort index = Machine.game_colortable[table_offset];
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
-                        pen_visiblecount.write32(index, pen_visiblecount.read32(index) - 1);
+                        pen_visiblecount[Machine.game_colortable[table_offset]]--;
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
-                        pen_cachedcount.write32(index, pen_cachedcount.read32(index) - 1);
+                        pen_cachedcount[Machine.game_colortable[table_offset]]--;
                 }
                 table_offset++;
                 usage_mask >>= 1;
@@ -1124,14 +1114,11 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset];
-                        uint dw = pen_visiblecount.read32(w);
-                        pen_visiblecount.write32(w, dw + 1);
+                        pen_visiblecount[Machine.game_colortable[table_offset]]++;
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset];
-                        pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
+                        pen_cachedcount[Machine.game_colortable[table_offset]]++;
                     }
                 }
                 table_offset++;
@@ -1149,13 +1136,12 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset + pen];
-                        pen_visiblecount.write32(w,pen_visiblecount.read32(w) + 1);
+                        pen_visiblecount[Machine.game_colortable[table_offset+pen]]++;
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
                         ushort w = Machine.game_colortable[table_offset + pen];
-                        pen_cachedcount.write32(w, pen_cachedcount.read32(w) + 1);
+                        pen_cachedcount[Machine.game_colortable[table_offset + pen]]++;
                     }
                     flag[pen] = 1;
                 }
@@ -1172,13 +1158,11 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset+pen];
-                        pen_visiblecount.write32(w,pen_visiblecount.read32(w)-1);
+                        pen_visiblecount[Machine.game_colortable[table_offset + pen]]--;
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset+pen];
-                        pen_cachedcount.write32(w,pen_cachedcount.read32(w)-1);
+                        pen_cachedcount[Machine.game_colortable[table_offset + pen]]--;
                     }
                     flag[pen] = true;
                 }
@@ -1200,8 +1184,8 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
             for (int pen = 0; pen < Machine.drv.total_colors; pen++)
             {
-                if (pen_visiblecount.read32(pen) != 0) palette_used_colors[pen] |= PALETTE_COLOR_VISIBLE;
-                if (pen_cachedcount.read32(pen) != 0) palette_used_colors[pen] |= PALETTE_COLOR_CACHED;
+                if (pen_visiblecount[pen] != 0) palette_used_colors[pen] |= PALETTE_COLOR_VISIBLE;
+                if (pen_cachedcount[pen] != 0) palette_used_colors[pen] |= PALETTE_COLOR_CACHED;
             }
         }
     }

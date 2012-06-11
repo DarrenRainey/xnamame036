@@ -228,6 +228,7 @@
     <Compile Include="mame\drivers\driver_mpatrol.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_namcos1.cs" />
     <Compile Include="mame\drivers\driver_pacman.cs">
       <SubType>Code</SubType>
     </Compile>

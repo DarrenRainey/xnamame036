@@ -52,7 +52,7 @@ namespace xnamame036.mame
         static ushort[] pTmerge;            /* mergeing pixels   */
         static ushort[] invpens;            /* maps OS colors to pens */
 
-        static _ShortPtr pens;
+        static ushort[] pens;
         static uint total_colors;
 
 
@@ -87,7 +87,7 @@ namespace xnamame036.mame
                 {
                     byte r1 = 0, g1 = 0, b1 = 0;
 
-                    Mame.osd_get_pen(pens.read16(i), ref r1, ref g1, ref b1);
+                    Mame.osd_get_pen(pens[i], ref r1, ref g1, ref b1);
                     if ((x = (int)(Math.Abs(r1 - r) + 1)) > ii) continue;
                     if ((y = (int)(Math.Abs(g1 - g) + 1)) > ii) continue;
                     if ((z = (int)(Math.Abs(b1 - b) + 1)) > ii) continue;
@@ -169,7 +169,7 @@ namespace xnamame036.mame
                 invpens[i] = 0;
             //memset (invpens, 0, 65536 * sizeof(unsigned short));
             for (i = 0; i < total_colors; i++)
-                invpens[Mame.Machine.pens.read16(i)] = (ushort)i;
+                invpens[Mame.Machine.pens[i]] = (ushort)i;
 
             /* build anti-alias table */
             h = 256 / ANTIALIAS_GUNNUM;           /* to generate table faster */
@@ -178,7 +178,7 @@ namespace xnamame036.mame
                 for (j = 0; j < total_colors; j++)               /* color */
                 {
                     byte r1 = 0, g1 = 0, b1 = 0, pen, n;
-                    Mame.osd_get_pen(pens.read16(j), ref r1, ref g1, ref b1);
+                    Mame.osd_get_pen(pens[j], ref r1, ref g1, ref b1);
                     pen = (byte)find_pen((byte)((r1 * (i + 1)) >> 8), (byte)((g1 * (i + 1)) >> 8), (byte)((b1 * (i + 1)) >> 8));
                     for (n = 0; n < h; n++)
                     {
@@ -192,10 +192,10 @@ namespace xnamame036.mame
             {
                 byte[] rgb1 = new byte[3], rgb2 = new byte[3];
 
-                Mame.osd_get_pen(pens.read16(i), ref rgb1[0], ref rgb1[1], ref rgb1[2]);
+                Mame.osd_get_pen(pens[i], ref rgb1[0], ref rgb1[1], ref rgb1[2]);
                 for (j = 0; j <= i; j++)               /* color2 */
                 {
-                    Mame.osd_get_pen(pens.read16(j), ref rgb2[0], ref rgb2[1], ref rgb2[2]);
+                    Mame.osd_get_pen(pens[j], ref rgb2[0], ref rgb2[1], ref rgb2[2]);
 
                     for (k = 0; k < 3; k++)
                         if (translucency != 0) /* add gun values */
@@ -276,7 +276,7 @@ namespace xnamame036.mame
         }
         static void vector_clear_pixels()
         {
-            byte bg = (byte)pens.read16(0);
+            byte bg = (byte)pens[0];
 
             for (int i = p_index - 1; i >= 0; i--)
             {
@@ -681,7 +681,7 @@ namespace xnamame036.mame
             if (y < ymin || y >= ymax)
                 return;
 
-            vector_pp(vecbitmap, x, y, pens.read16(pTmerge[invpens[vector_rp(vecbitmap, x, y)] * total_colors + col]));
+            vector_pp(vecbitmap, x, y, pens[pTmerge[invpens[vector_rp(vecbitmap, x, y)] * total_colors + col]]);
 
             if (p_index < MAX_PIXELS)
             {
@@ -726,7 +726,7 @@ namespace xnamame036.mame
             throw new Exception();
         }
         public static void vector_vh_update_overlay(Mame.osd_bitmap bitmap, Mame.artwork a, int full_refresh)
-{
+        {
             throw new Exception();
         }
     }

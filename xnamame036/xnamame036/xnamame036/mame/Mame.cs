@@ -17,14 +17,14 @@ namespace xnamame036.mame
             public int[] memory_region_type = new int[MAX_MEMORY_REGIONS];
             public GfxElement[] gfx = new GfxElement[MAX_GFX_ELEMENTS];	/* graphic sets (chars, sprites) */
             public osd_bitmap scrbitmap;	/* bitmap to draw into */
-            public _ShortPtr pens;	/* remapped palette pen numbers. When you write */
+            public ushort[] pens;	/* remapped palette pen numbers. When you write */
             /* directly to a bitmap, never use absolute values, */
             /* use this array to get the pen number. For example, */
             /* if you want to use color #6 in the palette, use */
             /* pens[6] instead of just 6. */
             public ushort[] game_colortable;	/* lookup table used to map gfx pen numbers */
             /* to color numbers */
-            public _ShortPtr remapped_colortable;	/* the above, already remapped through */
+            public UShortSubArray remapped_colortable;	/* the above, already remapped through */
             /* Machine.pens */
             public GameDriver gamedrv;	/* contains the definition of the game machine */
             public MachineDriver drv;	/* same as gamedrv.drv */
@@ -46,11 +46,7 @@ namespace xnamame036.mame
             public int uiwidth, uiheight;
             public int ui_orientation;
         }
-        public class ImageFile
-        {
-            public string name;
-            public int type;
-        }
+
         public class GameOptions
         {
             public int mame_debug;
@@ -92,11 +88,11 @@ namespace xnamame036.mame
             //These driver seems to work OK
             //main("pacman");              
             //main("invaders");// sound from samples not good
-            //main("1942");
-           // main("1943"); 
+           // main("1942");
+            //main("1943"); // Some transparent color problems now
             //main("zaxxon");
             //main("szaxxon");
-            //main("galaga");
+            main("galaga");
             //main("digdug");
             //main("dkong");
             //main("mario");
@@ -143,7 +139,7 @@ namespace xnamame036.mame
             //These drivers have problems that should be fixable
             
              
-            main("pang"); // needs sound. graphics glitches
+            
 
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
 
@@ -170,14 +166,15 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have major problems
-            //main("xsleena"); // tilemap problems ?
+            //main("xsleena"); // tilemap problems ? Stops in an infinite loop somewhare
             //main("xevious");//tilemap problems ?
-            //main("ajax");//tilemap problems ?
+            main("ajax");//tilemap problems ?
+            main("pang"); // tilemap problems ?
 
-           main("irobot");//6809 graphics missing, 
-            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
+           //main("irobot");//6809 graphics missing, 
+           // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
-           // main("raiden");  //cpu problems ?
+            main("raiden");  //cpu problems ?
             
         }
         public void main(string game)
@@ -536,7 +533,7 @@ namespace xnamame036.mame
                         return 1;
                     }
                     if (Machine.remapped_colortable != null)
-                        Machine.gfx[i].colortable = new _ShortPtr(Machine.remapped_colortable, (int)drv.gfxdecodeinfo[i].color_codes_start * sizeof(short));
+                        Machine.gfx[i].colortable = new UShortSubArray(Machine.remapped_colortable, (int)drv.gfxdecodeinfo[i].color_codes_start );
                     Machine.gfx[i].total_colors = drv.gfxdecodeinfo[i].total_color_codes;
                 }
             }

@@ -960,7 +960,7 @@ double Cap =0.000001;	/* C15 1uF */
                 Generic.SetDirtyBuffer(true);
             }
         }
-        public static void galaxian_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void galaxian_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             color_mask = (Mame.Machine.gfx[0].color_granularity == 4) ? 7 : 3;
             int cpi = 0, pi = 0;
@@ -1271,10 +1271,10 @@ double Cap =0.000001;	/* C15 1uF */
 
             pixel = Mame.read_pixel(bitmap, x, y);
 
-            if ((pixel == Mame.Machine.pens.read16(0)) ||
-                (pixel == Mame.Machine.pens.read16(96 + backcol)))
+            if ((pixel == Mame.Machine.pens[0]) ||
+                (pixel == Mame.Machine.pens[96 + backcol]))
             {
-                Mame.plot_pixel(bitmap, x, y, Mame.Machine.pens.read16(STARS_COLOR_BASE + code));
+                Mame.plot_pixel(bitmap, x, y, Mame.Machine.pens[STARS_COLOR_BASE + code]);
             }
         }
 
@@ -1305,7 +1305,7 @@ double Cap =0.000001;	/* C15 1uF */
                 throw new NotImplementedException();
             }
 
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 galaxian_vh_convert_color_prom(palette, colortable, color_prom);
             }

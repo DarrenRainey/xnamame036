@@ -211,7 +211,7 @@ namespace xnamame036.mame.drivers
         {
             throw new NotImplementedException();
         }
-        public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i;
             /* Bits are. Red: 6&5 (0x60), Green: 4&3 (0x18), Blue: 2&1 (0x06) */

@@ -389,7 +389,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)
                 //#define COLOR(gfxn,offs) (colortable[Machine.drv.gfxdecodeinfo[gfxn].color_codes_start + offs])
@@ -486,7 +486,7 @@ namespace xnamame036.mame.drivers
                             {
                                 stars[total_stars].x = x;
                                 stars[total_stars].y = y;
-                                stars[total_stars].col = Mame.Machine.pens.read16(color + STARS_COLOR_BASE);
+                                stars[total_stars].col = Mame.Machine.pens[color + STARS_COLOR_BASE];
                                 stars[total_stars].set = set;
                                 if (++set > 3)
                                     set = 0;
@@ -597,40 +597,40 @@ namespace xnamame036.mame.drivers
                         {
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code + 2, (uint)color, flipx, flipy, sx + sfa, sy - sfa,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code, (uint)color, flipx, flipy, sx + sfa, sy - sfb,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
 
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code + 3, (uint)color, flipx, flipy, sx + sfb, sy - sfa,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code + 1, (uint)color, flipx, flipy, sx + sfb, sy - sfb,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                         }
                         else if ((Generic.spriteram_3[offs] & 8) != 0)	/* double width */
                         {
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code + 2, (uint)color, flipx, flipy, sx, sy - sfa,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code, (uint)color, flipx, flipy, sx, sy - sfb,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                         }
                         else if ((Generic.spriteram_3[offs] & 4) != 0)	/* double height */
                         {
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code, (uint)color, flipx, flipy, sx + sfa, sy,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                     (uint)code + 1, (uint)color, flipx, flipy, sx + sfb, sy,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                         }
                         else	/* normal */
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[1],
                                    (uint)code, (uint)color, flipx, flipy, sx, sy,
-                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens.read16(0));
+                                    Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_THROUGH, Mame.Machine.pens[0]);
                     }
                 }
 
@@ -641,7 +641,7 @@ namespace xnamame036.mame.drivers
                     int bpen;
 
 
-                    bpen = Mame.Machine.pens.read16(0);
+                    bpen = Mame.Machine.pens[0];
                     for (offs = 0; offs < total_stars; offs++)
                     {
                         int x, y;

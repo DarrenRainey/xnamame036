@@ -45,7 +45,7 @@ namespace xnamame036.mame
         {
             blitterThread.Abort();
         }
-        static int osd_allocate_colors(uint totalcolors, _BytePtr palette, _ShortPtr pens, int modifiable)
+        static int osd_allocate_colors(uint totalcolors, _BytePtr palette, ushort[] pens, int modifiable)
         {
             int i;
 
@@ -71,19 +71,19 @@ namespace xnamame036.mame
             {
                 int r, g, b;
 
-                uint p = (uint)pens.offset;
+                uint p = 0;// (uint)pens.offset;
                 for (i = 0; i < totalcolors; i++)
                 {
                     r = (int)(255 * brightness * Math.Pow(palette[3 * i + 0] / 255.0, 1 / osd_gamma_correction) / 100);
                     g = (int)(255 * brightness * Math.Pow(palette[3 * i + 1] / 255.0, 1 / osd_gamma_correction) / 100);
                     b = (int)(255 * brightness * Math.Pow(palette[3 * i + 2] / 255.0, 1 / osd_gamma_correction) / 100);
-                    pens.write16((int)p++, makecol((byte)r, (byte)g, (byte)b));
+                    pens[(int)p++]= makecol((byte)r, (byte)g, (byte)b);
                 }
 
-                Machine.uifont.colortable.write16(0, makecol(0x00, 0x00, 0x00));
-                Machine.uifont.colortable.write16(1, makecol(0xff, 0xff, 0xff));
-                Machine.uifont.colortable.write16(2, makecol(0xff, 0xff, 0xff));
-                Machine.uifont.colortable.write16(3, makecol(0x00, 0x00, 0x00));
+                Machine.uifont.colortable[0]= makecol(0x00, 0x00, 0x00);
+                Machine.uifont.colortable[1]= makecol(0xff, 0xff, 0xff);
+                Machine.uifont.colortable[2]= makecol(0xff, 0xff, 0xff);
+                Machine.uifont.colortable[3]= makecol(0x00, 0x00, 0x00);
             }
             else
             {
@@ -116,37 +116,37 @@ namespace xnamame036.mame
                     }
 
                     for (i = 0; i < totalcolors; i++)
-                        pens.write16(i, (ushort)i);
+                        pens[i]= (ushort)i;
 
                     /* map black to pen 0, otherwise the screen border will not be black */
-                    pens.write16(bestblack,  0);
-                    pens.write16(0, (ushort)bestblack);
+                    pens[bestblack]=  0;
+                    pens[0]= (ushort)bestblack;
 
-                    Machine.uifont.colortable.write16(0,pens.read16(bestblack));
-                    Machine.uifont.colortable.write16(1,pens.read16(bestwhite));
-                    Machine.uifont.colortable.write16(2,pens.read16(bestwhite));
-                    Machine.uifont.colortable.write16(3,pens.read16(bestblack));
+                    Machine.uifont.colortable[0]=pens[bestblack];
+                    Machine.uifont.colortable[1]=pens[bestwhite];
+                    Machine.uifont.colortable[2]=pens[bestwhite];
+                    Machine.uifont.colortable[3]=pens[bestblack];
                 }
                 else
                 {
                     /* reserve color 1 for the user interface text */
                     current_palette[3 * 1 + 0] = current_palette[3 * 1 + 1] = current_palette[3 * 1 + 2] = 0xff;
-                    Machine.uifont.colortable.write16(0, 0);
-                    Machine.uifont.colortable.write16(1, 1);
-                    Machine.uifont.colortable.write16(2, 1);
-                    Machine.uifont.colortable.write16(3, 0);
+                    Machine.uifont.colortable[0]= 0;
+                    Machine.uifont.colortable[1]= 1;
+                    Machine.uifont.colortable[2]= 1;
+                    Machine.uifont.colortable[3]= 0;
 
                     /* fill the palette starting from the end, so we mess up badly written */
                     /* drivers which don't go through Machine.pens[] */
                     for (i = 0; i < totalcolors; i++)
-                        pens.write16(i, (ushort)((screen_colors - 1) - i));
+                        pens[i]= (ushort)((screen_colors - 1) - i);
                 }
 
                 for (i = 0; i < totalcolors; i++)
                 {
-                    current_palette[3 * pens.read16(i) + 0] = palette[3 * i];
-                    current_palette[3 * pens.read16(i) + 1] = palette[3 * i + 1];
-                    current_palette[3 * pens.read16(i) + 2] = palette[3 * i + 2];
+                    current_palette[3 * pens[i] + 0] = palette[3 * i];
+                    current_palette[3 * pens[i] + 1] = palette[3 * i + 1];
+                    current_palette[3 * pens[i] + 2] = palette[3 * i + 2];
                 }
             }
 

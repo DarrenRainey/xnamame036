@@ -121,7 +121,7 @@ namespace xnamame036.mame
 
                 return Generic.generic_vh_start();
             }
-            public static int pacman_vh_convert_color_prom(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public static int pacman_vh_convert_color_prom(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 int i;
                 //#define TOTAL_COLORS(gfxn) (Machine.gfx[gfxn].total_colors * Machine.gfx[gfxn].color_granularity)

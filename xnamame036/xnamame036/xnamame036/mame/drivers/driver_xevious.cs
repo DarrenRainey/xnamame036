@@ -591,7 +591,7 @@ static int xevious_interrupt_3()
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint pi=0, cpi = 0;
                 for (int i = 0; i < 128; i++)

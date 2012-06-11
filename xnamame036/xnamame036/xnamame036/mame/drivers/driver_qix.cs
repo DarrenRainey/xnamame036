@@ -105,7 +105,7 @@ namespace xnamame036.mame.drivers
             x = offset & 0xff;
             y = offset >> 8;
 
-            Mame.plot_pixel(Mame.Machine.scrbitmap, x, y, Mame.Machine.pens.read16(data));
+            Mame.plot_pixel(Mame.Machine.scrbitmap, x, y, Mame.Machine.pens[data]);
 
             Generic.videoram[offset] = (byte)data;
         }
@@ -182,7 +182,7 @@ namespace xnamame036.mame.drivers
             x = offset & 0xff;
             y = offset >> 8;
 
-            Mame.plot_pixel(Mame.Machine.scrbitmap, x, y, Mame.Machine.pens.read16(data));
+            Mame.plot_pixel(Mame.Machine.scrbitmap, x, y, Mame.Machine.pens[data]);
 
             Generic.videoram[offset] = (byte)data;
         }
@@ -329,7 +329,7 @@ namespace xnamame036.mame.drivers
                         for (int i = 0; i < nvram_size[0]; i++) nvram[i] = 0;
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, ushort [] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort [] colortable, _BytePtr color_prom)
             {
                 //nothing
             }
@@ -356,7 +356,7 @@ namespace xnamame036.mame.drivers
                         int x = offs & 0xff;
                         int y = offs >> 8;
 
-                        Mame.plot_pixel(bitmap, x, y, Mame.Machine.pens.read16(Generic.videoram[offs]));
+                        Mame.plot_pixel(bitmap, x, y, Mame.Machine.pens[Generic.videoram[offs]]);
                     }
                 }
             }

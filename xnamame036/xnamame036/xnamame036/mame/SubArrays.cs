@@ -10,6 +10,16 @@ namespace xnamame036.mame
         public int[] buffer;
         public int offset;
 
+        public IntSubArray(int size)
+        {
+            this.buffer = new int[size];
+            this.offset = 0;
+        }
+        public IntSubArray(IntSubArray subarray, int offset = 0)
+        {
+            this.buffer = subarray.buffer;
+            this.offset = subarray.offset + offset;
+        }
         public IntSubArray(int[] buffer, int offset = 0)
         {
             this.buffer = buffer;
@@ -42,8 +52,14 @@ namespace xnamame036.mame
     public class UShortSubArray
     {
         ushort[] buffer;
-        int offset;
+        public int offset;
 
+        public UShortSubArray(int size) { this.buffer = new ushort[size]; this.offset = 0; }
+        public UShortSubArray(UShortSubArray subarray, int offset = 0)
+        {
+            this.buffer = subarray.buffer;
+            this.offset = subarray.offset + offset;
+        }
         public UShortSubArray(ushort[] buffer, int offset = 0)
         {
             this.buffer = buffer;

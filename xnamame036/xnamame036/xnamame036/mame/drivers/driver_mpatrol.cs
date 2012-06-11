@@ -208,7 +208,7 @@ namespace xnamame036.mame.drivers
             {
                 throw new NotImplementedException();
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 uint cpi = 0, pi = 0;
                 /* character palette */
@@ -401,7 +401,7 @@ namespace xnamame036.mame.drivers
                 }
                 Mame.copybitmap(bitmap, bgbitmap[image], flipscreen != 0, flipscreen != 0, xpos, ypos, clip1, transparency, 128);
                 Mame.copybitmap(bitmap, bgbitmap[image], flipscreen != 0, flipscreen != 0, xpos - 256, ypos, clip1, transparency, 128);
-                Mame.fillbitmap(bitmap, Mame.Machine.gfx[image * 2 + 2].colortable.read16(3), clip2);
+                Mame.fillbitmap(bitmap, Mame.Machine.gfx[image * 2 + 2].colortable[3], clip2);
             }
             public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
             {
@@ -441,12 +441,12 @@ namespace xnamame036.mame.drivers
                     Mame.rectangle clip = new Mame.rectangle();
 
                     get_clip(clip, 7 * 8, bg2ypos - 1);
-                    Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), clip);
+                    Mame.fillbitmap(bitmap, Mame.Machine.pens[0], clip);
 
                     draw_background(bitmap, bg2xpos, bg2ypos, bg1ypos + BGHEIGHT - 1, 0, Mame.TRANSPARENCY_NONE);
                     draw_background(bitmap, bg1xpos, bg1ypos, Mame.Machine.drv.visible_area.max_y,(bgcontrol == 0x04) ? 1 : 2, Mame.TRANSPARENCY_COLOR);
                 }
-                else Mame.fillbitmap(bitmap, Mame.Machine.pens.read16(0), Mame.Machine.drv.visible_area);
+                else Mame.fillbitmap(bitmap, Mame.Machine.pens[0], Mame.Machine.drv.visible_area);
 
 
                 /* copy the temporary bitmap to the screen */

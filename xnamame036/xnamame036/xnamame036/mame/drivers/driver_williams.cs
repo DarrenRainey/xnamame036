@@ -430,7 +430,7 @@ new _6821pia.pia6821_interface(
 
         static void copy_pixels_8(Mame.osd_bitmap bitmap, Mame.rectangle clip)
         {
-            _ShortPtr pens = Mame.Machine.pens;
+            ushort[] pens = Mame.Machine.pens;
             int pairs = (clip.max_x - clip.min_x + 1) / 2;
             int xoffset = clip.min_x;
             int x, y;
@@ -462,8 +462,8 @@ new _6821pia.pia6821_interface(
                         for (x = 0; x < pairs; x++, source.offset += 256, dest.offset += 2)
                         {
                             int pix = source[0];
-                            dest[0] = (byte)pens.read16(pix >> 4);
-                            dest[1] = (byte)pens.read16(pix & 0x0f);
+                            dest[0] = (byte)pens[pix >> 4];
+                            dest[1] = (byte)pens[pix & 0x0f];
                         }
                     }
 
@@ -474,8 +474,8 @@ new _6821pia.pia6821_interface(
                         for (x = 0; x < pairs; x++, source.offset += 256, dest.offset -= 2)
                         {
                             int pix = source[0];
-                            dest[-1] = (byte)pens.read16(pix >> 4);
-                            dest[-2] = (byte)pens.read16(pix & 0x0f);
+                            dest[-1] = (byte)pens[pix >> 4];
+                            dest[-2] = (byte)pens[pix & 0x0f];
                         }
                     }
                 }
@@ -510,8 +510,8 @@ new _6821pia.pia6821_interface(
                         for (x = 0; x < pairs; x++, source.offset += 256, dest.offset += dy + dy)
                         {
                             int pix = source[0];
-                            dest[0] = (byte)pens.read16(pix >> 4);
-                            dest[dy] = (byte)pens.read16(pix & 0x0f);
+                            dest[0] = (byte)pens[pix >> 4];
+                            dest[dy] = (byte)pens[pix & 0x0f];
                         }
                     }
 
@@ -522,8 +522,8 @@ new _6821pia.pia6821_interface(
                         for (x = 0; x < pairs; x++, source.offset += 256, dest.offset -= dy + dy)
                         {
                             int pix = source[0];
-                            dest[-dy] = (byte)pens.read16(pix >> 4);
-                            dest[-dy - dy] = (byte)pens.read16(pix & 0x0f);
+                            dest[-dy] = (byte)pens[pix >> 4];
+                            dest[-dy - dy] = (byte)pens[pix & 0x0f];
                         }
                     }
                 }
@@ -1144,7 +1144,7 @@ static Mame.MemoryWriteAddress[] sound_writemem =
                         //memset(&ram[cmos_base], 0, cmos_length);
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                //nothing
             }

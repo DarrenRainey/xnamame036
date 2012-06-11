@@ -63,7 +63,7 @@ namespace xnamame036.mame
             cinemat_backdrop_req = backdrop_req;
             cinemat_simple_overlay = simple_overlay;
         }
-        static void shade_fill(_BytePtr palette, int rgb, int start_index, int end_index, int start_inten, int end_inten)
+        static void shade_fill(byte[] palette, int rgb, int start_index, int end_index, int start_inten, int end_inten)
         {
             int i, inten, index_range, inten_range;
 
@@ -79,7 +79,7 @@ namespace xnamame036.mame
         }
 
 
-        public static void cinemat_init_colors(_BytePtr palette, ushort[] colortable, _BytePtr color_prom)
+        public static void cinemat_init_colors(byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i, j, k, nextcol;
             string filename = "";
