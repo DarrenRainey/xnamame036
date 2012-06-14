@@ -195,7 +195,7 @@ namespace xnamame036.mame.drivers
         static Mame.DACinterface dac_interface = new Mame.DACinterface(1, new int[] { 100 });
         static Namco_interface namco_interface = new Namco_interface(23920 / 2, 8, 50, -1, true);
         static YM2151interface ym2151_interface = new YM2151interface(1, 3579580,
-            new int[] { YM2151.YM3012_VOL(80, Mame.MIXER_PAN_LEFT, 80, Mame.MIXER_PAN_RIGHT) }, null);
+            new int[] { YM2151.YM3012_VOL(80, Mame.MIXER_PAN_LEFT, 80, Mame.MIXER_PAN_RIGHT) }, null,null);
 
 
         static Mame.GfxLayout charlayout =

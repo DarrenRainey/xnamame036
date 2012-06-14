@@ -55,7 +55,7 @@ namespace xnamame036.mame
             }
         }
 
-        const byte SOUND_COUNT = 10;
+        const byte SOUND_COUNT = 16;
         public const byte SOUND_NAMCO = 1;
         public const byte SOUND_SAMPLES = 2;
         public const byte SOUND_AY8910 = 3;
@@ -70,15 +70,20 @@ namespace xnamame036.mame
         public const byte SOUND_YM3812 = 12;
         public const byte SOUND_CUSTOM = 13;
         public const byte SOUND_MSM5205 = 14;
+        public const byte SOUND_ADPCM = 15;
         
-        
-        public const byte SOUND_SEGAPCM = 15;
+        public const byte SOUND_SEGAPCM = 99;
 
         public delegate int CustomSoundStart(MachineSound msound);
         public delegate void CustomSoundHandler();
 
         public class CustomSoundInterface : snd_interface
         {
+            public CustomSoundInterface()
+            {
+                this.sound_num = Mame.SOUND_CUSTOM;
+                this.name = "Custom";
+            }
             public CustomSoundStart SoundStart;
             public CustomSoundHandler SoundStop, SoundUpdate;
             public override int chips_clock(MachineSound msound)
@@ -123,6 +128,7 @@ namespace xnamame036.mame
                                       new YM3812(),
                                       new CustomSoundInterface(),
                                       new MSM5205(),
+                                      new ADPCM()
                                   };
         int sound_start()
         {

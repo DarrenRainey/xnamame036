@@ -146,6 +146,7 @@ namespace xnamame036.mame
             return ((((XY) >> 1) | ((XY) << 1)) & 3);
         }
         public static int TILE_FLIPYX(int YX) { return YX; }
+        public static int TILE_SPLIT(int t) { return t << 2; }
         public static void SET_TILE_INFO(int GFX, int CODE, int COLOR)
         {
             GfxElement gfx = Machine.gfx[(GFX)];
@@ -1007,9 +1008,10 @@ namespace xnamame036.mame
                 {
                     _tilemap.paldata[tile_index] = null;
                 }
-
-                memset(_tilemap.priority, 0, num_tiles);
-                memset(_tilemap.visible, 0, num_tiles);
+                Array.Clear(_tilemap.priority,0,num_tiles);
+                Array.Clear(_tilemap.visible, 0, num_tiles);
+                //memset(_tilemap.priority, 0, num_tiles);
+                //memset(_tilemap.visible, 0, num_tiles);
                 for (int i = 0; i < num_tiles; i++)
                 {
                     _tilemap.dirty_vram[i] = true;
@@ -1266,7 +1268,8 @@ namespace xnamame036.mame
                     for (sy = y1; sy != y2; sy += dy)
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
-                        for (x = tile_width; x >= 0; x--) { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
+                        for (x = tile_width; x >= 0; x--)
+                        { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
                     }
                 }
                 else
@@ -1274,7 +1277,8 @@ namespace xnamame036.mame
                     for (sy = y1; sy != y2; sy += dy)
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
-                        for (x = 0; x < tile_width; x++) { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
+                        for (x = 0; x < tile_width; x++) 
+                        { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
                     }
                 }
             }
@@ -1329,8 +1333,8 @@ namespace xnamame036.mame
                     blit.source_height = _tilemap.height;
                     blit.visible_row = _tilemap.visible_row;
 
-                    memset(_tilemap.visible, 0, _tilemap.num_tiles);
-
+                    //memset(_tilemap.visible, 0, _tilemap.num_tiles);
+                    Array.Clear(_tilemap.visible, 0, _tilemap.num_tiles);
                     if (rows == 0 && cols == 0)
                     { /* no scrolling */
                         blit.clip_left = left;
@@ -1564,11 +1568,13 @@ namespace xnamame036.mame
                                     uint old_pen_usage = pen_usage[tile_index];
                                     if (old_pen_usage != 0)
                                     {
-                                        palette_decrease_usage_count(the_color.offset - Machine.remapped_colortable.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        //palette_decrease_usage_count(the_color.offset - Machine.remapped_colortable.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        palette_decrease_usage_count(the_color.offset , old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                                     }
                                     else
                                     {
-                                        palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        //palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        palette_decrease_usage_countx(the_color.offset , num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                                     }
                                 }
                             }
@@ -1592,11 +1598,13 @@ namespace xnamame036.mame
 
                             if (tile_info.pen_usage != 0)
                             {
-                                palette_increase_usage_count(tile_info.pal_data.offset - Machine.remapped_colortable.offset, tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                //palette_increase_usage_count(tile_info.pal_data.offset - Machine.remapped_colortable.offset, tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_increase_usage_count(tile_info.pal_data.offset , tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
                             else
                             {
-                                palette_increase_usage_countx(tile_info.pal_data.offset - Machine.remapped_colortable.offset, num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                //palette_increase_usage_countx(tile_info.pal_data.offset - Machine.remapped_colortable.offset, num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_increase_usage_countx(tile_info.pal_data.offset , num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
 
                             dirty_pixels[tile_index] = true;
@@ -1632,11 +1640,13 @@ namespace xnamame036.mame
                             uint old_pen_usage = _tilemap.pen_usage[tile_index];
                             if (old_pen_usage != 0)
                             {
-                                palette_decrease_usage_count(the_color.offset - Machine.remapped_colortable.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_decrease_usage_count(the_color.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                //palette_decrease_usage_count(the_color.offset - Machine.remapped_colortable.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
                             else
                             {
-                                palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                //palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_decrease_usage_countx(the_color.offset , num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
                             _tilemap.paldata[tile_index] = null;
                         }

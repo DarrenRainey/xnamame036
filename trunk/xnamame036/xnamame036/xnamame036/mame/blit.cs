@@ -29,7 +29,17 @@ namespace xnamame036.mame
             while (true)
             {
                 blitHandle.WaitOne();
+                var Width = Machine.drv.visible_area.max_x - Machine.drv.visible_area.min_x;
+                var Height = Machine.drv.visible_area.max_y - Machine.drv.visible_area.min_y;
+                if (Width != scrbitmap.width || Height != scrbitmap.height)
+                {
+                    int a = 0;
+                }
                 for (int i = 0; i < scrbitmap.height; i++)
+                //    for (int i = Machine.drv.visible_area.min_y; i < Machine.drv.visible_area.max_y; i++)
+                  //  {
+                    //    Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset + Machine.drv.visible_area.min_x, back_buffer, i * scrbitmap.width, Width);
+                    //}
                 {
                     Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset, back_buffer, i * scrbitmap.width, scrbitmap.width);
                 }

@@ -424,7 +424,7 @@ new Mame.DACinterface(
             public machine_driver_dkong()
             {
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3072000, readmem, dkong_writemem, null, null, Mame.nmi_interrupt, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_8035 | Mame.CPU_AUDIO_CPU, 6000000 / 15, readmem_sound, writemem_sound, readport_sound, writeport_sound, Mame.ignore_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_I8035 | Mame.CPU_AUDIO_CPU, 6000000 / 15, readmem_sound, writemem_sound, readport_sound, writeport_sound, Mame.ignore_interrupt, 1));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 1;
@@ -770,7 +770,7 @@ new Mame.Samplesinterface(
             public machine_driver_dkongjr()
             {
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3072000, driver_dkong.readmem, dkongjr_writemem, null, null, Mame.nmi_interrupt, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_8035, 6000000 / 15, driver_dkong.readmem_sound, driver_dkong.writemem_sound, driver_dkong.readport_sound, driver_dkong.writeport_sound, Mame.ignore_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_I8035, 6000000 / 15, driver_dkong.readmem_sound, driver_dkong.writemem_sound, driver_dkong.readport_sound, driver_dkong.writeport_sound, Mame.ignore_interrupt, 1));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 1;
@@ -871,6 +871,8 @@ new Mame.Samplesinterface(
         {
             public machine_driver_dkong3()
             {
+                //cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 8000000 / 2, dkong3_readmem, dkong3_writemem, null, dkong3_writeport, Mame.nmi_interrupt, 1));
+                //cpu.Add(new Mame.MachineCPU(Mame.CPU_N2A03|Mame.CPU_AUDIO_CPU,Mame.cpu_n
                 throw new Exception();
             }
             public override void init_machine()
@@ -908,8 +910,36 @@ new Mame.Samplesinterface(
         }
         Mame.RomModule[] rom_dkong3()
         {
-            throw new Exception();
-    }
+
+            ROM_START("dkong3");
+            ROM_REGION(0x10000, Mame.REGION_CPU1);	/* 64k for code */
+            ROM_LOAD("dk3c.7b", 0x0000, 0x2000, 0x38d5f38e);
+            ROM_LOAD("dk3c.7c", 0x2000, 0x2000, 0xc9134379);
+            ROM_LOAD("dk3c.7d", 0x4000, 0x2000, 0xd22e2921);
+            ROM_LOAD("dk3c.7e", 0x8000, 0x2000, 0x615f14b7);
+
+            ROM_REGION(0x10000, Mame.REGION_CPU2);	/* sound #1 */
+            ROM_LOAD("dk3c.5l", 0xe000, 0x2000, 0x7ff88885);
+
+            ROM_REGION(0x10000, Mame.REGION_CPU3);	/* sound #2 */
+            ROM_LOAD("dk3c.6h", 0xe000, 0x2000, 0x36d7200c);
+
+            ROM_REGION(0x2000, Mame.REGION_GFX1 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("dk3v.3n", 0x0000, 0x1000, 0x415a99c7);
+            ROM_LOAD("dk3v.3p", 0x1000, 0x1000, 0x25744ea0);
+
+            ROM_REGION(0x4000, Mame.REGION_GFX2 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("dk3v.7c", 0x0000, 0x1000, 0x8ffa1737);
+            ROM_LOAD("dk3v.7d", 0x1000, 0x1000, 0x9ac84686);
+            ROM_LOAD("dk3v.7e", 0x2000, 0x1000, 0x0c0af3fb);
+            ROM_LOAD("dk3v.7f", 0x3000, 0x1000, 0x55c58662);
+
+            ROM_REGION(0x0300, Mame.REGION_PROMS);
+            ROM_LOAD("dkc1-c.1d", 0x0000, 0x0200, 0xdf54befc); /* palette red & green component */
+            ROM_LOAD("dkc1-c.1c", 0x0100, 0x0200, 0x66a77f40); /* palette blue component */
+            ROM_LOAD("dkc1-v.2n", 0x0200, 0x0100, 0x50e33434);	/* character color codes on a per-column basis */
+            return ROM_END;
+        }
         public override void driver_init()
         {
         }

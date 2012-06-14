@@ -9,7 +9,7 @@ namespace xnamame036.mame
     partial class Mame
     {
         delegate void update_screen_delegate();
-        
+
         public static Texture2D win_video_window;
         static System.Threading.WaitHandle blitHandle = new AutoResetEvent(false);
         static Thread blitterThread;
@@ -17,8 +17,8 @@ namespace xnamame036.mame
         {
             config();
 
-            int width=Machine.drv.screen_width;
-            int height=Machine.drv.screen_height;
+            int width = Machine.drv.screen_width;
+            int height = Machine.drv.screen_height;
             if ((Machine.orientation & ROT90) != 0)
             {
                 height = Machine.drv.screen_width;
@@ -29,13 +29,13 @@ namespace xnamame036.mame
                 height = Machine.drv.screen_height;
                 width = Machine.drv.screen_width;
             }
-            
+
 
             xna_init_input();
 
             return 0;
         }
-        static void osd_create_backbuffer(int width,int height)
+        static void osd_create_backbuffer(int width, int height)
         {
             win_video_window = new Texture2D(Game1.graphics.GraphicsDevice, width, height);
             blitterThread = new Thread(blitscreen_dirty1_vga);
@@ -45,7 +45,7 @@ namespace xnamame036.mame
         {
             blitterThread.Abort();
         }
-        static int osd_allocate_colors(uint totalcolors, _BytePtr palette, ushort[] pens, int modifiable)
+        static int osd_allocate_colors(uint totalcolors, byte[] palette, ushort[] pens, int modifiable)
         {
             int i;
 
@@ -77,13 +77,13 @@ namespace xnamame036.mame
                     r = (int)(255 * brightness * Math.Pow(palette[3 * i + 0] / 255.0, 1 / osd_gamma_correction) / 100);
                     g = (int)(255 * brightness * Math.Pow(palette[3 * i + 1] / 255.0, 1 / osd_gamma_correction) / 100);
                     b = (int)(255 * brightness * Math.Pow(palette[3 * i + 2] / 255.0, 1 / osd_gamma_correction) / 100);
-                    pens[(int)p++]= makecol((byte)r, (byte)g, (byte)b);
+                    pens[(int)p++] = makecol((byte)r, (byte)g, (byte)b);
                 }
 
-                Machine.uifont.colortable[0]= makecol(0x00, 0x00, 0x00);
-                Machine.uifont.colortable[1]= makecol(0xff, 0xff, 0xff);
-                Machine.uifont.colortable[2]= makecol(0xff, 0xff, 0xff);
-                Machine.uifont.colortable[3]= makecol(0x00, 0x00, 0x00);
+                Machine.uifont.colortable[0] = makecol(0x00, 0x00, 0x00);
+                Machine.uifont.colortable[1] = makecol(0xff, 0xff, 0xff);
+                Machine.uifont.colortable[2] = makecol(0xff, 0xff, 0xff);
+                Machine.uifont.colortable[3] = makecol(0x00, 0x00, 0x00);
             }
             else
             {
@@ -116,30 +116,30 @@ namespace xnamame036.mame
                     }
 
                     for (i = 0; i < totalcolors; i++)
-                        pens[i]= (ushort)i;
+                        pens[i] = (ushort)i;
 
                     /* map black to pen 0, otherwise the screen border will not be black */
-                    pens[bestblack]=  0;
-                    pens[0]= (ushort)bestblack;
+                    pens[bestblack] = 0;
+                    pens[0] = (ushort)bestblack;
 
-                    Machine.uifont.colortable[0]=pens[bestblack];
-                    Machine.uifont.colortable[1]=pens[bestwhite];
-                    Machine.uifont.colortable[2]=pens[bestwhite];
-                    Machine.uifont.colortable[3]=pens[bestblack];
+                    Machine.uifont.colortable[0] = pens[bestblack];
+                    Machine.uifont.colortable[1] = pens[bestwhite];
+                    Machine.uifont.colortable[2] = pens[bestwhite];
+                    Machine.uifont.colortable[3] = pens[bestblack];
                 }
                 else
                 {
                     /* reserve color 1 for the user interface text */
                     current_palette[3 * 1 + 0] = current_palette[3 * 1 + 1] = current_palette[3 * 1 + 2] = 0xff;
-                    Machine.uifont.colortable[0]= 0;
-                    Machine.uifont.colortable[1]= 1;
-                    Machine.uifont.colortable[2]= 1;
-                    Machine.uifont.colortable[3]= 0;
+                    Machine.uifont.colortable[0] = 0;
+                    Machine.uifont.colortable[1] = 1;
+                    Machine.uifont.colortable[2] = 1;
+                    Machine.uifont.colortable[3] = 0;
 
                     /* fill the palette starting from the end, so we mess up badly written */
                     /* drivers which don't go through Machine.pens[] */
                     for (i = 0; i < totalcolors; i++)
-                        pens[i]= (ushort)((screen_colors - 1) - i);
+                        pens[i] = (ushort)((screen_colors - 1) - i);
                 }
 
                 for (i = 0; i < totalcolors; i++)

@@ -24,7 +24,7 @@ namespace xnamame036.mame
             /* pens[6] instead of just 6. */
             public ushort[] game_colortable;	/* lookup table used to map gfx pen numbers */
             /* to color numbers */
-            public UShortSubArray remapped_colortable;	/* the above, already remapped through */
+            public ushort[] remapped_colortable;	/* the above, already remapped through */
             /* Machine.pens */
             public GameDriver gamedrv;	/* contains the definition of the game machine */
             public MachineDriver drv;	/* same as gamedrv.drv */
@@ -88,11 +88,11 @@ namespace xnamame036.mame
             //These driver seems to work OK
             //main("pacman");              
             //main("invaders");// sound from samples not good
-           // main("1942");
+            //main("1942");
             //main("1943"); // Some transparent color problems now
             //main("zaxxon");
             //main("szaxxon");
-            main("galaga");
+           // main("galaga");
             //main("digdug");
             //main("dkong");
             //main("mario");
@@ -128,6 +128,14 @@ namespace xnamame036.mame
             //main("dkongjr");
             //
             //main("dkong3");
+
+
+            //main("ddragonb");
+            //main("ddragon2");
+
+            main("retofinv");
+
+
             //Here are some vector games
             //main("zektor");
             //main("tacscan");
@@ -137,8 +145,7 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers have problems that should be fixable
-            
-             
+            main("turbo");     //Graphics not drawn correctly. Some offset problem ?             
             
 
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
@@ -146,9 +153,11 @@ namespace xnamame036.mame
             //main("defender"); //graphics/palette problems
 
 
-
             //-------------------------------------------------
             //These drivers I would like to implement
+            //main("gng");
+            //main("battlane");
+            //main("brkthru");
 
 
             //main("galaga88");   //6809,hd63701                    
@@ -168,9 +177,9 @@ namespace xnamame036.mame
             //These drivers have major problems
             //main("xsleena"); // tilemap problems ? Stops in an infinite loop somewhare
             //main("xevious");//tilemap problems ?
-            main("ajax");//tilemap problems ?
-            main("pang"); // tilemap problems ?
-
+            //main("ajax");//tilemap problems ?
+            //main("pang"); // tilemap problems ?
+            //main("baraduke"); // tilemap & input port
            //main("irobot");//6809 graphics missing, 
            // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?

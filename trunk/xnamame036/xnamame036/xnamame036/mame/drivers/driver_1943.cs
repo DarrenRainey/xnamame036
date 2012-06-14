@@ -254,7 +254,7 @@ new Mame.GfxLayout(
                 for (int i = 0; i < TOTAL_COLORS(1); i++)
                 {
                     /* color 0 MUST map to pen 0 in order for transparency to work */
-                    if (i % Mame.Machine.gfx[1].color_granularity == 0)
+                    if ((i % Mame.Machine.gfx[1].color_granularity) == 0)
                         COLOR(colortable,1,i, 0);
                     else
                         COLOR(colortable,1,i, color_prom[cpi] + 16 * (color_prom[cpi+256] & 0x03));
@@ -278,7 +278,7 @@ new Mame.GfxLayout(
                     COLOR(colortable, 3, i, (ushort)(color_prom[cpi] + 16 * (color_prom[cpi+256] & 0x07) + 128));
                     cpi++;
                 }
-                
+                color_prom.offset = (int)(cpi + TOTAL_COLORS(3));   
             }
             public override int vh_start()
             {

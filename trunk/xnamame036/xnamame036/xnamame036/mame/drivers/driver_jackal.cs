@@ -159,7 +159,7 @@ namespace xnamame036.mame.drivers
             1,
             3580000,
             new int[] { YM2151.YM3012_VOL(50, Mame.MIXER_PAN_LEFT, 50, Mame.MIXER_PAN_RIGHT) },
-            new YM2151writehandler[] { null }
+            null,new YM2151writehandler[] { null }
         );
 
         static int jackal_zram_r(int offset)

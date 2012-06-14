@@ -12,18 +12,20 @@ namespace xnamame036.mame
         public const byte MAX_2151 = 3;
     }
     public delegate void YM2151writehandler(int a, int b);
+    public delegate void YM2151irqhandler(int i);
     class YM2151interface
     {
         public int num;
         public int baseclock;
         public int[] volume = new int[Mame.MAX_2151];
-        public Mame.irqcallback[] irqhandler = new Mame.irqcallback[Mame.MAX_2151];
+        public YM2151irqhandler[] irqhandler = new YM2151irqhandler[Mame.MAX_2151];
         public YM2151writehandler[] portwritehandler;
-        public YM2151interface(int num, int baseclock, int[] volume, YM2151writehandler[] writehandler)
+        public YM2151interface(int num, int baseclock, int[] volume, YM2151irqhandler[] irqhandler, YM2151writehandler[] writehandler)
         {
             this.num = num;
             this.volume = volume;
             this.baseclock = baseclock;
+            this.irqhandler = irqhandler;
             this.portwritehandler = writehandler;
         }
     }

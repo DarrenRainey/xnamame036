@@ -957,5 +957,23 @@ namespace xnamame036.mame
             static void xrl_a_xr0() { R.A ^= R.RAM[R.RAM[R.regPtr] & 0x7f]; }
             static void xrl_a_xr1() { R.A ^= R.RAM[R.RAM[R.regPtr + 1] & 0x7f]; }
         }
+        public class cpu_i8035:cpu_i8039
+        {
+            public cpu_i8035()
+                : base()
+            {
+                cpu_num = CPU_I8035;
+               
+            }
+            public override string cpu_info(object context, int regnum)
+            {
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "I8035";
+                    case CPU_INFO_VERSION: return "1.1";
+                }
+                return base.cpu_info(context, regnum);
+            }
+        }
     }
 }

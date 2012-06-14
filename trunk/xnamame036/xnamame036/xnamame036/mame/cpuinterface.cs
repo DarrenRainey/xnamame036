@@ -12,7 +12,6 @@ namespace xnamame036.mame
         public const int CPU_Z80 = 1;
         public const int CPU_8080 = 2;
         public const int CPU_I8039 = 3;
-        public const int CPU_8035 = 3;
         public const int CPU_M6800 = 4;
         public const int CPU_M6802 = 5;
         public const int CPU_M6803 = 6;
@@ -29,25 +28,30 @@ namespace xnamame036.mame
         public const int CPU_M6502 = 14;
         public const byte CPU_CCPU = 15;
         public const byte CPU_V30 = 16;
-        public const int CPU_M68000 = 17; 
-        
-        
-        
-        public const byte CPU_I86 = 17;
+        public const int CPU_M68000 = 17;
+        public const byte CPU_HD6309 = 18;
+        public const int CPU_I8035 = 19;
 
 
 
-        
-        public const int CPU_M68010 = 18;
 
-        public const int CPU_M6509 = 19;
-        public const byte CPU_M6510 = 20;
-        public const byte CPU_M6801 = 21;
-        public const byte CPU_M65C02 = 22;
-        public const byte CPU_HD6309 = 23;
-        public const byte CPU_M65CE02 = 24;
-        public const byte CPU_M65SC02 = 25;
-        public const byte CPU_N2A03 = 26;
+
+
+        public const byte CPU_M6510 = 120;
+        public const byte CPU_M6801 = 121;
+        public const byte CPU_M65C02 = 122;
+        
+        public const byte CPU_M65CE02 = 124;
+        public const byte CPU_M65SC02 = 125;
+        public const byte CPU_N2A03 = 126;
+        public const byte CPU_V33 = 130;
+        public const byte CPU_V20 = 131;
+        public const byte CPU_N7751 = 132;
+        public const byte CPU_I8048 = 133;
+        public const byte CPU_I86 = 117;
+        public const int CPU_M68010 = 118;
+
+        public const int CPU_M6509 = 119;
 
 
         public const byte Z80_MAXDAISY = 4;
@@ -115,6 +119,8 @@ namespace xnamame036.mame
                                              new cpu_ccpu(),
                                              new cpu_v30(),
                                              new cpu_m68000(),
+                                             new cpu_hd6309(),
+                                             new cpu_i8035(),
                                              //new cpu_i86(),
                                              
                                              
@@ -1033,30 +1039,14 @@ namespace xnamame036.mame
 				}
 				break;
 #endif
-#if (HAS_I86)
-			case CPU_I86:				irq_line = 0; LOG((errorlog,"I86 IRQ\n")); break;
-#endif
-#if (HAS_V20)
-			case CPU_V20:				irq_line = 0; LOG((errorlog,"V20 IRQ\n")); break;
-#endif
-#if (HAS_V30)
-			case CPU_V30:				irq_line = 0; LOG((errorlog,"V30 IRQ\n")); break;
-#endif
-#if (HAS_V33)
-			case CPU_V33:				irq_line = 0; LOG((errorlog,"V33 IRQ\n")); break;
-#endif
-#if (HAS_I8035)
-			case CPU_I8035: 			irq_line = 0; LOG((errorlog,"I8035 IRQ\n")); break;
-#endif
-#if (HAS_I8039)
-			case CPU_I8039: 			irq_line = 0; LOG((errorlog,"I8039 IRQ\n")); break;
-#endif
-#if (HAS_I8048)
-			case CPU_I8048: 			irq_line = 0; LOG((errorlog,"I8048 IRQ\n")); break;
-#endif
-#if (HAS_N7751)
-			case CPU_N7751: 			irq_line = 0; LOG((errorlog,"N7751 IRQ\n")); break;
-#endif
+			case CPU_I86:				irq_line = 0; break;
+			case CPU_V20:				irq_line = 0; break;
+			case CPU_V30:				irq_line = 0; break;
+			case CPU_V33:				irq_line = 0; break;
+			case CPU_I8035: 			irq_line = 0; break;
+			case CPU_I8039: 			irq_line = 0; break;
+			case CPU_I8048: 			irq_line = 0; break;
+            case CPU_N7751: irq_line = 0; break; 
 
                         case CPU_M6800: irq_line = 0; break;//LOG((errorlog,"M6800 IRQ\n")); break;
 
