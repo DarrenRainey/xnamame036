@@ -62,6 +62,11 @@ namespace xnamame036.mame
     }
     class Pokey : Mame.snd_interface
     {
+        public Pokey()
+        {
+            this.sound_num = Mame.SOUND_POKEY;
+            this.name = "Pokey";
+    }
         class POKEYregisters
         {
             public int[] counter = new int[4];		/* channel counter */

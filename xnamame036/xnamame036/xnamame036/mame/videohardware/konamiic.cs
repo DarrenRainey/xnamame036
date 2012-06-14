@@ -285,7 +285,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
                 return 1;
 
             /* set the color information */
-            Mame.Machine.gfx[gfx_index].colortable = Mame.Machine.remapped_colortable;
+            Mame.Machine.gfx[gfx_index].colortable = new UShortSubArray(Mame.Machine.remapped_colortable);
             Mame.Machine.gfx[gfx_index].total_colors = (int)Mame.Machine.drv.color_table_len / 16;
 
             K052109_memory_region = gfx_memory_region;
@@ -363,7 +363,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
                 return 1;
 
             /* set the color information */
-            Mame.Machine.gfx[gfx_index].colortable = Mame.Machine.remapped_colortable;
+            Mame.Machine.gfx[gfx_index].colortable = new UShortSubArray(Mame.Machine.remapped_colortable);
             Mame.Machine.gfx[gfx_index].total_colors = (int)Mame.Machine.drv.color_table_len / 16;
 
             K051960_memory_region = gfx_memory_region;
@@ -442,7 +442,7 @@ if (errorlog) fprintf(errorlog,"%04x: write %02x to 051937 address %x\n",cpu_get
                 return 1;
 
             /* set the color information */
-            Mame.Machine.gfx[gfx_index].colortable = Mame.Machine.remapped_colortable;
+            Mame.Machine.gfx[gfx_index].colortable = new UShortSubArray(Mame.Machine.remapped_colortable);
             Mame.Machine.gfx[gfx_index].total_colors = (int)(Mame.Machine.drv.color_table_len / (1 << bpp));
 
             K051316_memory_region[chip] = gfx_memory_region;

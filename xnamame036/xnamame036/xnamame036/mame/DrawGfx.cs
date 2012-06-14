@@ -106,7 +106,8 @@ namespace xnamame036.mame
         plot_pixel_proc[] pps_8_nd = { pp_8_nd, pp_8_nd_fx, pp_8_nd_fy, pp_8_nd_fxy, pp_8_nd_s, pp_8_nd_fx_s, pp_8_nd_fy_s, pp_8_nd_fxy_s };
         plot_pixel_proc[] pps_8_d = { pp_8_d, pp_8_d_fx, pp_8_d_fy, pp_8_d_fxy, pp_8_d_s, pp_8_d_fx_s, pp_8_d_fy_s, pp_8_d_fxy_s };
 
-        plot_pixel_proc[] pps_16_d;
+        plot_pixel_proc[] pps_16_d= {pp_16_d,   pp_16_d_fx,   pp_16_d_fy, 	 pp_16_d_fxy,
+		  pp_16_d_s, pp_16_d_fx_s, pp_16_d_fy_s, pp_16_d_fxy_s };
         read_pixel_proc[] rps_8 = { rp_8, rp_8_fx, rp_8_fy, rp_8_fxy, rp_8_s, rp_8_fx_s, rp_8_fy_s, rp_8_fxy_s };
         read_pixel_proc[] rps_16 = { rp_16, rp_16_fx, rp_16_fy, rp_16_fxy, rp_16_s, rp_16_fx_s, rp_16_fy_s, rp_16_fxy_s };
 
@@ -118,6 +119,16 @@ namespace xnamame036.mame
         static void pp_16_nd_fx_s(osd_bitmap b, int x, int y, int p) { b.line[x].write16(b.width - 1 - y, (ushort)p); }
         static void pp_16_nd_fy_s(osd_bitmap b, int x, int y, int p) { b.line[b.height - 1 - x].write16(y, (ushort)p); }
         static void pp_16_nd_fxy_s(osd_bitmap b, int x, int y, int p) { b.line[b.height - 1 - x].write16(b.width - 1 - y, (ushort)p); }
+
+        static void pp_16_d(osd_bitmap b, int x, int y, int p) { new _ShortPtr(b.line[y]).write16(x, (ushort)p); osd_mark_dirty(x, y, x, y, 0); }
+        static void pp_16_d_fx(osd_bitmap b, int x, int y, int p) { int newx = b.width - 1 - x; new _ShortPtr(b.line[y]).write16(newx, (ushort)p); osd_mark_dirty(newx, y, newx, y, 0); }
+        static void pp_16_d_fy(osd_bitmap b, int x, int y, int p) { int newy = b.height - 1 - y; new _ShortPtr(b.line[newy]).write16(x, (ushort)p); osd_mark_dirty(x, newy, x, newy, 0); }
+        static void pp_16_d_fxy(osd_bitmap b, int x, int y, int p) { int newx = b.width - 1 - x; int newy = b.height - 1 - y; new _ShortPtr(b.line[newy]).write16(newx, (ushort)p); osd_mark_dirty(newx, newy, newx, newy, 0); }
+        static void pp_16_d_s(osd_bitmap b, int x, int y, int p) { new _ShortPtr(b.line[x]).write16(y, (ushort)p); osd_mark_dirty(y, x, y, x, 0); }
+static void pp_16_d_fx_s(osd_bitmap b, int x, int y, int p) { int newy = b.width - 1 - y; new _ShortPtr(b.line[x]).write16(newy, (ushort)p); osd_mark_dirty(newy, x, newy, x, 0); }
+static void pp_16_d_fy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; new _ShortPtr(b.line[newx]).write16(y, (ushort)p); osd_mark_dirty(y, newx, y, newx, 0); }
+static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; int newy = b.width - 1 - y; new _ShortPtr(b.line[newx]).write16(newy, (ushort)p); osd_mark_dirty(newy, newx, newy, newx, 0); }
+
 
         static int rp_16(osd_bitmap b, int x, int y) { return b.line[y].read16(x); }
         static int rp_16_fx(osd_bitmap b, int x, int y) { return b.line[y].read16(b.width - 1 - x); }
@@ -684,7 +695,8 @@ namespace xnamame036.mame
         static void blockmove_transcolor8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
+            //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ) / 2);
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             while (srcheight != 0)
@@ -705,7 +717,8 @@ namespace xnamame036.mame
         static void blockmove_transcolor_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
             int end;
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
+            //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ));
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
             while (srcheight != 0)

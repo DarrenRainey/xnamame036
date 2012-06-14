@@ -7,6 +7,36 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
+        public class cpu_hd6309 : cpu_m6809
+        {
+            public cpu_hd6309()
+            {
+                cpu_num = CPU_HD6309;
+                num_irqs = 2;
+                default_vector = 0;
+                overclock = 1.0;
+                no_int = HD6309_INT_NONE;
+                irq_int = HD6309_INT_IRQ;
+                nmi_int = HD6309_INT_NMI;
+                address_shift = 0;
+                address_bits = 16;
+                endianess = CPU_IS_BE;
+                align_unit = 1;
+                max_inst_len = 4;
+                abits1 = ABITS1_16;
+                abits2 = ABITS2_16;
+                abitsmin = ABITS_MIN_16;
+                icount = m6809_ICount;
+            }
+            public override string cpu_info(object context, int regnum)
+            {
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "HD6309";
+                }
+                return base.cpu_info(context, regnum);
+            }
+        }
         public class cpu_m6809 : cpu_interface
         {
             public const int M6809_INT_NONE = 0;
@@ -574,7 +604,7 @@ namespace xnamame036.mame
                 public byte int_state;  /* SYNC and CWAI flags */
                 public byte nmi_state;
             }
-            static int[] m6809_ICount = new int[1];
+            public static int[] m6809_ICount = new int[1];
 
 
             /* macros to access memory */

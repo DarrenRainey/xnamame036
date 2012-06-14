@@ -40,7 +40,11 @@ namespace xnamame036.mame
     }
     class YM3812 : Mame.snd_interface
     {
-
+        public YM3812()
+        {
+            this.sound_num = Mame.SOUND_YM3812;
+            this.name = "YM-3812";
+        }
         public override int chips_clock(Mame.MachineSound msound)
         {
             throw new NotImplementedException();

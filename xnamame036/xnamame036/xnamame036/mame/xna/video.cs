@@ -605,15 +605,15 @@ namespace xnamame036.mame
             if (skipcolumns > skipcolumnsmax)
                 skipcolumns = skipcolumnsmax;
 
-            printf("gfx_width = %d gfx_height = %d\n" +
-                        "gfx_xoffset = %d gfx_yoffset = %d\n" +
-                        "xmin %d ymin %d xmax %d ymax %d\n" +
-                        "skiplines %d skipcolumns %d\n" +
-                        "gfx_display_lines %d gfx_display_columns %d\n" +
-                        "xmultiply %d ymultiply %d\n",
-                        gfx_width, gfx_height,
-                        gfx_xoffset, gfx_yoffset,
-                        xmin, ymin, xmax, ymax, skiplines, skipcolumns, gfx_display_lines, gfx_display_columns, xmultiply, ymultiply);
+            //printf("gfx_width = %d gfx_height = %d\n" +
+            //            "gfx_xoffset = %d gfx_yoffset = %d\n" +
+            //            "xmin %d ymin %d xmax %d ymax %d\n" +
+            //            "skiplines %d skipcolumns %d\n" +
+            //            "gfx_display_lines %d gfx_display_columns %d\n" +
+            //            "xmultiply %d ymultiply %d\n",
+            //            gfx_width, gfx_height,
+            //            gfx_xoffset, gfx_yoffset,
+            //            xmin, ymin, xmax, ymax, skiplines, skipcolumns, gfx_display_lines, gfx_display_columns, xmultiply, ymultiply);
 
             set_ui_visarea(skipcolumns, skiplines, skipcolumns + gfx_display_columns - 1, skiplines + gfx_display_lines - 1);
 

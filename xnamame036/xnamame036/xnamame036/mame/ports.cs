@@ -12,6 +12,21 @@ namespace xnamame036.mame
         public static string IP_NAME_DEFAULT = "-1";
         public static Dictionary<string, string> ipdn_defaultstrings = new Dictionary<string, string>();
 
+        public const string Off = "Off";
+        public const string On = "On";
+        public const string Unknown = "Unknown";
+        public const string Coinage = "Coinage";   
+        public const string Coin_A = "Coin A";
+        public const string Coin_B = "Coin B";
+        public const string Difficulty = "Difficulty";
+        public const string Free_Play = "Free Play";
+        public const string Demo_Sounds = "Demo Sounds";
+        public const string Flip_Screen = "Flip Screen";
+        public const string Cabinet = "Cabinet";
+        public const string Lives = "Lives";
+        public const string Upright = "Upright";
+        public const string Cocktail = "Cocktail";
+        public const string Bonus_Life = "Bonus Life";
 
         public static string DEF_STR(string key) { return ipdn_defaultstrings[key]; }
         static ports()

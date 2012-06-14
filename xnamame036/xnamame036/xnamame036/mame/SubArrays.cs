@@ -37,6 +37,11 @@ namespace xnamame036.mame
         uint[] buffer;
         int offset;
 
+        public UIntSubArray(UIntSubArray subarray, int offset = 0)
+        {
+            this.buffer = subarray.buffer;
+            this.offset = subarray.offset + offset;
+        }
         public UIntSubArray(uint[] buffer, int offset = 0)
         {
             this.buffer = buffer;

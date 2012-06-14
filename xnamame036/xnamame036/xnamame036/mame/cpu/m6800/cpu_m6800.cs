@@ -7,6 +7,7 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
+
         public class cpu_m6800 : cpu_interface
         {
             public const int M6800_INT_NONE = 0;
@@ -4166,6 +4167,335 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
                 m6800.insn = hd63701_insn;
                 m6800.cycles = cycles_63701;
             }
+            public override string cpu_info(object context, int regnum)
+            {
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "HD63701";
+                }
+                return base.cpu_info(context, regnum);
+            }
+            public override int execute(int cycles)
+            {
+                byte ireg;
+                m6800_ICount[0] = cycles;
+
+                m6800.output_compare.wh -= m6800.counter.wh;
+                m6800.timer_over.wl -= m6800.counter.wh;
+                m6800.counter.wh = 0;
+                timer_next = (m6800.output_compare.d < m6800.timer_over.d) ? m6800.output_compare.d : m6800.timer_over.d; 							
+
+                //INCREMENT_COUNTER(m6800.extra_cycles);
+                m6800_ICount[0] -= m6800.extra_cycles;			
+	m6800.counter.d += (uint)m6800.extra_cycles;					
+	if( m6800.counter.d >= timer_next)			
+		check_timer_event();		
+                m6800.extra_cycles = 0;
+
+                if ((m6800.wai_state & (M6800_WAI | M6800_SLP))!=0)
+                {
+                    int cycles_to_eat;												
+																	
+	cycles_to_eat =(int)(timer_next - m6800.counter.d);								
+	if( cycles_to_eat > m6800_ICount[0]) cycles_to_eat = m6800_ICount[0];	
+	if (cycles_to_eat > 0)											
+	{																
+		//INCREMENT_COUNTER(cycles_to_eat);							
+        m6800_ICount[0] -= cycles_to_eat;			
+	m6800.counter.d += (uint)cycles_to_eat;					
+	if( m6800.counter.d >= timer_next)			
+		check_timer_event();		
+	}																
+;
+                    goto getout;
+                }
+
+                do
+                {
+                    m6800.ppc = m6800.pc;
+
+                    ireg = (byte)cpu_readop(m6800.pc.d);
+                    m6800.pc.wl++;
+
+                    switch (ireg)
+                    {
+                        case 0x00: trap(); break;
+                        case 0x01: nop(); break;
+                        case 0x02: trap(); break;
+                        case 0x03: trap(); break;
+                        case 0x04: lsrd(); /* 6803 only */; break;
+                        case 0x05: asld(); /* 6803 only */; break;
+                        case 0x06: tap(); break;
+                        case 0x07: tpa(); break;
+                        case 0x08: inx(); break;
+                        case 0x09: dex(); break;
+                        case 0x0A: m6800.cc &= 0xfd; break;
+                        case 0x0B: m6800.cc |= 0x02; break;
+                        case 0x0C: m6800.cc &= 0xfe; break;
+                        case 0x0D: m6800.cc |= 0x01; break;
+                        case 0x0E: cli(); break;
+                        case 0x0F: sei(); break;
+                        case 0x10: sba(); break;
+                        case 0x11: cba(); break;
+                        case 0x12: undoc1(); break;
+                        case 0x13: undoc2(); break;
+                        case 0x14: trap(); break;
+                        case 0x15: trap(); break;
+                        case 0x16: tab(); break;
+                        case 0x17: tba(); break;
+                        case 0x18: xgdx(); /* HD63701YO only */; break;
+                        case 0x19: daa(); break;
+                        case 0x1a: slp(); break;
+                        case 0x1b: aba(); break;
+                        case 0x1c: trap(); break;
+                        case 0x1d: trap(); break;
+                        case 0x1e: trap(); break;
+                        case 0x1f: trap(); break;
+                        case 0x20: bra(); break;
+                        case 0x21: brn(); break;
+                        case 0x22: bhi(); break;
+                        case 0x23: bls(); break;
+                        case 0x24: bcc(); break;
+                        case 0x25: bcs(); break;
+                        case 0x26: bne(); break;
+                        case 0x27: beq(); break;
+                        case 0x28: bvc(); break;
+                        case 0x29: bvs(); break;
+                        case 0x2a: bpl(); break;
+                        case 0x2b: bmi(); break;
+                        case 0x2c: bge(); break;
+                        case 0x2d: blt(); break;
+                        case 0x2e: bgt(); break;
+                        case 0x2f: ble(); break;
+                        case 0x30: tsx(); break;
+                        case 0x31: ins(); break;
+                        case 0x32: pula(); break;
+                        case 0x33: pulb(); break;
+                        case 0x34: des(); break;
+                        case 0x35: txs(); break;
+                        case 0x36: psha(); break;
+                        case 0x37: pshb(); break;
+                        case 0x38: pulx(); /* 6803 only */ break;
+                        case 0x39: rts(); break;
+                        case 0x3a: abx(); /* 6803 only */ break;
+                        case 0x3b: rti(); break;
+                        case 0x3c: pshx(); /* 6803 only */ break;
+                        case 0x3d: mul(); /* 6803 only */ break;
+                        case 0x3e: wai(); break;
+                        case 0x3f: swi(); break;
+                        case 0x40: nega(); break;
+                        case 0x41: trap(); break;
+                        case 0x42: trap(); break;
+                        case 0x43: coma(); break;
+                        case 0x44: lsra(); break;
+                        case 0x45: trap(); break;
+                        case 0x46: rora(); break;
+                        case 0x47: asra(); break;
+                        case 0x48: asla(); break;
+                        case 0x49: rola(); break;
+                        case 0x4a: deca(); break;
+                        case 0x4b: trap(); break;
+                        case 0x4c: inca(); break;
+                        case 0x4d: tsta(); break;
+                        case 0x4e: trap(); break;
+                        case 0x4f: clra(); break;
+                        case 0x50: negb(); break;
+                        case 0x51: trap(); break;
+                        case 0x52: trap(); break;
+                        case 0x53: comb(); break;
+                        case 0x54: lsrb(); break;
+                        case 0x55: trap(); break;
+                        case 0x56: rorb(); break;
+                        case 0x57: asrb(); break;
+                        case 0x58: aslb(); break;
+                        case 0x59: rolb(); break;
+                        case 0x5a: decb(); break;
+                        case 0x5b: trap(); break;
+                        case 0x5c: incb(); break;
+                        case 0x5d: tstb(); break;
+                        case 0x5e: trap(); break;
+                        case 0x5f: clrb(); break;
+                        case 0x60: neg_ix(); break;
+                        case 0x61: aim_ix(); /* HD63701YO only */; break;
+                        case 0x62: oim_ix(); /* HD63701YO only */; break;
+                        case 0x63: com_ix(); break;
+                        case 0x64: lsr_ix(); break;
+                        case 0x65: eim_ix(); /* HD63701YO only */; break;
+                        case 0x66: ror_ix(); break;
+                        case 0x67: asr_ix(); break;
+                        case 0x68: asl_ix(); break;
+                        case 0x69: rol_ix(); break;
+                        case 0x6a: dec_ix(); break;
+                        case 0x6b: tim_ix(); /* HD63701YO only */; break;
+                        case 0x6c: inc_ix(); break;
+                        case 0x6d: tst_ix(); break;
+                        case 0x6e: jmp_ix(); break;
+                        case 0x6f: clr_ix(); break;
+                        case 0x70: neg_ex(); break;
+                        case 0x71: aim_di(); /* HD63701YO only */; break;
+                        case 0x72: oim_di(); /* HD63701YO only */; break;
+                        case 0x73: com_ex(); break;
+                        case 0x74: lsr_ex(); break;
+                        case 0x75: eim_di(); /* HD63701YO only */; break;
+                        case 0x76: ror_ex(); break;
+                        case 0x77: asr_ex(); break;
+                        case 0x78: asl_ex(); break;
+                        case 0x79: rol_ex(); break;
+                        case 0x7a: dec_ex(); break;
+                        case 0x7b: tim_di(); /* HD63701YO only */; break;
+                        case 0x7c: inc_ex(); break;
+                        case 0x7d: tst_ex(); break;
+                        case 0x7e: jmp_ex(); break;
+                        case 0x7f: clr_ex(); break;
+                        case 0x80: suba_im(); break;
+                        case 0x81: cmpa_im(); break;
+                        case 0x82: sbca_im(); break;
+                        case 0x83: subd_im(); /* 6803 only */ break;
+                        case 0x84: anda_im(); break;
+                        case 0x85: bita_im(); break;
+                        case 0x86: lda_im(); break;
+                        case 0x87: sta_im(); break;
+                        case 0x88: eora_im(); break;
+                        case 0x89: adca_im(); break;
+                        case 0x8a: ora_im(); break;
+                        case 0x8b: adda_im(); break;
+                        case 0x8c: cpx_im(); /* 6803 difference */ break;
+                        case 0x8d: bsr(); break;
+                        case 0x8e: lds_im(); break;
+                        case 0x8f: sts_im(); /* orthogonality */ break;
+                        case 0x90: suba_di(); break;
+                        case 0x91: cmpa_di(); break;
+                        case 0x92: sbca_di(); break;
+                        case 0x93: subd_di(); /* 6803 only */ break;
+                        case 0x94: anda_di(); break;
+                        case 0x95: bita_di(); break;
+                        case 0x96: lda_di(); break;
+                        case 0x97: sta_di(); break;
+                        case 0x98: eora_di(); break;
+                        case 0x99: adca_di(); break;
+                        case 0x9a: ora_di(); break;
+                        case 0x9b: adda_di(); break;
+                        case 0x9c: cpx_di(); /* 6803 difference */ break;
+                        case 0x9d: jsr_di(); break;
+                        case 0x9e: lds_di(); break;
+                        case 0x9f: sts_di(); break;
+                        case 0xa0: suba_ix(); break;
+                        case 0xa1: cmpa_ix(); break;
+                        case 0xa2: sbca_ix(); break;
+                        case 0xa3: subd_ix(); /* 6803 only */ break;
+                        case 0xa4: anda_ix(); break;
+                        case 0xa5: bita_ix(); break;
+                        case 0xa6: lda_ix(); break;
+                        case 0xa7: sta_ix(); break;
+                        case 0xa8: eora_ix(); break;
+                        case 0xa9: adca_ix(); break;
+                        case 0xaa: ora_ix(); break;
+                        case 0xab: adda_ix(); break;
+                        case 0xac: cpx_ix(); /* 6803 difference */ break;
+                        case 0xad: jsr_ix(); break;
+                        case 0xae: lds_ix(); break;
+                        case 0xaf: sts_ix(); break;
+                        case 0xb0: suba_ex(); break;
+                        case 0xb1: cmpa_ex(); break;
+                        case 0xb2: sbca_ex(); break;
+                        case 0xb3: subd_ex(); /* 6803 only */ break;
+                        case 0xb4: anda_ex(); break;
+                        case 0xb5: bita_ex(); break;
+                        case 0xb6: lda_ex(); break;
+                        case 0xb7: sta_ex(); break;
+                        case 0xb8: eora_ex(); break;
+                        case 0xb9: adca_ex(); break;
+                        case 0xba: ora_ex(); break;
+                        case 0xbb: adda_ex(); break;
+                        case 0xbc: cpx_ex(); /* 6803 difference */ break;
+                        case 0xbd: jsr_ex(); break;
+                        case 0xbe: lds_ex(); break;
+                        case 0xbf: sts_ex(); break;
+                        case 0xc0: subb_im(); break;
+                        case 0xc1: cmpb_im(); break;
+                        case 0xc2: sbcb_im(); break;
+                        case 0xc3: addd_im(); /* 6803 only */ break;
+                        case 0xc4: andb_im(); break;
+                        case 0xc5: bitb_im(); break;
+                        case 0xc6: ldb_im(); break;
+                        case 0xc7: stb_im(); break;
+                        case 0xc8: eorb_im(); break;
+                        case 0xc9: adcb_im(); break;
+                        case 0xca: orb_im(); break;
+                        case 0xcb: addb_im(); break;
+                        case 0xcc: ldd_im(); /* 6803 only */ break;
+                        case 0xcd: std_im(); /* 6803 only -- orthogonality */ break;
+                        case 0xce: ldx_im(); break;
+                        case 0xcf: stx_im(); break;
+                        case 0xd0: subb_di(); break;
+                        case 0xd1: cmpb_di(); break;
+                        case 0xd2: sbcb_di(); break;
+                        case 0xd3: addd_di(); /* 6803 only */ break;
+                        case 0xd4: andb_di(); break;
+                        case 0xd5: bitb_di(); break;
+                        case 0xd6: ldb_di(); break;
+                        case 0xd7: stb_di(); break;
+                        case 0xd8: eorb_di(); break;
+                        case 0xd9: adcb_di(); break;
+                        case 0xda: orb_di(); break;
+                        case 0xdb: addb_di(); break;
+                        case 0xdc: ldd_di(); /* 6803 only */ break;
+                        case 0xdd: std_di(); /* 6803 only */ break;
+                        case 0xde: ldx_di(); break;
+                        case 0xdf: stx_di(); break;
+                        case 0xe0: subb_ix(); break;
+                        case 0xe1: cmpb_ix(); break;
+                        case 0xe2: sbcb_ix(); break;
+                        case 0xe3: addd_ix(); /* 6803 only */ break;
+                        case 0xe4: andb_ix(); break;
+                        case 0xe5: bitb_ix(); break;
+                        case 0xe6: ldb_ix(); break;
+                        case 0xe7: stb_ix(); break;
+                        case 0xe8: eorb_ix(); break;
+                        case 0xe9: adcb_ix(); break;
+                        case 0xea: orb_ix(); break;
+                        case 0xeb: addb_ix(); break;
+                        case 0xec: ldd_ix(); /* 6803 only */ break;
+                        case 0xed: std_ix(); /* 6803 only */ break;
+                        case 0xee: ldx_ix(); break;
+                        case 0xef: stx_ix(); break;
+                        case 0xf0: subb_ex(); break;
+                        case 0xf1: cmpb_ex(); break;
+                        case 0xf2: sbcb_ex(); break;
+                        case 0xf3: addd_ex(); /* 6803 only */ break;
+                        case 0xf4: andb_ex(); break;
+                        case 0xf5: bitb_ex(); break;
+                        case 0xf6: ldb_ex(); break;
+                        case 0xf7: stb_ex(); break;
+                        case 0xf8: eorb_ex(); break;
+                        case 0xf9: adcb_ex(); break;
+                        case 0xfa: orb_ex(); break;
+                        case 0xfb: addb_ex(); break;
+                        case 0xfc: ldd_ex(); /* 6803 only */ break;
+                        case 0xfd: std_ex(); /* 6803 only */ break;
+                        case 0xfe: ldx_ex(); break;
+                        case 0xff: stx_ex(); break;
+                    }
+                    //INCREMENT_COUNTER(cycles_63701[ireg]);
+                    m6800_ICount[0] -= cycles_63701[ireg];
+                    m6800.counter.d += cycles_63701[ireg];
+                    if (m6800.counter.d >= timer_next)			
+		check_timer_event();		
+
+
+
+                } while (m6800_ICount[0] > 0);
+
+            getout:
+                //INCREMENT_COUNTER(hd63701.extra_cycles);
+                m6800_ICount[0] -= m6800.extra_cycles;
+            m6800.counter.d +=(uint) m6800.extra_cycles;
+            if (m6800.counter.d >= timer_next)			
+		check_timer_event();		
+                m6800.extra_cycles = 0;
+
+                return cycles - m6800_ICount[0];
+            }
             static byte[] cycles_63701 =
 {
   /* 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
@@ -4187,6 +4517,7 @@ eorb_ex,adcb_ex,orb_ex, addb_ex,ldd_ex, std_ex, ldx_ex, stx_ex
  /*F*/ 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
 };
         }
+
         public class nsc8105 : cpu_m6800
         {
 

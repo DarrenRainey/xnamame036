@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define PEDANTIC
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,7 +44,7 @@ namespace xnamame036.mame
 
         static int total_shrinked_pens;
         static ushort[] shrinked_pens;
-        static _BytePtr shrinked_palette;
+        static byte[] shrinked_palette;
         static ushort[] palette_map;	/* map indexes from game_palette to shrinked_palette */
         static ushort[] pen_usage_count = new ushort[DYNAMIC_MAX_PENS];
 
@@ -66,11 +67,11 @@ namespace xnamame036.mame
             int num;
 
             game_palette = new byte[3 * Machine.drv.total_colors];
-            palette_map = new ushort[Machine.drv.total_colors ];
+            palette_map = new ushort[Machine.drv.total_colors];
             if (Machine.drv.color_table_len != 0)
             {
                 Machine.game_colortable = new ushort[(int)Machine.drv.color_table_len];
-                Machine.remapped_colortable = new UShortSubArray((int)Machine.drv.color_table_len );
+                Machine.remapped_colortable = new ushort[Machine.drv.color_table_len];// new UShortSubArray((int)Machine.drv.color_table_len);
             }
             else
             {
@@ -105,7 +106,7 @@ namespace xnamame036.mame
             }
 
             shrinked_pens = new ushort[total_shrinked_pens];
-            shrinked_palette = new _BytePtr((3 * total_shrinked_pens * sizeof(byte)));
+            shrinked_palette = new byte[3 * total_shrinked_pens];
 
             Machine.pens = new ushort[Machine.drv.total_colors];
 
@@ -114,7 +115,7 @@ namespace xnamame036.mame
                 /* if the palette changes dynamically, */
                 /* we'll need the usage arrays to help in shrinking. */
                 palette_used_colors = new _BytePtr(((int)((1 + 1 + 1 + 3 + 1) * Machine.drv.total_colors * sizeof(byte))));
-                pen_visiblecount = new IntSubArray((int)(2 * Machine.drv.total_colors ));
+                pen_visiblecount = new IntSubArray((int)(2 * Machine.drv.total_colors));
 
                 if (palette_used_colors == null || pen_visiblecount == null)
                 {
@@ -140,17 +141,17 @@ namespace xnamame036.mame
 
             if (Machine.color_depth == 8) num = 256;
             else num = 65536;
-            palette_shadow_table = new UShortSubArray(2 * num );
+            palette_shadow_table = new UShortSubArray(2 * num);
             if (palette_shadow_table == null)
             {
                 palette_stop();
                 return 1;
             }
-            palette_highlight_table = new UShortSubArray(palette_shadow_table, num );
+            palette_highlight_table = new UShortSubArray(palette_shadow_table, num);
             for (int i = 0; i < num; i++)
             {
-                palette_shadow_table[i]= (ushort)i;
-                palette_highlight_table[i]= (ushort)i;
+                palette_shadow_table[i] = (ushort)i;
+                palette_highlight_table[i] = (ushort)i;
             }
 
             if ((Machine.drv.color_table_len != 0 && (Machine.game_colortable == null || Machine.remapped_colortable == null))
@@ -263,7 +264,7 @@ namespace xnamame036.mame
             /* order of the palette. The driver can overwrite this in */
             /* vh_init_palette() */
             for (int i = 0; i < Machine.drv.color_table_len; i++)
-                Machine.game_colortable[i]= (ushort)(i % Machine.drv.total_colors);
+                Machine.game_colortable[i] = (ushort)(i % Machine.drv.total_colors);
 
             /* by default we use -1 to identify the transparent color, the driver */
             /* can modify this. */
@@ -300,7 +301,7 @@ namespace xnamame036.mame
                             /* create some defaults associations of game colors to shrinked pens. */
                             /* They will be dynamically modified at run time. */
                             for (int i = 0; i < Machine.drv.total_colors; i++)
-                                palette_map[i]= (ushort)((i & 7) + 8);
+                                palette_map[i] = (ushort)((i & 7) + 8);
 
                             if (osd_allocate_colors((uint)total_shrinked_pens, shrinked_palette, shrinked_pens, 1) != 0)
                                 return 1;
@@ -324,7 +325,7 @@ namespace xnamame036.mame
                                         break;
                                 }
 
-                                palette_map[i]= (ushort)j;
+                                palette_map[i] = (ushort)j;
 
                                 if (j == used)
                                 {
@@ -332,7 +333,7 @@ namespace xnamame036.mame
                                     if (used > total_shrinked_pens)
                                     {
                                         used = total_shrinked_pens;
-                                        palette_map[i]= (ushort)(total_shrinked_pens - 1);
+                                        palette_map[i] = (ushort)(total_shrinked_pens - 1);
                                         usrintf_showmessage("cannot shrink static palette");
                                         printf("error: ran out of free pens to shrink the palette.\n");
                                     }
@@ -353,7 +354,7 @@ namespace xnamame036.mame
 
 
                         for (int i = 0; i < Machine.drv.total_colors; i++)
-                            Machine.pens[i]= shrinked_pens[palette_map[i]];
+                            Machine.pens[i] = shrinked_pens[palette_map[i]];
 
                         palette_transparent_pen = shrinked_pens[TRANSPARENT_PEN];	/* for dynamic palette games */
                     }
@@ -361,7 +362,7 @@ namespace xnamame036.mame
 
                 case STATIC_16BIT:
                     {
-                        _BytePtr p = new _BytePtr(shrinked_palette.buffer, shrinked_palette.offset);
+                        _BytePtr p = new _BytePtr(shrinked_palette);
 
                         if (Machine.scrbitmap.depth == 16)
                         {
@@ -406,7 +407,7 @@ namespace xnamame036.mame
                             byte g = game_palette[3 * i + 1];
                             byte b = game_palette[3 * i + 2];
 
-                            Machine.pens[i]= shrinked_pens[rgbpenindex(r, g, b)];
+                            Machine.pens[i] = shrinked_pens[rgbpenindex(r, g, b)];
                         }
 
                         palette_transparent_pen = shrinked_pens[0];	/* we are forced to use black for the transparent pen */
@@ -433,7 +434,7 @@ namespace xnamame036.mame
                             return 1;
 
                         for (int i = 0; i < Machine.drv.total_colors; i++)
-                            Machine.pens[i]=shrinked_pens[i + RESERVED_PENS];
+                            Machine.pens[i] = shrinked_pens[i + RESERVED_PENS];
 
                         palette_transparent_pen = shrinked_pens[TRANSPARENT_PEN];	/* for dynamic palette games */
                     }
@@ -446,7 +447,7 @@ namespace xnamame036.mame
 
                 /* check for invalid colors set by Machine.drv.vh_init_palette */
                 if (color < Machine.drv.total_colors)
-                    Machine.remapped_colortable[i]= Machine.pens[color];
+                    Machine.remapped_colortable[i] = Machine.pens[color];
                 else
                     usrintf_showmessage("colortable[%d] (=%d) out of range (total_colors = %d)",
                             i, color, Machine.drv.total_colors);
@@ -482,35 +483,35 @@ namespace xnamame036.mame
                         pen_usage_count[palette_map[i]]--;
                         if (pen_usage_count[palette_map[i]] == 0)
                             saved++;
-                        palette_map[i]= (ushort)j;
+                        palette_map[i] = (ushort)j;
                         pen_usage_count[palette_map[i]]++;
-                        Machine.pens[i]= shrinked_pens[palette_map[i]];
+                        Machine.pens[i] = shrinked_pens[palette_map[i]];
                     }
                 }
             }
 
-#if VERBOSE
-if (errorlog)
-{
-	int subcount[8];
+            //#if VERBOSE
+            //if (errorlog)
+            {
+                int[] subcount = new int[8];
 
 
-	for (i = 0;i < 8;i++)
-		subcount[i] = 0;
+                for (i = 0; i < 8; i++)
+                    subcount[i] = 0;
 
-	for (i = 0;i < Machine.drv.total_colors;i++)
-		subcount[palette_used_colors[i]]++;
+                for (i = 0; i < Machine.drv.total_colors; i++)
+                    subcount[palette_used_colors[i]]++;
 
-	fprintf(errorlog,"Ran out of pens! %d colors used (%d unused, %d visible %d cached %d visible+cached, %d transparent)\n",
-			subcount[PALETTE_COLOR_VISIBLE]+subcount[PALETTE_COLOR_CACHED]+subcount[PALETTE_COLOR_VISIBLE|PALETTE_COLOR_CACHED]+subcount[PALETTE_COLOR_TRANSPARENT],
-			subcount[PALETTE_COLOR_UNUSED],
-			subcount[PALETTE_COLOR_VISIBLE],
-			subcount[PALETTE_COLOR_CACHED],
-			subcount[PALETTE_COLOR_VISIBLE|PALETTE_COLOR_CACHED],
-			subcount[PALETTE_COLOR_TRANSPARENT]);
-	fprintf(errorlog,"Compressed the palette, saving %d pens\n",saved);
-}
-#endif
+                printf("Ran out of pens! %d colors used (%d unused, %d visible %d cached %d visible+cached, %d transparent)\n",
+                        subcount[PALETTE_COLOR_VISIBLE] + subcount[PALETTE_COLOR_CACHED] + subcount[PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED] + subcount[PALETTE_COLOR_TRANSPARENT],
+                        subcount[PALETTE_COLOR_UNUSED],
+                        subcount[PALETTE_COLOR_VISIBLE],
+                        subcount[PALETTE_COLOR_CACHED],
+                        subcount[PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED],
+                        subcount[PALETTE_COLOR_TRANSPARENT]);
+                printf("Compressed the palette, saving %d pens\n", saved);
+            }
+            //#endif
 
             return saved;
         }
@@ -646,9 +647,7 @@ if (errorlog)
 
                 if (need > avail)
                 {
-#if VERBOSE
-if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some pens.\n",need,avail);
-#endif
+                    Mame.printf("Need %d new pens; %d available. I'll reuse some pens.\n", need, avail);
                     reuse_pens = 1;
                     build_rgb_to_pen();
                 }
@@ -662,18 +661,15 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 if ((palette_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0 &&
                         palette_used_colors[color] != old_used_colors[color])
                 {
-                    byte r, g, b;
-
-
                     if ((old_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0)
                     {
                         pen_usage_count[palette_map[color]]--;
                         old_used_colors[color] &= unchecked((byte)~PALETTE_COLOR_VISIBLE);
                     }
 
-                    r = game_palette[3 * color + 0];
-                    g = game_palette[3 * color + 1];
-                    b = game_palette[3 * color + 2];
+                    byte r = game_palette[3 * color + 0];
+                    byte g = game_palette[3 * color + 1];
+                    byte b = game_palette[3 * color + 2];
 
                     if ((palette_used_colors[color] & PALETTE_COLOR_TRANSPARENT_FLAG) != 0)
                     {
@@ -688,10 +684,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                 just_remapped[color] = 1;
                             }
 
-                            palette_map[color]= TRANSPARENT_PEN;
+                            palette_map[color] = TRANSPARENT_PEN;
                         }
                         pen_usage_count[palette_map[color]]++;
-                        Machine.pens[color]= shrinked_pens[palette_map[color]];
+                        Machine.pens[color] = shrinked_pens[palette_map[color]];
                         old_used_colors[color] = palette_used_colors[color];
                     }
                     else
@@ -711,10 +707,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                         just_remapped[color] = 1;
                                     }
 
-                                    palette_map[color]= (ushort)i;
+                                    palette_map[color] = (ushort)i;
                                 }
                                 pen_usage_count[palette_map[color]]++;
-                                Machine.pens[color]= shrinked_pens[palette_map[color]];
+                                Machine.pens[color] = shrinked_pens[palette_map[color]];
                                 old_used_colors[color] = palette_used_colors[color];
                             }
                         }
@@ -743,9 +739,9 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                                         just_remapped[color] = 1;
                                     }
 
-                                    palette_map[color]= (ushort)first_free_pen;
+                                    palette_map[color] = (ushort)first_free_pen;
                                     pen_usage_count[palette_map[color]]++;
-                                    Machine.pens[color]= shrinked_pens[palette_map[color]];
+                                    Machine.pens[color] = shrinked_pens[palette_map[color]];
                                 }
                                 else
                                 {
@@ -806,7 +802,6 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 
             if (ran_out > 1)
             {
-
                 printf("Error: no way to shrink the palette to 256 colors, left out %d colors.\n", ran_out - 1);
 
             }
@@ -830,10 +825,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
 	{
 		if (pen_usage_count[i] == 0)
 		{
-			int r,g,b;
-			r = rand() & 0xff;
-			g = rand() & 0xff;
-			b = rand() & 0xff;
+			byte r,g,b;
+			r = (byte)(rand() & 0xff);
+			g = (byte)(rand() & 0xff);
+			b = (byte)(rand() & 0xff);
 			shrinked_palette[3*i + 0] = r;
 			shrinked_palette[3*i + 1] = g;
 			shrinked_palette[3*i + 2] = b;
@@ -846,7 +841,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             {
                 /* rebuild the color lookup table */
                 for (i = 0; i < Machine.drv.color_table_len; i++)
-                    Machine.remapped_colortable[i]= Machine.pens[Machine.game_colortable[i]];
+                    Machine.remapped_colortable[i] = Machine.pens[Machine.game_colortable[i]];
             }
 
             if (need_refresh != 0)
@@ -910,8 +905,6 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         }
         static void palette_change_color_8(int color, byte red, byte green, byte blue)
         {
-            int pen;
-
             if (color == palette_transparent_color)
             {
                 osd_modify_pen(palette_transparent_pen, red, green, blue);
@@ -927,7 +920,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 return;
             }
 
-            pen = palette_map[color];
+            int pen = palette_map[color];
 
             /* if the color was used, mark it as dirty, we'll change it in palette_recalc() */
             if ((old_used_colors[color] & PALETTE_COLOR_VISIBLE) != 0)
@@ -1060,7 +1053,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             bit0 = (data >> 3) & 0x01;
             bit1 = (data >> 4) & 0x01;
             bit2 = (data >> 5) & 0x01;
-           byte  g = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
+            byte g = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
             /* blue component */
             bit0 = 0;
             bit1 = (data >> 6) & 0x01;
@@ -1084,7 +1077,16 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
             paletteram[offset] = (byte)data;
             changecolor_xxxxBBBBGGGGRRRR(offset / 2, paletteram[offset | 1] | (paletteram[offset & ~1] << 8));
         }
-
+        public static void paletteram_RRRRGGGGBBBBxxxx_split1_w(int offset, int data)
+        {
+            paletteram[offset] = (byte)data;
+            changecolor_RRRRGGGGBBBBxxxx(offset, paletteram[offset] | (paletteram_2[offset] << 8));
+        }
+        public static void paletteram_RRRRGGGGBBBBxxxx_split2_w(int offset, int data)
+        {
+            paletteram_2[offset] = (byte)data;
+            changecolor_RRRRGGGGBBBBxxxx(offset, paletteram[offset] | (paletteram_2[offset] << 8));
+        }
         static void palette_decrease_usage_count(int table_offset, uint usage_mask, int color_flags)
         {
             /* if we are not dynamically reducing the palette, return immediately. */
@@ -1128,6 +1130,7 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         static void palette_increase_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
         {
             byte[] flag = new byte[256];
+            Array.Clear(flag, 0, 256);
 
             while (num_pens-- != 0)
             {
@@ -1136,11 +1139,10 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
-                        pen_visiblecount[Machine.game_colortable[table_offset+pen]]++;
+                        pen_visiblecount[Machine.game_colortable[table_offset + pen]]++;
                     }
                     if ((color_flags & PALETTE_COLOR_CACHED) != 0)
                     {
-                        ushort w = Machine.game_colortable[table_offset + pen];
                         pen_cachedcount[Machine.game_colortable[table_offset + pen]]++;
                     }
                     flag[pen] = 1;
@@ -1150,11 +1152,11 @@ if (errorlog) fprintf(errorlog,"Need %d new pens; %d available. I'll reuse some 
         static void palette_decrease_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
         {
             bool[] flag = new bool[256];
-
+            Array.Clear(flag, 0, 256);
             while (num_pens-- != 0)
             {
                 int pen = pen_data[num_pens];
-                if (!flag[pen] )
+                if (!flag[pen])
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {

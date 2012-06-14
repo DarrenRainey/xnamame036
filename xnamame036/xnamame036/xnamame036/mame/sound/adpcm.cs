@@ -5,6 +5,14 @@ using System.Text;
 
 namespace xnamame036.mame
 {
+    partial class Mame
+    {
+        public const byte MAX_ADPCM = 8;
+    }
+    public class ADPCMsample
+    {
+        public int num, offset, length;
+    }
     class OKIM6295interface
     {
         public OKIM6295interface(int num, int[] frequency, int[] region, int[] mixing_level)
@@ -18,7 +26,204 @@ namespace xnamame036.mame
         public int[] mixing_level = new int[okim6295.MAX_OKIM6295];
     }
 
+    public delegate void ADPCM_init(ADPCMinterface i, ADPCMsample[] s, int max);
+    public class ADPCMinterface
+    {
+        public ADPCMinterface(int num, int frequency, int region, ADPCM_init init, int[] mixing_level)
+        {
+            this.num = num; this.frequency = frequency; this.region = region;
+            this.init = init; this.mixing_level = mixing_level;
+        }
+        public int num, frequency, region;
+        public ADPCM_init init;
+        public int[] mixing_level = new int[Mame.MAX_ADPCM];
+    }
+    class ADPCM : Mame.snd_interface
+    {
+        const int MAX_SAMPLE_CHUNK = 10000;
+        const int FRAC_BITS = 14;
+        const int FRAC_ONE = 1 << FRAC_BITS;
+        const int FRAC_MASK = FRAC_ONE - 1;
 
+        class ADPCMVoice
+        {
+            public int stream;
+            public bool playing;
+            public _BytePtr region_base, _base;
+            public uint sample, count;
+            public uint signal, step, volume;
+            public int last_sample, curr_sample;
+            public uint source_step, source_pos;
+        }
+        static byte num_voices;
+        static ADPCMVoice[] adpcm = new ADPCMVoice[Mame.MAX_ADPCM];
+        static ADPCMsample[] sample_list;
+        static int[] index_shift = { -1, -1, -1, -1, 2, 4, 6, 8 };
+        static int[] diff_lookup = new int[49 * 16];
+        static uint[] volume_table = new uint[16];
+
+        public ADPCM()
+        {
+            this.sound_num = Mame.SOUND_ADPCM;
+            this.name = "ADPCM";
+            for (int i = 0; i < Mame.MAX_ADPCM; i++) adpcm[i] = new ADPCMVoice();
+        }
+        public override int chips_clock(Mame.MachineSound msound)
+        {
+            return 0;
+        }
+        public override int chips_num(Mame.MachineSound msound)
+        {
+            return ((ADPCMinterface)msound.sound_interface).num;
+        }
+
+        static void compute_tables()
+        {
+            /* nibble to bit map */
+            int[][] nbl2bit =
+	{
+		new int[]{ 1, 0, 0, 0}, new int[]{ 1, 0, 0, 1}, new int[]{ 1, 0, 1, 0}, new int[]{ 1, 0, 1, 1},
+		new int[]{ 1, 1, 0, 0}, new int[]{ 1, 1, 0, 1}, new int[]{ 1, 1, 1, 0}, new int[]{ 1, 1, 1, 1},
+		new int[]{-1, 0, 0, 0}, new int[]{-1, 0, 0, 1}, new int[]{-1, 0, 1, 0}, new int[]{-1, 0, 1, 1},
+		new int[]{-1, 1, 0, 0}, new int[]{-1, 1, 0, 1}, new int[]{-1, 1, 1, 0}, new int[]{-1, 1, 1, 1}
+	};
+
+            /* loop over all possible steps */
+            for (int step = 0; step <= 48; step++)
+            {
+                /* compute the step value */
+                int stepval = (int)Math.Floor(16.0 * Math.Pow(11.0 / 10.0, (double)step));
+
+                /* loop over all nibbles and compute the difference */
+                for (int nib = 0; nib < 16; nib++)
+                {
+                    diff_lookup[step * 16 + nib] = nbl2bit[nib][0] *
+                        (stepval * nbl2bit[nib][1] +
+                         stepval / 2 * nbl2bit[nib][2] +
+                         stepval / 4 * nbl2bit[nib][3] +
+                         stepval / 8);
+                }
+            }
+
+            /* generate the volume table (currently just a guess) */
+            for (int step = 0; step < 16; step++)
+            {
+                double _out = 256.0;
+                int vol = step;
+
+                /* assume 2dB per step (most likely wrong!) */
+                while (vol-- > 0)
+                    _out /= 1.258925412;	/* = 10 ^ (2/20) = 2dB */
+                volume_table[step] = (uint)_out;
+            }
+        }
+        public override int start(Mame.MachineSound msound)
+        {
+            ADPCMinterface intf = (ADPCMinterface)msound.sound_interface;
+            string stream_name;
+
+            /* reset the ADPCM system */
+            num_voices = (byte)intf.num;
+            compute_tables();
+            sample_list = null;
+
+            /* generate the sample table, if one is needed */
+            if (intf.init != null)
+            {
+                /* allocate memory for it */
+                sample_list = new ADPCMsample[257];
+                if (sample_list == null)
+                    return 1;
+                for (int i = 0; i < 257; i++)
+                    sample_list[i] = new ADPCMsample();
+
+                /* callback to initialize */
+                intf.init(intf, sample_list, 256);
+            }
+
+            /* initialize the voices */
+            //memset(adpcm, 0, sizeof(adpcm));
+            for (int i = 0; i < num_voices; i++)
+            {
+                /* generate the name and create the stream */
+                stream_name = Mame.sprintf("%s #%d", Mame.sound_name(msound), i);
+                adpcm[i].stream = Mame.stream_init(stream_name, intf.mixing_level[i], Mame.Machine.sample_rate, i, okim6295.adpcm_update);
+                if (adpcm[i].stream == -1)
+                    return 1;
+
+                /* initialize the rest of the structure */
+                adpcm[i].region_base = Mame.memory_region(intf.region);
+                adpcm[i].volume = 255;
+                adpcm[i].signal = unchecked((uint)-2);
+                if (Mame.Machine.sample_rate != 0)
+                    adpcm[i].source_step = (uint)((double)intf.frequency * (double)FRAC_ONE / (double)Mame.Machine.sample_rate);
+            }
+
+            /* success */
+            return 0;
+        }
+
+        public override void stop()
+        {
+            throw new NotImplementedException();
+        }
+        public override void reset()
+        {
+            //nothing
+        }
+        public override void update()
+        {
+            //nothing
+        }
+
+        public static void ADPCM_play(int num, int offset, int length)
+        {
+            ADPCMVoice voice = adpcm[num];
+
+            /* bail if we're not playing anything */
+            if (Mame.Machine.sample_rate == 0)
+                return;
+
+            /* range check the numbers */
+            if (num >= num_voices)
+            {
+                Mame.printf("error: ADPCM_trigger() called with channel = %d, but only %d channels allocated\n", num, num_voices);
+                return;
+            }
+
+            /* update the ADPCM voice */
+            Mame.stream_update(voice.stream, 0);
+
+            /* set up the voice to play this sample */
+            voice.playing = true;
+            voice._base = new _BytePtr(voice.region_base[offset]);
+            voice.sample = 0;
+            voice.count = (uint)length;
+
+            /* also reset the ADPCM parameters */
+            voice.signal = unchecked((uint)-2);
+            voice.step = 0;
+        }
+        public static int ADPCM_playing(int num)
+        {
+            ADPCMVoice voice = adpcm[num];
+
+            /* bail if we're not playing anything */
+            if (Mame.Machine.sample_rate == 0)
+                return 0;
+
+            /* range check the numbers */
+            if (num >= num_voices)
+            {
+                Mame.printf("error: ADPCM_playing() called with channel = %d, but only %d channels allocated\n", num, num_voices);
+                return 0;
+            }
+
+            /* update the ADPCM voice */
+            Mame.stream_update(voice.stream, 0);
+            return voice.playing ? 1 : 0;
+        }
+    }
     class okim6295 : Mame.snd_interface
     {
         public okim6295()
@@ -218,7 +423,7 @@ namespace xnamame036.mame
                 volume_table[step] = (uint)_out;
             }
         }
-        static void adpcm_update(int num, _ShortPtr buffer, int length)
+        public static void adpcm_update(int num, _ShortPtr buffer, int length)
         {
             ADPCMVoice voice = _adpcm[num];
             _ShortPtr sample_data = new _ShortPtr(MAX_SAMPLE_CHUNK * 2), curr_data = new _ShortPtr(sample_data);

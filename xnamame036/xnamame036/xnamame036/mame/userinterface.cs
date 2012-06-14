@@ -417,12 +417,14 @@ namespace xnamame036.mame
             while (i < MAX_CPU && i < Machine.drv.cpu.Count && Machine.drv.cpu[i].cpu_type != 0)
             {
                 if (Machine.drv.cpu[i].cpu_clock >= 1000000)
-                    buf += sprintf("%s %d.%06d MHz",
+                    buf += //sprintf("%s %d.%06d MHz",
+                        string.Format("{0} {1}.{2:d06} Mhz",
                             cputype_name(Machine.drv.cpu[i].cpu_type),
                             Machine.drv.cpu[i].cpu_clock / 1000000,
                             Machine.drv.cpu[i].cpu_clock % 1000000);
                 else
-                    buf += sprintf("%s %d.%03d kHz",
+                    buf += //sprintf("%s %d.%03d kHz",
+                            string.Format("{0} {1}.{2:d03d} kHz",
                             cputype_name(Machine.drv.cpu[i].cpu_type),
                             Machine.drv.cpu[i].cpu_clock / 1000,
                             Machine.drv.cpu[i].cpu_clock % 1000);
@@ -451,11 +453,17 @@ namespace xnamame036.mame
                 //if (sound_clock(&Machine.drv.sound[i]))
                 {
                     if (sound_clock(Machine.drv.sound[i]) >= 1000000)
-                        buf += sprintf(" %d.%06d MHz",
+                    {
+                        buf += string.Format(" {0}.{1:d06} Mhz",
                                 sound_clock(Machine.drv.sound[i]) / 1000000,
                                 sound_clock(Machine.drv.sound[i]) % 1000000);
+                    }
+                    //buf += sprintf(" %d.%07d MHz",
+                    //sound_clock(Machine.drv.sound[i]) / 1000000,
+                    //sound_clock(Machine.drv.sound[i]) % 1000000);
                     else
-                        buf += sprintf(" %d.%03d kHz",
+                        buf += string.Format(" {0}.{1:d03} kHz",
+                            //sprintf(" %d.%03d kHz",
                                 sound_clock(Machine.drv.sound[i]) / 1000,
                                 sound_clock(Machine.drv.sound[i]) % 1000);
                 }
@@ -2291,8 +2299,8 @@ namespace xnamame036.mame
                             if (palette_used_colors != null)
                             {
                                 memset(palette_used_colors, PALETTE_COLOR_TRANSPARENT, (int)Machine.drv.total_colors);
-                                table_offs = (int)(Machine.gfx[bank].colortable.offset - Machine.remapped_colortable.offset
-                                        + Machine.gfx[bank].color_granularity * color);
+                                //table_offs = (int)(Machine.gfx[bank].colortable.offset - Machine.remapped_colortable.offset+ Machine.gfx[bank].color_granularity * color);
+                                table_offs = (int)(Machine.gfx[bank].colortable.offset  + Machine.gfx[bank].color_granularity * color);
                                 for (i = 0; i < Machine.gfx[bank].color_granularity; i++)
                                     palette_used_colors[Machine.game_colortable[table_offs + i]] = PALETTE_COLOR_USED;
                                 palette_recalc();	/* do it twice in case of previous overflow */

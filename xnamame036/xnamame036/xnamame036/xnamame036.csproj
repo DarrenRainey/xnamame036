@@ -159,6 +159,7 @@
     <Compile Include="mame\drivers\driver_asteroid.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_baraduke.cs" />
     <Compile Include="mame\drivers\driver_bombjack.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -171,6 +172,7 @@
     <Compile Include="mame\drivers\driver_citycon.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_ddragon.cs" />
     <Compile Include="mame\drivers\driver_dec8.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -247,6 +249,7 @@
     <Compile Include="mame\drivers\driver_raiden.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_retofinv.cs" />
     <Compile Include="mame\drivers\driver_rocnrope.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -259,6 +262,7 @@
     <Compile Include="mame\drivers\driver_tp84.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_turbo.cs" />
     <Compile Include="mame\drivers\driver_williams.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -269,9 +273,11 @@
     <Compile Include="mame\drivers\driver_zaxxon.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\gng.cs" />
     <Compile Include="mame\drivers\pleiads.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\machine\8255ppi.cs" />
     <Compile Include="mame\machine\atari_vg.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -24,6 +24,11 @@ namespace xnamame036.mame
     }
     public class MSM5205 : Mame.snd_interface
     {
+        public MSM5205()
+        {
+            this.sound_num = Mame.SOUND_MSM5205;
+            this.name = "MSM5205";
+        }
         public const byte MSM5205_S96_3B = 0;     /* prsicaler 1/96(4KHz) , data 3bit */
         public const byte MSM5205_S48_3B = 1;/* prsicaler 1/48(8KHz) , data 3bit */
         public const byte MSM5205_S64_3B = 2;/* prsicaler 1/64(6KHz) , data 3bit */

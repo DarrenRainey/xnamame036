@@ -113,7 +113,15 @@ namespace xnamame036.mame
 
         public static void sample_set_freq(int channel, int freq)
         {
-            throw new Exception();
+            if (Machine.sample_rate == 0) return;
+            if (Machine.samples == null) return;
+            if (channel >= numchannels)
+            {
+                printf("error: sample_adjust() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
+                return;
+            }
+
+            mixer_set_sample_frequency(channel + firstchannel, freq);
         }
         public static void sample_set_volume(int channel, int volume)
         {
