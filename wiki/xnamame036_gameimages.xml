@@ -17,6 +17,8 @@
          'Galaga<br>1981 Namco',
          'Dig Dug (set 1)<br>1982 Namco',
          'Donkey Kong (US)<br>1981 Nintendo of America',
+         'Dkonkey Kong Junior (US)<br>1982 Nintendo of America',
+         'Donkey Kong 3(US)<br>1983 Nintendo of America',
          'Mario Bros. (US)<br>1983 Nintendo of America',
          'Bomb Jack (set 1)<br>1984 Tehkan',
          'Amidar<br>1981 Konami',
@@ -29,9 +31,34 @@
          'Boot Hill<br>1977 Midway',
          'Arkanoid (World)<br>1986 Taito Corporation Japan',
          'Frogger<br>1981 Konami',
-         'Gun:Smoke (World)1985 Capcom',
+         'Gun.Smoke (World)1985 Capcom',
          'Qix (set 1)<br>1981 Taito America Corporation',
-         'Moon Patrl (Williams)<br>1982 Namco'];
+         'Moon Patrl (Williams)<br>1982 Namco',
+         'Pinball Action (set 1)<br>1985 Tehkan',
+         'City Connection (set 1)<br>1985 Jaleco',
+         'Jackal (World)<br>1986 Konami',
+         'Speed Ball<br>1987 Tecfri',
+         'Gyruss (Konami)<br>1983 Konami',
+         "Roc'n Rope<br>1983 Konami',
+         'Galaxian (Namco)<br>1979 Namco',
+         'Lady Bug<br>1981 Universal',
+         'Lode Runner (set 1)<br>1984 Irem (licensed from Broderbund)',
+         'Lode Runner II - The Bungeling Strikes Back<br>1984 Irem (licensed from Broderbund)',
+         'Lode Runner  III - Majin No Fukkatsu<br>1985 Irem (licensed from Broderbund)',
+         'Lode Runner IV - Teikoku Karano Dasshutsu<br>1986 Irem (licensed from Broderbund)',
+'Galaga 3 (set 1)<br>1984 Namco',
+'Gaplus (set 1)<br>1984 Namco',
+'Cobra-Command (World revision 5)<br>1988 Data Ease Corporation',
+'Double Dragon (bootleg)<br>1987 bootleg',
+'Dougle Dragon II - The Revenge<br>1988 Tecnos',
+'Vigilante (World)<br>1988 Irem',
+"Ghosts'n Goblins (World)<br>1985 Capcom',
+'Diamond Run<br>1989 Capcom'
+
+
+
+
+];
          
          var menus = ['pacman', 'invaders', '1942', '1943',
                   'zaxxon',
@@ -39,6 +66,8 @@
          'galaga',
          'digdug',
          'dkong',
+         'dkongjr',
+         'dkong3',
          'mario',
          'bombjack',
          'amidar',
@@ -53,7 +82,27 @@
          'frogger',
          'gunsmoke',
          'qix',
-         'mpatrol'];
+         'mpatrol',
+         'pbaction',
+         'rocnrope',
+         'galaxian',
+         'ladybug',
+         'ldrun',
+         'ldrun2',
+         'ldrun3',
+         'ldrun4',
+         'galaga3',
+         'gaplus',
+         'cobracom',
+         'ddragonb',
+         'ddragon2',
+         'vigilant',
+         'pang',
+         'spang',
+         'gng',
+         'diamond'
+
+];
 
          var rows = [];
          $.each(menus, function (i, menu) {
