@@ -122,11 +122,11 @@
          var t = '<table>' + rows.join('') + '</table>';
          $('<table></table>').append(rows.join('')).appendTo('#menuOrder'); 
          $("img[id^='xmi_']").each(function () {
-             $('#'+this.id).width(200);
+             $(this).width(200);
              $('#' + this.id).mouseover(function () {
                  $(this).css("cursor", "pointer");
              });
-             $('#'+this.id).toggle(function ()
+             $(this).toggle(function ()
              { $(this).animate({ width: "500px" }, 'slow'); },
           function () {
               $(this).animate({ width: "200px" }, 'slow');
