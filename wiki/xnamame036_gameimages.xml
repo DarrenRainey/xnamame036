@@ -17,7 +17,7 @@
          'Galaga<br>1981 Namco',
          'Dig Dug (set 1)<br>1982 Namco',
          'Donkey Kong (US)<br>1981 Nintendo of America',
-         'Dkonkey Kong Junior (US)<br>1982 Nintendo of America',
+         'Donkey Kong Junior (US)<br>1982 Nintendo of America',
          'Donkey Kong 3(US)<br>1983 Nintendo of America',
          'Mario Bros. (US)<br>1983 Nintendo of America',
          'Bomb Jack (set 1)<br>1984 Tehkan',
@@ -33,7 +33,7 @@
          'Frogger<br>1981 Konami',
          'Gun.Smoke (World)1985 Capcom',
          'Qix (set 1)<br>1981 Taito America Corporation',
-         'Moon Patrl (Williams)<br>1982 Namco',
+         'Moon Patrol (Williams)<br>1982 Namco',
          'Pinball Action (set 1)<br>1985 Tehkan',
          'City Connection (set 1)<br>1985 Jaleco',
          'Jackal (World)<br>1986 Konami',
@@ -52,6 +52,8 @@
 'Double Dragon (bootleg)<br>1987 bootleg',
 'Dougle Dragon II - The Revenge<br>1988 Tecnos',
 'Vigilante (World)<br>1988 Irem',
+'Pang (World)<br>1989 Mitchell',
+'Super Pang (World)<br>1990 Mitchell',
 "Ghosts'n Goblins (World)<br>1985 Capcom",
 'Diamond Run<br>1989 Capcom'
 
@@ -84,6 +86,10 @@
          'qix',
          'mpatrol',
          'pbaction',
+         'citycon',
+         'jackal',
+         'speedbal',
+'gyruss'
          'rocnrope',
          'galaxian',
          'ladybug',
