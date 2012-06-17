@@ -25,6 +25,8 @@ There is one thing that will/may reduce the runtime memory footprint that I'd li
   * galaga
   * digdug
   * dkong
+  * dkongjr
+  * dkong3
   * mario
   * bombjack
   * amidar
@@ -48,6 +50,22 @@ There is one thing that will/may reduce the runtime memory footprint that I'd li
   * rocnrope
   * galaxian
   * ladybug
+  * ldrun
+  * ldrun2
+  * ldrun3
+  * ldrun4
+  * galaga3
+  * gaplus
+  * cobracom
+  * ddragonb
+  * ddragon2
+  * retofinv
+  * vigilant
+  * pang
+  * spang
+  * gng
+  * diamond
+
 
 And even some vector games
   * zektor
