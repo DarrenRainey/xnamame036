@@ -62,7 +62,46 @@ namespace xnamame036.mame
             mixer_stop_sample(channel + firstchannel);
         }
         static int firstchannel, numchannels;
-        public class Samples : Mame.snd_interface
+       
+
+        public static void sample_set_freq(int channel, int freq)
+        {
+            if (Machine.sample_rate == 0) return;
+            if (Machine.samples == null) return;
+            if (channel >= numchannels)
+            {
+                printf("error: sample_adjust() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
+                return;
+            }
+
+            mixer_set_sample_frequency(channel + firstchannel, freq);
+        }
+        public static void sample_set_volume(int channel, int volume)
+        {
+
+            if (Machine.sample_rate == 0) return;
+            if (Machine.samples == null) return;
+            if (channel >= numchannels)
+            {
+                printf("error: sample_adjust() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
+                return;
+            }
+
+            mixer_set_volume(channel + firstchannel, volume * 100 / 255);
+        }
+        public static bool sample_playing(int channel)
+        {
+            if (Machine.sample_rate == 0) return false;
+            if (channel >= numchannels)
+            {
+                printf("error: sample_playing() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
+                return false;
+            }
+
+            return mixer_is_sample_playing(channel + firstchannel);
+        }
+
+    public class Samples : Mame.snd_interface
         {
             public Samples()
             {
@@ -109,43 +148,5 @@ namespace xnamame036.mame
                 }
                 return 0;
             }
-        }
-
-        public static void sample_set_freq(int channel, int freq)
-        {
-            if (Machine.sample_rate == 0) return;
-            if (Machine.samples == null) return;
-            if (channel >= numchannels)
-            {
-                printf("error: sample_adjust() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
-                return;
-            }
-
-            mixer_set_sample_frequency(channel + firstchannel, freq);
-        }
-        public static void sample_set_volume(int channel, int volume)
-        {
-
-            if (Machine.sample_rate == 0) return;
-            if (Machine.samples == null) return;
-            if (channel >= numchannels)
-            {
-                printf("error: sample_adjust() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
-                return;
-            }
-
-            mixer_set_volume(channel + firstchannel, volume * 100 / 255);
-        }
-        public static bool sample_playing(int channel)
-        {
-            if (Machine.sample_rate == 0) return false;
-            if (channel >= numchannels)
-            {
-                printf("error: sample_playing() called with channel = %d, but only %d channels allocated\n", channel, numchannels);
-                return false;
-            }
-
-            return mixer_is_sample_playing(channel + firstchannel);
-        }
-    }
+        } }
 }

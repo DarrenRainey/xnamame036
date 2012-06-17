@@ -429,6 +429,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
 
         static void drawgfx_core8(osd_bitmap dest, GfxElement gfx, uint code, uint color, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color)
         {
+            FuncDict["drawgfx_core8"] = "drawgfx_core8";
             /* check bounds */
             int ox = sx;
             int oy = sy;
@@ -516,6 +517,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_opaque8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata)
         {
+            FuncDict["blockmove_opaque8"] = "blockmove_opaque8";
             int end;
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
@@ -547,6 +549,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_opaque_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata)
         {
+            FuncDict["blockmove_opaque_flipx8"] = "blockmove_opaque_flipx8";
             int end;
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1;
@@ -579,19 +582,20 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transpen8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen)
         {
+            FuncDict["blockmove_transpen8"] = "blockmove_transpen8";
             int end;
             int trans4;
             _IntPtr sd4;
+            int si = 0;
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             trans4 = transpen * 0x01010101;
             while (srcheight != 0)
             {
                 end = (int)(dstdata.offset + srcwidth);
-                while ((srcdata.offset & 3) != 0 && dstdata.offset < end) /* longword align */
+                while (((long)si & 3) != 0 && dstdata.offset < end) /* longword align */
                 {
-                    int col = srcdata[0];
-                    srcdata.offset++;
+                    int col = srcdata[si++];
                     if (col != transpen)
                         dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
@@ -616,15 +620,15 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
                     dstdata.offset += 4;
                 }
                 srcdata = new _BytePtr(sd4);
+                si = 0;
                 while (dstdata.offset < end)
                 {
-                    int col = srcdata[0];
-                    srcdata.offset++;
+                    int col = srcdata[si++];
                     if (col != transpen)
                         dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
                 }
-                srcdata.offset += srcmodulo;
+                si+= srcmodulo;
                 dstdata.offset += dstmodulo;
                 srcheight--;
             }
@@ -632,6 +636,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
 
         static void blockmove_transpen_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transpen)
         {
+            FuncDict["blockmove_transpen_flipx8"] = "blockmove_transpen_flipx8";
             int end;
             _IntPtr sd4 = new _IntPtr(srcdata);
             srcmodulo += srcwidth;
@@ -686,7 +691,54 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transmask8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
-            throw new Exception();
+           int end;
+	_IntPtr sd4;
+
+	srcmodulo -= srcwidth;
+	dstmodulo -= srcwidth;
+
+	while (srcheight!=0)
+	{
+		end = dstdata.offset + srcwidth;
+		while (((long)srcdata.offset & 3)!=0 && dstdata.offset < end)	/* longword align */
+		{
+			int col;
+
+			col = srcdata[0];srcdata.offset++;
+			if ( ((1<<col)&transmask) == 0) dstdata[0] = (byte)paldata[col];
+			dstdata.offset++;
+		}
+		sd4 = new _IntPtr(srcdata);
+		while (dstdata.offset <= end - 4)
+		{
+			int col;
+			uint col4;
+
+			col4 = sd4.read32(0);sd4.offset+=4;
+			col = (int)((col4 >>  0) & 0xff);
+			if ( ((1<<col)&transmask) == 0) dstdata[BL0] = (byte)paldata[col];
+			col = (int)((col4 >>  8) & 0xff);
+			if ( ((1<<col)&transmask) == 0) dstdata[BL1] =(byte) paldata[col];
+			col =(int)( (col4 >> 16) & 0xff);
+			if ( ((1<<col)&transmask) == 0) dstdata[BL2] = (byte)paldata[col];
+			col = (int)((col4 >> 24) & 0xff);
+			if ( ((1<<col)&transmask) == 0) dstdata[BL3] = (byte)paldata[col];
+			dstdata.offset += 4;
+		}
+		srcdata = new _BytePtr(sd4);
+		while (dstdata.offset < end)
+		{
+			int col;
+
+			col = srcdata[0];srcdata.offset++;
+			if ( ((1<<col)&transmask) == 0) dstdata[0] = (byte)paldata[col];
+			dstdata.offset++;
+		}
+
+		srcdata.offset += srcmodulo;
+		dstdata.offset += dstmodulo;
+		srcheight--;
+	}
         }
         static void blockmove_transmask_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
@@ -694,6 +746,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transcolor8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
+            FuncDict["blockmove_transcolor8"] = "blockmove_transcolor8";
             int end;
             //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
             UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ) / 2);
@@ -716,6 +769,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transcolor_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
+            FuncDict["blockmove_transcolor_flipx8"] = "blockmove_transcolor_flipx8";
             int end;
             //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
             UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ));
@@ -738,6 +792,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transthrough8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
+            FuncDict["blockmove_transthrough8"] = "blockmove_transthrough8";
             int end;
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
@@ -758,6 +813,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transthrough_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transcolor)
         {
+            FuncDict["blockmove_transthrough_flipx8"] = "blockmove_transthrough_flipx8";
             int end;
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth;
@@ -909,6 +965,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
 
         public static void copybitmap(osd_bitmap dest, osd_bitmap src, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color)
         {
+            FuncDict["copybitmap"] = "copybitmap";
             rectangle myclip = new rectangle();
 
             /* if necessary, remap the transparent color */
@@ -976,6 +1033,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void copybitmap_core8(osd_bitmap dest, osd_bitmap src, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color)
         {
+            FuncDict["copybitmap_core8"] = "copybitmap_core8";
             int ox; int oy; int ex; int ey; /* check bounds */
             ox = sx;
             oy = sy;
@@ -1036,6 +1094,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_opaque_noremap8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo)
         {
+            FuncDict["blockmove_opaque_noremap8"]="blockmove_opaque_noremap8";
             while (srcheight != 0)
             {
                 Buffer.BlockCopy(srcdata.buffer, (int)srcdata.offset, dstdata.buffer, (int)dstdata.offset, srcwidth);
@@ -1047,6 +1106,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_opaque_noremap_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo)
         {
+            FuncDict["blockmove_opaque_noremap_flipx8"] = "blockmove_opaque_noremap_flipx8";
             uint end;
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
@@ -1098,6 +1158,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transpen_noremap8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, int transpen)
         {
+            FuncDict["blockmove_transpen_noremap8"] = "blockmove_transpen_noremap8";
             int end;
             int trans4;
             _IntPtr sd4;
@@ -1174,6 +1235,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         public static void copyscrollbitmap(osd_bitmap dest, osd_bitmap src, int rows, int[] rowscroll, int cols, int[] colscroll, rectangle clip, int transparency, int transparent_color)
         {
+            FuncDict["copyscrollbitmap"] = "copyscrollbitmap";
             int srcwidth, srcheight, destwidth, destheight;
 
             if (rows == 0 && cols == 0)
@@ -1387,6 +1449,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         public static void fillbitmap(osd_bitmap dest, int pen, rectangle clip)
         {
+            FuncDict["fillbitmap"] = "fillbitmap";
             rectangle myclip = new rectangle();
 
             if ((Machine.orientation & ORIENTATION_SWAP_XY) != 0)
@@ -1478,10 +1541,9 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         {
             throw new Exception();
         }
-        public static void drawgfxzoom(osd_bitmap dest_bmp, GfxElement gfx,
-        uint code, uint color, bool flipx, bool flipy, int sx, int sy,
-         rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
+        public static void drawgfxzoom(osd_bitmap dest_bmp, GfxElement gfx,uint code, uint color, bool flipx, bool flipy, int sx, int sy,rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
         {
+            FuncDict["drawgfxzoom"] = "drawgfxzoom";
             rectangle myclip = new rectangle();
 
 
@@ -1818,6 +1880,5 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
                 }
             }
         }
-
     }
 }

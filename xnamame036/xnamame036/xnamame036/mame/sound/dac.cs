@@ -52,17 +52,17 @@ namespace xnamame036.mame
                 SignedVolTable[i] = i * 0x101 - 0x8000;	/* range -32768..32767 */
             }
         }
-        public static void DAC_signed_data_16_w(int num,int data)
-{
-	int _out = data - 0x8000;	/* range -32768..32767 */
+        public static void DAC_signed_data_16_w(int num, int data)
+        {
+            int _out = data - 0x8000;	/* range -32768..32767 */
 
-	if (output[num] != _out)
-	{
-		/* update the output buffer before changing the registers */
-		Mame.stream_update(channel[num],0);
-		output[num] = _out;
-	}
-}
+            if (output[num] != _out)
+            {
+                /* update the output buffer before changing the registers */
+                Mame.stream_update(channel[num], 0);
+                output[num] = _out;
+            }
+        }
 
         public override int start(Mame.MachineSound msound)
         {
@@ -91,7 +91,7 @@ namespace xnamame036.mame
         }
         public override void update()
         {
-           //nonehrow new NotImplementedException();
+            //nonehrow new NotImplementedException();
         }
         const byte MAX_DAC = 4;
         static int[] channel = new int[MAX_DAC];
@@ -111,6 +111,18 @@ namespace xnamame036.mame
                 output[num] = _out;
             }
         }
+        public static void DAC_signed_data_w(int num, int data)
+        {
+            int _out = SignedVolTable[data];
+
+            if (output[num] != _out)
+            {
+                /* update the output buffer before changing the registers */
+                Mame.stream_update(channel[num], 0);
+                output[num] = _out;
+            }
+        }
+
 
     }
 }

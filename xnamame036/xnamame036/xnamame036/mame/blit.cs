@@ -29,20 +29,24 @@ namespace xnamame036.mame
             while (true)
             {
                 blitHandle.WaitOne();
-                var Width = Machine.drv.visible_area.max_x - Machine.drv.visible_area.min_x;
-                var Height = Machine.drv.visible_area.max_y - Machine.drv.visible_area.min_y;
-                if (Width != scrbitmap.width || Height != scrbitmap.height)
+#if false
+                var W = Machine.drv.visible_area.max_x - Machine.drv.visible_area.min_x;
+                var H = Machine.drv.visible_area.max_y - Machine.drv.visible_area.min_y;
+
+                for (int i = Machine.drv.visible_area.min_y; i < Machine.drv.visible_area.max_y; i++)
                 {
-                    int a = 0;
+                    Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset + Machine.drv.visible_area.min_x,
+                                     back_buffer, i * scrbitmap.width, W);
                 }
+
+#else
+
+
                 for (int i = 0; i < scrbitmap.height; i++)
-                //    for (int i = Machine.drv.visible_area.min_y; i < Machine.drv.visible_area.max_y; i++)
-                  //  {
-                    //    Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset + Machine.drv.visible_area.min_x, back_buffer, i * scrbitmap.width, Width);
-                    //}
                 {
                     Buffer.BlockCopy(scrbitmap.line[i].buffer, scrbitmap.line[i].offset, back_buffer, i * scrbitmap.width, scrbitmap.width);
                 }
+#endif
                 //Buffer.BlockCopy(scrbitmap.line[0].buffer, scrbitmap.line[0].offset, back_buffer, 0, scrbitmap.line[0].buffer.Length);
                 {
                     int sbi = scrbitmap.line[skiplines].offset + skipcolumns;

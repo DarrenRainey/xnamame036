@@ -469,29 +469,26 @@ new Mame.GfxLayout(
         }
         static void mark_sprites_palette()
         {
-            int offs, color, code, attr, i;
             int[] colmask = new int[16];
-            int pal_base;
 
+            int pal_base = Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start;
 
-            pal_base = Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start;
-
-            for (color = 0; color < 16; color++) colmask[color] = 0;
+            for (int color = 0; color < 16; color++) colmask[color] = 0;
 
             /* the last entry is not a sprite, we skip it otherwise spang shows a bubble */
             /* moving diagonally across the screen */
-            for (offs = 0x1000 - 0x40; offs >= 0; offs -= 0x20)
+            for (int offs = 0x1000 - 0x40; offs >= 0; offs -= 0x20)
             {
-                attr = driver_mitchell.pang_objram[offs + 1];
-                code = driver_mitchell.pang_objram[offs] + ((attr & 0xe0) << 3);
-                color = attr & 0x0f;
+                int attr = driver_mitchell.pang_objram[offs + 1];
+                int code = driver_mitchell.pang_objram[offs] + ((attr & 0xe0) << 3);
+                int color = attr & 0x0f;
 
                 colmask[color] |= (int)Mame.Machine.gfx[1].pen_usage[code];
             }
 
-            for (color = 0; color < 16; color++)
+            for (int color = 0; color < 16; color++)
             {
-                for (i = 0; i < 15; i++)
+                for (int i = 0; i < 15; i++)
                 {
                     if ((colmask[color] & (1 << i)) != 0)
                         Mame.palette_used_colors[pal_base + 16 * color + i] |= Mame.PALETTE_COLOR_VISIBLE;
@@ -539,7 +536,7 @@ new Mame.GfxLayout(
             nvram_size = 0;
             kabuki.pang_decode();
         }
-        Mame.InputPortTiny[] input_ports_pang()
+        public Mame.InputPortTiny[] input_ports_pang()
         {
             INPUT_PORTS_START("pang");
             PORT_START("DSW");
@@ -614,6 +611,53 @@ new Mame.GfxLayout(
             flags = Mame.ROT0;
             input_ports = input_ports_pang();
             rom = rom_pang();
+            drv.HasNVRAMhandler = true;
+        }
+    }
+    class driver_spang : driver_pang
+    {
+        public override void driver_init()
+        {
+            input_type = 3;
+            nvram_size = 0x80;
+            nvram = new _BytePtr(Mame.memory_region(Mame.REGION_CPU1), 0xe000);	/* NVRAM */
+            kabuki.spang_decode();
+        }
+        Mame.RomModule[] rom_spang()
+        {
+            ROM_START("spang");
+            ROM_REGION(2 * 0x50000, Mame.REGION_CPU1);	/* 320k for code + 320k for decrypted opcodes */
+            ROM_LOAD("spe_06.rom", 0x00000, 0x08000, 0x1af106fb);
+            ROM_LOAD("spe_07.rom", 0x10000, 0x20000, 0x208b5f54);
+            ROM_LOAD("spe_08.rom", 0x30000, 0x20000, 0x2bc03ade);
+
+            ROM_REGION(0x100000, Mame.REGION_GFX1 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("spe_02.rom", 0x000000, 0x20000, 0x63c9dfd2);	/* chars */
+            ROM_LOAD("03.f2", 0x020000, 0x20000, 0x3ae28bc1);
+            /* 40000-7ffff empty */
+            ROM_LOAD("spe_04.rom", 0x080000, 0x20000, 0x9d7b225b);
+            ROM_LOAD("05.g2", 0x0a0000, 0x20000, 0x4a060884);
+            /* c0000-fffff empty */
+
+            ROM_REGION(0x040000, Mame.REGION_GFX2 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("spe_10.rom", 0x000000, 0x20000, 0xeedd0ade);	/* sprites */
+            ROM_LOAD("spe_09.rom", 0x020000, 0x20000, 0x04b41b75);
+
+            ROM_REGION(0x80000, Mame.REGION_SOUND1);	/* OKIM */
+            ROM_LOAD("spe_01.rom", 0x00000, 0x20000, 0x2d19c133);
+            return ROM_END;
+
+        }
+        public driver_spang()
+        {
+            drv = new machine_driver_pang();
+            year = "1990";
+            name = "spang";
+            description = "Super Pang (World)";
+            manufacturer = "Mitchel";
+            flags = Mame.ROT0;
+            input_ports = input_ports_pang();
+            rom = rom_spang();
             drv.HasNVRAMhandler = true;
         }
     }

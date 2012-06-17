@@ -334,19 +334,19 @@ namespace xnamame036.mame
 };
         static int mrh_error(int offset)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %04x: warning - read %02x from unmapped memory address %04x\n",cpu_getactivecpu(),cpu_get_pc(),cpu_bankbase[0][offset],offset);
+            //Mame.printf("CPU #%d PC %04x: warning - read %02x from unmapped memory address %04x\n",cpu_getactivecpu(),cpu_get_pc(),cpu_bankbase[0][offset],offset);
             return cpu_bankbase[0][offset];
         }
 
         static int mrh_error_sparse(int offset)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: warning - read unmapped memory address %08x\n",cpu_getactivecpu(),cpu_get_pc(),offset);
+            //Mame.printf("CPU #%d PC %08x: warning - read unmapped memory address %08x\n",cpu_getactivecpu(),cpu_get_pc(),offset);
             return 0;
         }
 
         static int mrh_error_sparse_bit(int offset)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: warning - read unmapped memory bit addr %08x (byte addr %08x)\n",cpu_getactivecpu(),cpu_get_pc(),offset<<3, offset);
+            //Mame.printf("CPU #%d PC %08x: warning - read unmapped memory bit addr %08x (byte addr %08x)\n", cpu_getactivecpu(), cpu_get_pc(), offset << 3, offset);
             return 0;
         }
 
@@ -381,16 +381,16 @@ namespace xnamame036.mame
 
         static void mwh_error(int offset, int data)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %04x: warning - write %02x to unmapped memory address %04x\n",cpu_getactivecpu(),cpu_get_pc(),data,offset);
+            //Mame.printf("CPU #%d PC %04x: warning - write %02x to unmapped memory address %04x\n", cpu_getactivecpu(), cpu_get_pc(), data, offset);
             cpu_bankbase[0][offset] = (byte)data;
         }
         static void mwh_error_sparse(int offset, int data)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: warning - write %02x to unmapped memory address %08x\n",cpu_getactivecpu(),cpu_get_pc(),data,offset);
+            //Mame.printf("CPU #%d PC %08x: warning - write %02x to unmapped memory address %08x\n", cpu_getactivecpu(), cpu_get_pc(), data, offset);
         }
         static void mwh_error_sparse_bit(int offset, int data)
         {
-            //if (errorlog) fprintf(errorlog,"CPU #%d PC %08x: warning - write %02x to unmapped memory bit addr %08x\n",cpu_getactivecpu(),cpu_get_pc(),data,offset<<3);
+            //Mame.printf("CPU #%d PC %08x: warning - write %02x to unmapped memory bit addr %08x\n", cpu_getactivecpu(), cpu_get_pc(), data, offset << 3);
         }
         static void mwh_rom(int offset, int data)
         {

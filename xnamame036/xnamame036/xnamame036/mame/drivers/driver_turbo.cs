@@ -13,12 +13,17 @@ namespace xnamame036.mame.drivers
         static byte[] turbo_segment_data = new byte[32];
         static byte turbo_speed;
 
+        /* local data */
         static byte segment_address, segment_increment;
         static byte osel, bsel, accel;
 
+
+
+        /* external definitions */
         static _BytePtr turbo_sprite_position = new _BytePtr(1);
         static byte turbo_collision;
 
+        /* internal data */
         static _BytePtr sprite_gfxdata, sprite_priority;
         static _BytePtr road_gfxdata, road_palette, road_enable_collide;
         static _BytePtr back_gfxdata, back_palette;
@@ -26,6 +31,7 @@ namespace xnamame036.mame.drivers
         const int VIEW_WIDTH = 32 * 8;
         const int VIEW_HEIGHT = 28 * 8;
 
+        /* sprite tracking */
         struct sprite_params_data
         {
             public UIntSubArray _base;
@@ -36,6 +42,7 @@ namespace xnamame036.mame.drivers
         static sprite_params_data[] sprite_params = new sprite_params_data[16];
         static uint[] sprite_expanded_data;
 
+        /* orientation */
         static Mame.rectangle game_clip = new Mame.rectangle(0, VIEW_WIDTH - 1, 64, 64 + VIEW_HEIGHT - 1);
         static Mame.rectangle adjusted_clip;
         static int startx, starty, deltax, deltay;
@@ -44,6 +51,7 @@ namespace xnamame036.mame.drivers
         static ushort[] back_expanded_data;
         static ushort[] road_expanded_palette;
         static byte drew_frame;
+
 
 
         static Mame.GfxLayout numlayout =
@@ -85,6 +93,11 @@ namespace xnamame036.mame.drivers
 	new Mame.GfxDecodeInfo(Mame.REGION_GFX4, 0x0100, tachlayout,	512,   3 ),
 	new Mame.GfxDecodeInfo(Mame.REGION_GFX3, 0x0000, charlayout,	512,   3 ),
 };
+
+
+        /*********************************************************************
+         * Sound interfaces
+         *********************************************************************/
 
         static string[] sample_names =
 {
@@ -378,6 +391,7 @@ namespace xnamame036.mame.drivers
             }
             public override void nvram_handler(object file, int read_or_write)
             {
+                throw new NotImplementedException();
             }
             public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
@@ -674,8 +688,10 @@ namespace xnamame036.mame.drivers
 		sprite_params[6],sprite_params[14],
 		sprite_params[7], sprite_params[15]
 	};
+                int i;
+
                 /* loop over the offroad sprites */
-                for (int i = 0; i < 10; i++)
+                for (i = 0; i < 10; i++)
                 {
                     sprite_params_data data = param_list[i];
 

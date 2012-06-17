@@ -594,6 +594,7 @@ namespace xnamame036.mame
             offset += (uint)osd_fread(f, buf, 4);
             if (offset < 8)
                 return null;
+            
             filesize = (uint)BitConverter.ToInt32(buf, 0);
 
             /* read the RIFF file type and make sure it's a WAVE file */
@@ -677,9 +678,10 @@ namespace xnamame036.mame
                 /* convert 8-bit data to signed samples */
                 for (temp32 = 0; temp32 < length; temp32++)
                 {
-                    sbyte b = (sbyte)result.data[temp32];
-                    b ^= unchecked((sbyte)0x80);
-                    result.data[temp32] = (byte)b;
+                    //sbyte b = (sbyte)result.data[temp32];
+                    //b ^= unchecked((sbyte)0x80);
+                    //result.data[temp32] = (byte)b;
+                    result.data[temp32] ^= 0x80;
                 }
                     
             }

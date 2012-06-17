@@ -14,6 +14,8 @@ namespace xnamame036.mame
 
         public const string Off = "Off";
         public const string On = "On";
+        public const string Yes = "Yes";
+        public const string No = "No";
         public const string Unknown = "Unknown";
         public const string Coinage = "Coinage";   
         public const string Coin_A = "Coin A";

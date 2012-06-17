@@ -122,7 +122,7 @@ namespace xnamame036.mame
 
         static void IRQHandler(int n, int irq)
         {
-            if (intf.irqhandler[n] != null) intf.irqhandler[n](irq);
+            if (intf.irqhandler != null && intf.irqhandler[n] != null) intf.irqhandler[n](irq);
         }
         static void timer_callback_2151(int param)
         {
