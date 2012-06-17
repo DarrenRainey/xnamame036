@@ -9,7 +9,7 @@ namespace xnamame036.mame.drivers
     {
         static int flipscreen;
         public static int gfx_bank, palette_bank, grid_on;
-        static _BytePtr color_codes = new _BytePtr(1);
+        public static _BytePtr color_codes = new _BytePtr(1);
 
         public static Mame.MemoryReadAddress[] readmem =
 {
@@ -37,33 +37,7 @@ namespace xnamame036.mame.drivers
 	new Mame.MemoryReadAddress(-1 )	/* end of table */
 };
 
-        //static Mame.MemoryWriteAddress[] radarscp_writemem =
-        //{
-        //    new Mame.MemoryWriteAddress( 0x0000, 0x5fff, MWA_ROM ),
-        //    new Mame.MemoryWriteAddress( 0x6000, 0x68ff, MWA_RAM ),
-        //    new Mame.MemoryWriteAddress( 0x6900, 0x6a7f, MWA_RAM, &spriteram, &spriteram_size ),
-        //    new Mame.MemoryWriteAddress( 0x6a80, 0x6fff, MWA_RAM ),
-        //    new Mame.MemoryWriteAddress( 0x7000, 0x73ff, MWA_RAM ),    /* ???? */
-        //    new Mame.MemoryWriteAddress( 0x7400, 0x77ff, videoram_w, &videoram, &videoram_size ),
-        //    new Mame.MemoryWriteAddress( 0x7800, 0x7803, MWA_RAM ),	/* ???? */
-        //    new Mame.MemoryWriteAddress( 0x7808, 0x7808, MWA_RAM ),	/* ???? */
-        //    new Mame.MemoryWriteAddress( 0x7c00, 0x7c00, dkong_sh_tuneselect ),
-        //    new Mame.MemoryWriteAddress( 0x7c80, 0x7c80, radarscp_grid_color_w ),
-        //    new Mame.MemoryWriteAddress( 0x7d00, 0x7d02, dkong_sh1_w ),	/* walk/jump/boom sample trigger */
-        //    new Mame.MemoryWriteAddress( 0x7d03, 0x7d03, dkong_sh_sound3 ),
-        //    new Mame.MemoryWriteAddress( 0x7d04, 0x7d04, dkong_sh_sound4 ),
-        //    new Mame.MemoryWriteAddress( 0x7d05, 0x7d05, dkong_sh_sound5 ),
-        //    new Mame.MemoryWriteAddress( 0x7d80, 0x7d80, dkong_sh_w ),
-        //    new Mame.MemoryWriteAddress( 0x7d81, 0x7d81, radarscp_grid_enable_w ),
-        //    new Mame.MemoryWriteAddress( 0x7d82, 0x7d82, dkong_flipscreen_w ),
-        //    new Mame.MemoryWriteAddress( 0x7d83, 0x7d83, MWA_RAM ),
-        //    new Mame.MemoryWriteAddress( 0x7d84, 0x7d84, interrupt_enable_w ),
-        //    new Mame.MemoryWriteAddress( 0x7d85, 0x7d85, MWA_RAM ),
-        //    new Mame.MemoryWriteAddress( 0x7d86, 0x7d87, dkong_palettebank_w ),
-        //    new Mame.MemoryWriteAddress( -1 )	/* end of table */
-        //};
-
-        static Mame.MemoryWriteAddress[] dkong_writemem =
+           static Mame.MemoryWriteAddress[] dkong_writemem =
 {
 	new Mame.MemoryWriteAddress( 0x0000, 0x5fff, Mame.MWA_ROM ),
 	new Mame.MemoryWriteAddress( 0x6000, 0x68ff, Mame.MWA_RAM ),
@@ -256,9 +230,7 @@ new Mame.DACinterface(
         public static void dkong_sh_sound4(int offset, int data) { t[1] = ~data & 1; }
         public static void dkong_sh_sound5(int offset, int data) { t[0] = ~data & 1; }
         static void dkong_sh_tuneselect(int offset, int data) { Mame.soundlatch_w(offset, data ^ 0x0f); }
-
-
-
+        
         static void dkong_sh_putp2(int offset, int data)
         {
             /*   If P2.Bit7 . is apparently an external signal decay or other output control
@@ -731,7 +703,7 @@ new Mame.DACinterface(
 	new Mame.MemoryWriteAddress( 0x8000, 0x9fff, Mame.MWA_ROM ),	/* bootleg DKjr only */
 	new Mame.MemoryWriteAddress( -1 )	/* end of table */
 };
-        static Mame.GfxLayout dkongjr_charlayout =
+        public static Mame.GfxLayout dkongjr_charlayout =
 new Mame.GfxLayout(
     8, 8,	/* 8*8 characters */
     512,	/* 512 characters */
@@ -867,37 +839,192 @@ new Mame.Samplesinterface(
     }
     class driver_dkong3 : Mame.GameDriver
     {
+        static Mame.MemoryReadAddress[] dkong3_readmem =
+{
+	new Mame.MemoryReadAddress( 0x0000, 0x5fff, Mame.MRA_ROM ),	/* DK: 0000-3fff */
+	new Mame.MemoryReadAddress( 0x6000, 0x6fff, Mame.MRA_RAM ),	/* including sprites RAM */
+	new Mame.MemoryReadAddress( 0x7400, 0x77ff, Mame.MRA_RAM ),	/* video RAM */
+	new Mame.MemoryReadAddress( 0x7c00, 0x7c00, Mame.input_port_0_r ),	/* IN0 */
+	new Mame.MemoryReadAddress( 0x7c80, 0x7c80, Mame.input_port_1_r ),	/* IN1 */
+	new Mame.MemoryReadAddress( 0x7d00, 0x7d00, Mame.input_port_2_r ),	/* IN2/DSW2 */
+	new Mame.MemoryReadAddress( 0x7d80, 0x7d80, Mame.input_port_3_r ),	/* DSW1 */
+	new Mame.MemoryReadAddress( 0x8000, 0x9fff, Mame.MRA_ROM ),	/* DK3 and bootleg DKjr only */
+	new Mame.MemoryReadAddress( -1 )	/* end of table */
+};
+
+static Mame.MemoryWriteAddress[] dkong3_writemem =
+{
+	new Mame.MemoryWriteAddress( 0x0000, 0x5fff, Mame.MWA_ROM ),
+	new Mame.MemoryWriteAddress( 0x6000, 0x68ff, Mame.MWA_RAM ),
+	new Mame.MemoryWriteAddress( 0x6900, 0x6a7f, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size ),
+	new Mame.MemoryWriteAddress( 0x6a80, 0x6fff, Mame.MWA_RAM ),
+	new Mame.MemoryWriteAddress( 0x7400, 0x77ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size ),
+	new Mame.MemoryWriteAddress( 0x7c00, 0x7c00, Mame.soundlatch_w ),
+	new Mame.MemoryWriteAddress( 0x7c80, 0x7c80, Mame.soundlatch2_w ),
+	new Mame.MemoryWriteAddress( 0x7d00, 0x7d00, Mame.soundlatch3_w ),
+	new Mame.MemoryWriteAddress( 0x7d80, 0x7d80, dkong3_2a03_reset_w ),
+	new Mame.MemoryWriteAddress( 0x7e81, 0x7e81, dkong3_gfxbank_w ),
+	new Mame.MemoryWriteAddress( 0x7e82, 0x7e82, driver_dkong.dkong_flipscreen_w ),
+	new Mame.MemoryWriteAddress( 0x7e84, 0x7e84, Mame.interrupt_enable_w ),
+	new Mame.MemoryWriteAddress( 0x7e85, 0x7e85, Mame.MWA_NOP ),	/* ??? */
+	new Mame.MemoryWriteAddress( 0x7e86, 0x7e87, driver_dkong.dkong_palettebank_w ),
+	new Mame.MemoryWriteAddress( 0x8000, 0x9fff, Mame.MWA_ROM ),
+	new Mame.MemoryWriteAddress( -1 )	/* end of table */
+};
+
+static Mame.IOWritePort[] dkong3_writeport =
+{
+	new Mame.IOWritePort(0x00, 0x00, Mame.IOWP_NOP ),	/* ??? */
+	new Mame.IOWritePort(-1 )	/* end of table */
+};
+
+static Mame.MemoryReadAddress[] dkong3_sound1_readmem =
+{
+	new Mame.MemoryReadAddress( 0x0000, 0x01ff, Mame.MRA_RAM ),
+	new Mame.MemoryReadAddress( 0x4016, 0x4016, Mame.soundlatch_r ),
+	new Mame.MemoryReadAddress( 0x4017, 0x4017, Mame.soundlatch2_r ),
+	new Mame.MemoryReadAddress( 0x4000, 0x4017, nes_apu.NESPSG_0_r ),
+	new Mame.MemoryReadAddress( 0xe000, 0xffff, Mame.MRA_ROM ),
+	new Mame.MemoryReadAddress( -1 )	/* end of table */
+};
+
+static Mame.MemoryWriteAddress[] dkong3_sound1_writemem =
+{
+	new Mame.MemoryWriteAddress( 0x0000, 0x01ff, Mame.MWA_RAM ),
+	new Mame.MemoryWriteAddress( 0x4000, 0x4017, nes_apu.NESPSG_0_w ),
+	new Mame.MemoryWriteAddress( 0xe000, 0xffff, Mame.MWA_ROM ),
+	new Mame.MemoryWriteAddress( -1 )	/* end of table */
+};
+
+static Mame.MemoryReadAddress[] dkong3_sound2_readmem =
+{
+	new Mame.MemoryReadAddress(0x0000, 0x01ff, Mame.MRA_RAM ),
+	new Mame.MemoryReadAddress(0x4016, 0x4016, Mame.soundlatch3_r ),
+	new Mame.MemoryReadAddress(0x4000, 0x4017, nes_apu.NESPSG_1_r ),
+	new Mame.MemoryReadAddress(0xe000, 0xffff,  Mame.MRA_ROM ),
+	new Mame.MemoryReadAddress(-1 )	/* end of table */
+};
+
+static Mame.MemoryWriteAddress []dkong3_sound2_writemem =
+{
+	new Mame.MemoryWriteAddress(0x0000, 0x01ff, Mame.MWA_RAM ),
+	new Mame.MemoryWriteAddress(0x4000, 0x4017, nes_apu.NESPSG_1_w ),
+	new Mame.MemoryWriteAddress(0xe000, 0xffff, Mame.MWA_ROM ),
+	new Mame.MemoryWriteAddress(-1 )	/* end of table */
+};
+ static Mame.GfxLayout dkong3_spritelayout =
+new Mame.GfxLayout(
+	16,16,	/* 16*16 sprites */
+	256,	/* 256 sprites */
+	2,	/* 2 bits per pixel */
+	new uint[]{ 256*16*16, 0 },	/* the two bitplanes are separated */
+	new uint[]{ 0, 1, 2, 3, 4, 5, 6, 7,	/* the two halves of the sprite are separated */
+			128*16*16+0, 128*16*16+1, 128*16*16+2, 128*16*16+3, 128*16*16+4, 128*16*16+5, 128*16*16+6, 128*16*16+7 },
+	new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
+			8*8, 9*8, 10*8, 11*8, 12*8, 13*8, 14*8, 15*8 },
+	16*8	/* every sprite takes 16 consecutive bytes */
+);
+       
+static Mame.GfxDecodeInfo[] dkong3_gfxdecodeinfo =
+{
+	new Mame.GfxDecodeInfo( Mame.REGION_GFX1, 0x0000, driver_dkongjr.dkongjr_charlayout,   0, 64 ),
+	new Mame.GfxDecodeInfo( Mame.REGION_GFX2, 0x0000, dkong3_spritelayout,  0, 64 ),
+};
+static NESinterface nes_interface = new NESinterface(2, new int[] { Mame.REGION_CPU2, Mame.REGION_CPU3 }, new int[] { 50, 50 });
+
+static void dkong3_2a03_reset_w(int offset, int data)
+{
+    if ((data & 1)!=0)
+    {
+        Mame.cpu_set_reset_line(1, Mame.CLEAR_LINE);
+        Mame.cpu_set_reset_line(2, Mame.CLEAR_LINE);
+    }
+    else
+    {
+        Mame.cpu_set_reset_line(1, Mame.ASSERT_LINE);
+        Mame.cpu_set_reset_line(2, Mame.ASSERT_LINE);
+    }
+}
+static void dkong3_gfxbank_w(int offset, int data)
+{
+    if (driver_dkong.gfx_bank != (~data & 1))
+    {
+        driver_dkong.gfx_bank = ~data & 1;
+        Generic.SetDirtyBuffer(true);// memset(dirtybuffer, 1, videoram_size);
+    }
+}
+
+
+
+
         class machine_driver_dkong3 : Mame.MachineDriver
         {
             public machine_driver_dkong3()
             {
-                //cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 8000000 / 2, dkong3_readmem, dkong3_writemem, null, dkong3_writeport, Mame.nmi_interrupt, 1));
-                //cpu.Add(new Mame.MachineCPU(Mame.CPU_N2A03|Mame.CPU_AUDIO_CPU,Mame.cpu_n
-                throw new Exception();
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 8000000 / 2, dkong3_readmem, dkong3_writemem, null, dkong3_writeport, Mame.nmi_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_N2A03 | Mame.CPU_AUDIO_CPU, (int)Mame.cpu_n2a03.N2A03_DEFAULTCLOCK, dkong3_sound1_readmem, dkong3_sound1_writemem, null, null, Mame.nmi_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_N2A03 | Mame.CPU_AUDIO_CPU, (int)Mame.cpu_n2a03.N2A03_DEFAULTCLOCK, dkong3_sound2_readmem, dkong3_sound2_writemem, null, null, Mame.nmi_interrupt, 1));
+                frames_per_second = 60;
+                vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
+                cpu_slices_per_frame = 1;
+                screen_width = 32 * 8;
+                screen_height = 32 * 8;
+                visible_area = new Mame.rectangle(0*8,32*8-1,2*8,30*8-1);
+                gfxdecodeinfo = dkong3_gfxdecodeinfo;
+                total_colors = 256;
+                color_table_len = 64*4;
+                video_attributes = Mame.VIDEO_TYPE_RASTER|Mame.VIDEO_SUPPORTS_DIRTY;
+                sound_attributes = 0;
+                sound.Add(new Mame.MachineSound(Mame.SOUND_NES,nes_interface));
             }
             public override void init_machine()
             {
-                throw new NotImplementedException();
             }
             public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
-                throw new NotImplementedException();
+                int cpi = 0, pi = 0;
+                for (int i = 0; i < 256; i++)
+                {
+                    /* red component */
+                    int bit0 = (color_prom[cpi] >> 4) & 0x01;
+                    int bit1 = (color_prom[cpi] >> 5) & 0x01;
+                    int bit2 = (color_prom[cpi] >> 6) & 0x01;
+                    int bit3 = (color_prom[cpi] >> 7) & 0x01;
+                    palette[pi++] = (byte)(255 - (0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3));
+                    /* green component */
+                    bit0 = (color_prom[cpi] >> 0) & 0x01;
+                    bit1 = (color_prom[cpi] >> 1) & 0x01;
+                    bit2 = (color_prom[cpi] >> 2) & 0x01;
+                    bit3 = (color_prom[cpi] >> 3) & 0x01;
+                    palette[pi++] = (byte)(255 - (0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3));
+                    /* blue component */
+                    bit0 = (color_prom[cpi+256] >> 0) & 0x01;
+                    bit1 = (color_prom[cpi+256] >> 1) & 0x01;
+                    bit2 = (color_prom[cpi+256] >> 2) & 0x01;
+                    bit3 = (color_prom[cpi+256] >> 3) & 0x01;
+                    palette[pi++] = (byte)(255 - (0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3));
+
+                    cpi++;
+                }
+
+                cpi += 256;
+                /* color_prom now points to the beginning of the character color codes */
+                driver_dkong.color_codes = new _BytePtr( color_prom,cpi);	/* we'll need it later */
             }
             public override int vh_start()
             {
-                throw new NotImplementedException();
+                return driver_dkong.dkong_vh_start();
             }
             public override void vh_stop()
             {
-                throw new NotImplementedException();
+                Generic.generic_vh_stop();
             }
             public override void vh_eof_callback()
             {
-                throw new NotImplementedException();
             }
             public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
             {
-                throw new NotImplementedException();
+                driver_dkong.dkong_vh_screenrefresh(bitmap, full_refresh);
             }
             public override void nvram_handler(object file, int read_or_write)
             {
@@ -906,7 +1033,75 @@ new Mame.Samplesinterface(
         }
         Mame.InputPortTiny[] input_ports_dkong3()
         {
-            throw new Exception();
+            
+INPUT_PORTS_START( "dkong3" );
+	PORT_START();      /* IN0 */
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY );
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT  | IPF_8WAY );
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP    | IPF_8WAY );
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN  | IPF_8WAY );
+	PORT_BIT( 0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1 );
+	PORT_BIT( 0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_START1 );
+	PORT_BIT( 0x40, IP_ACTIVE_HIGH, (uint)inptports.IPT_START2 );
+	PORT_BIT( 0x80, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN3 );
+
+
+	PORT_START ();     /* IN1 */
+	PORT_BIT( 0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY | IPF_COCKTAIL );
+	PORT_BIT( 0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT  | IPF_8WAY | IPF_COCKTAIL );
+	PORT_BIT( 0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP    | IPF_8WAY | IPF_COCKTAIL );
+	PORT_BIT( 0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN  | IPF_8WAY | IPF_COCKTAIL );
+	PORT_BIT( 0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1 | IPF_COCKTAIL );
+	PORT_BIT_IMPULSE( 0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN1, 1 );
+	PORT_BIT_IMPULSE( 0x40, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN2, 1 );
+	PORT_BIT( 0x80, IP_ACTIVE_HIGH, (uint)inptports.IPT_UNKNOWN );
+
+	PORT_START ();     /* DSW0 */
+	PORT_DIPNAME( 0x07, 0x00, DEF_STR( Coinage ) );
+	PORT_DIPSETTING(    0x02, DEF_STR( "3C_1C" ) );
+	PORT_DIPSETTING(    0x04, DEF_STR( "2C_1C" ) );
+	PORT_DIPSETTING(    0x00, DEF_STR( "1C_1C" ) );
+	PORT_DIPSETTING(    0x06, DEF_STR( "1C_2C" ) );
+	PORT_DIPSETTING(    0x01, DEF_STR( "1C_3C" ) );
+	PORT_DIPSETTING(    0x03, DEF_STR( "1C_4C" ) );
+	PORT_DIPSETTING(    0x05, DEF_STR( "1C_5C" ) );
+	PORT_DIPSETTING(    0x07, DEF_STR( "1C_6C" ) );
+	PORT_DIPNAME( 0x08, 0x00, DEF_STR( Unknown ) );
+	PORT_DIPSETTING(    0x00, DEF_STR( Off ) );
+	PORT_DIPSETTING(    0x08, DEF_STR( On ) );
+	PORT_DIPNAME( 0x10, 0x00, DEF_STR( Unknown ) );
+	PORT_DIPSETTING(    0x00, DEF_STR( Off ) );
+	PORT_DIPSETTING(    0x10, DEF_STR( On ) );
+	PORT_DIPNAME( 0x20, 0x00, DEF_STR( Unknown ) );
+	PORT_DIPSETTING(    0x00, DEF_STR( Off ) );
+	PORT_DIPSETTING(    0x20, DEF_STR( On ) );
+    PORT_BITX(0x40, IP_ACTIVE_HIGH, (uint)inptports.IPT_SERVICE, DEF_STR("Service Mode"), (ushort)Mame.InputCodes.KEYCODE_F2, IP_JOY_NONE);
+	PORT_DIPNAME( 0x80, 0x00, DEF_STR( Cabinet ) );
+	PORT_DIPSETTING(    0x00, DEF_STR( Upright ) );
+	PORT_DIPSETTING(    0x80, DEF_STR( Cocktail ) );
+
+	PORT_START();     /* DSW1 */
+	PORT_DIPNAME( 0x03, 0x00, DEF_STR( Lives ) );
+	PORT_DIPSETTING(    0x00, "3" );
+	PORT_DIPSETTING(    0x01, "4" );
+	PORT_DIPSETTING(    0x02, "5" );
+	PORT_DIPSETTING(    0x03, "6" );
+	PORT_DIPNAME( 0x0c, 0x00, DEF_STR( Bonus_Life ) );
+	PORT_DIPSETTING(    0x00, "30000" );
+	PORT_DIPSETTING(    0x04, "40000" );
+	PORT_DIPSETTING(    0x08, "50000" );
+	PORT_DIPSETTING(    0x0c, "None" );
+	PORT_DIPNAME( 0x30, 0x00, "Additional Bonus" );
+	PORT_DIPSETTING(    0x00, "30000" );
+	PORT_DIPSETTING(    0x10, "40000" );
+	PORT_DIPSETTING(    0x20, "50000" );
+	PORT_DIPSETTING(    0x30, "None" );
+	PORT_DIPNAME( 0xc0, 0x00, DEF_STR( Difficulty ) );
+	PORT_DIPSETTING(    0x00, "Easy" );
+	PORT_DIPSETTING(    0x40, "Medium" );
+	PORT_DIPSETTING(    0x80, "Hard" );
+	PORT_DIPSETTING(    0xc0, "Hardest" );
+return INPUT_PORTS_END;
         }
         Mame.RomModule[] rom_dkong3()
         {
@@ -947,7 +1142,7 @@ new Mame.Samplesinterface(
         {
             drv = new machine_driver_dkong3();
             year = "1983";
-            name = "dkongjr";
+            name = "dkong3";
             description = "Donkey Kong 3 (US)";
             manufacturer = "Nintendo of America";
             flags = Mame.ROT90;

@@ -55,7 +55,7 @@ namespace xnamame036.mame
             /* !!! not suppored yet !!! */
             public int dirty_flag;			/* dirty flag */
             /* !! only drawing routine !! */
-            public int visible;		/* visible flag        */
+            public bool visible;		/* visible flag        */
             public int draw_x;			/* x adjusted position */
             public int draw_y;			/* y adjusted position */
             public rectangle clip; /* clipping object size with visible area */
@@ -162,10 +162,10 @@ namespace xnamame036.mame
                 (_object.sx + _object.width <= min_x) ||
                 (_object.sy + _object.height <= min_y))
             {	/* outside of visible area */
-                _object.visible = 0;
+                _object.visible = false;
                 return;
             }
-            _object.visible = 1;
+            _object.visible = true;
             /* set draw position with adjust source offset */
             _object.draw_x = _object.sx -
                 (_object.flipx != 0 ?
@@ -226,7 +226,7 @@ namespace xnamame036.mame
                     if (_object.dirty_flag != 0)
                         object_update(_object);
                     /* store link */
-                    if (_object.visible != 0)
+                    if (_object.visible)
                     {
                         priority = _object.priority;
                         if (end_object[priority] != null)
@@ -304,7 +304,7 @@ namespace xnamame036.mame
 
             for (_object = object_list.first_object; _object != null; _object = _object.next)
             {
-                if (_object.visible != 0)
+                if (_object.visible)
                     draw_object_one(bitmap, _object);
             }
         }

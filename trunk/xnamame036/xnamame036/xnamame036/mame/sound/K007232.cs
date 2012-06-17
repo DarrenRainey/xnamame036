@@ -38,11 +38,11 @@ namespace xnamame036.mame
         public static int K007232_VOL(int LVol, int LPan, int RVol, int RPan) { return ((LVol) | ((LPan) << 8) | ((RVol) << 16) | ((RPan) << 24)); }
         public override int chips_clock(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return 0;
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return ((K007232_interface)msound.sound_interface).num_chips;
         }
         public override int start(Mame.MachineSound msound)
         {

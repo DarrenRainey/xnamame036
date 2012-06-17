@@ -71,7 +71,8 @@ namespace xnamame036.mame
         public const byte SOUND_CUSTOM = 13;
         public const byte SOUND_MSM5205 = 14;
         public const byte SOUND_ADPCM = 15;
-        
+        public const byte SOUND_NES = 16;
+
         public const byte SOUND_SEGAPCM = 99;
 
         public delegate int CustomSoundStart(MachineSound msound);
@@ -100,18 +101,18 @@ namespace xnamame036.mame
             }
             public override int start(MachineSound msound)
             {
-                if (SoundStart != null) return SoundStart(msound); else return 0;                
+                if (SoundStart != null) return SoundStart(msound); else return 0;
             }
             public override void stop()
             {
-                if (SoundStop != null)SoundStop();
+                if (SoundStop != null) SoundStop();
             }
             public override void update()
             {
-                if (SoundUpdate != null)SoundUpdate();
+                if (SoundUpdate != null) SoundUpdate();
             }
         }
-        
+
         public static snd_interface[] sndintf = {
                                       new SOUND_DUMMY(),
                                       new Namco(),
@@ -128,7 +129,8 @@ namespace xnamame036.mame
                                       new YM3812(),
                                       new CustomSoundInterface(),
                                       new MSM5205(),
-                                      new ADPCM()
+                                      new ADPCM(),
+                                      new nes_apu(),
                                   };
         int sound_start()
         {
@@ -287,6 +289,33 @@ namespace xnamame036.mame
         public static int soundlatch2_r(int offset)
         {
             return latch2;
+        }
+
+        static int latch3, read_debug3;
+
+        static void soundlatch3_callback(int param)
+        {
+            if (read_debug3 == 0 && latch3 != param)
+                printf( "Warning: sound latch 3 written before being read. Previous: %02x, new: %02x\n", latch3, param);
+            latch3 = param;
+            read_debug3 = 0;
+        }
+
+        public static void soundlatch3_w(int offset, int data)
+        {
+            /* make all the CPUs synchronize, and only AFTER that write the new command to the latch */
+            Timer.timer_set(Timer.TIME_NOW, data, soundlatch3_callback);
+        }
+
+        public static int soundlatch3_r(int offset)
+        {
+            read_debug3 = 1;
+            return latch3;
+        }
+
+        public static void soundlatch3_clear_w(int offset, int data)
+        {
+            latch3 = cleared_value;
         }
 
     }

@@ -47,9 +47,9 @@ namespace xnamame036.mame
             public bool is_playing;
             public bool is_looping;
             public bool is_16bit;
-            public object data_start;
+            public _BytePtr data_start;
             public int data_end;
-            public _BytePtr data_current;
+            public int data_current;
         }
 
         /* channel data */
@@ -152,7 +152,7 @@ namespace xnamame036.mame
 
             /* get the initial state */
             step_size = channel.step_size;
-            source = new _BytePtr(channel.data_current);
+            source = new _BytePtr(channel.data_start,channel.data_current);
             source_end = channel.data_end;
             input_frac = channel.input_frac;
             output_pos = (accum_base + channel.samples_available) & ACCUMULATOR_MASK;
@@ -165,7 +165,7 @@ namespace xnamame036.mame
                 {
                     while (source.offset < source_end && samples_to_generate > 0)
                     {
-                        left_accum[output_pos] += source[0] * mixing_volume;
+                        left_accum[output_pos] += (sbyte)source[0] * mixing_volume;
                         input_frac += step_size;
                         source.offset += (int)(input_frac >> FRACTION_BITS);
                         input_frac &= FRACTION_MASK;
@@ -179,7 +179,7 @@ namespace xnamame036.mame
                 {
                     while (source.offset < source_end && samples_to_generate > 0)
                     {
-                        right_accum[output_pos] += source[0] * mixing_volume;
+                        right_accum[output_pos] += (sbyte)source[0] * mixing_volume;
                         input_frac += step_size;
                         source.offset += (int)(input_frac >> FRACTION_BITS);
                         input_frac &= FRACTION_MASK;
@@ -193,7 +193,7 @@ namespace xnamame036.mame
                 {
                     while (source.offset < source_end && samples_to_generate > 0)
                     {
-                        int mixing_value = source[0] * mixing_volume;
+                        int mixing_value = (sbyte)source[0] * mixing_volume;
                         left_accum[output_pos] += mixing_value;
                         right_accum[output_pos] += mixing_value;
                         input_frac += step_size;
@@ -222,7 +222,7 @@ namespace xnamame036.mame
 
             /* update the final positions */
             channel.input_frac = input_frac;
-            channel.data_current = source;
+            channel.data_current = source.offset;
         }
         static void mix_sample_16(mixer_channel_data channel, int samples_to_generate)
         {
@@ -315,12 +315,11 @@ namespace xnamame036.mame
 
             /* update the final positions */
             channel.input_frac = input_frac;
-            channel.data_current = source;
+            channel.data_current = source.offset;
         }
         void mixer_sh_update()
         {
             uint accum_pos = accum_base;
-
 
             int sample;
 
@@ -401,9 +400,8 @@ namespace xnamame036.mame
             samples_this_frame = (uint)osd_update_audio_stream(mix_buffer);
 
             accum_base = accum_pos;
-
         }
-        void mixer_play_streamed_sample_16(int ch, _ShortPtr data, int len, int freq)
+        public static void mixer_play_streamed_sample_16(int ch, _ShortPtr data, int len, int freq)
         {
 
             uint step_size, input_pos, output_pos, samples_mixed;
@@ -479,8 +477,6 @@ namespace xnamame036.mame
             /* update the final positions */
             mixer_channel[ch].input_frac = input_pos & FRACTION_MASK;
             mixer_channel[ch].samples_available += samples_mixed;
-
-
         }
         public static int mixer_allocate_channel(int default_mixing_level) { return mixer_allocate_channels(1, new int[] { default_mixing_level }); }
         public static int mixer_allocate_channels(int channels, int[] default_mixing_levels)
@@ -573,8 +569,8 @@ namespace xnamame036.mame
 
             /* now determine where to mix it */
             mixer_channel[ch].input_frac = 0;
-            mixer_channel[ch].data_start = data;
-            mixer_channel[ch].data_current = new _BytePtr(data);
+            mixer_channel[ch].data_start =new _BytePtr ( data);
+            mixer_channel[ch].data_current = 0;
             //Buffer.BlockCopy(data, 0, mixer_channel[ch].data_current.buffer, 0, data.Length);
             mixer_channel[ch].data_end = len;
             mixer_channel[ch].is_playing = true;
@@ -600,7 +596,7 @@ namespace xnamame036.mame
             /* now determine where to mix it */
             mixer_channel[ch].input_frac = 0;
             mixer_channel[ch].data_start = data;
-            mixer_channel[ch].data_current = data;// new _BytePtr(data.Length * 2);
+            mixer_channel[ch].data_current = 0;// new _BytePtr(data.Length * 2);
             //for (int i = 0; i < data.Length; i++)mixer_channel[ch].data_current.write16(i,(ushort) data[i]);
             //Buffer.BlockCopy(data, 0, mixer_channel[ch].data_current.buffer, 0, data.Length * 2);
             mixer_channel[ch].data_end = len;

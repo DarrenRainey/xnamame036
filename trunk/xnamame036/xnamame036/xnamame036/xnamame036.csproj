@@ -138,6 +138,8 @@
     <Compile Include="mame\DataFile.cs" />
     <Compile Include="mame\DrawGfx.cs" />
     <Compile Include="mame\driver.cs" />
+    <Compile Include="mame\drivers\driver_baraduke.cs" />
+    <Compile Include="mame\drivers\driver_ddragon.cs" />
     <Compile Include="mame\drivers\driver_1942.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -159,7 +161,6 @@
     <Compile Include="mame\drivers\driver_asteroid.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_baraduke.cs" />
     <Compile Include="mame\drivers\driver_bombjack.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -172,7 +173,6 @@
     <Compile Include="mame\drivers\driver_citycon.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_ddragon.cs" />
     <Compile Include="mame\drivers\driver_dec8.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -230,7 +230,6 @@
     <Compile Include="mame\drivers\driver_mpatrol.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_namcos1.cs" />
     <Compile Include="mame\drivers\driver_pacman.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -249,7 +248,6 @@
     <Compile Include="mame\drivers\driver_raiden.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_retofinv.cs" />
     <Compile Include="mame\drivers\driver_rocnrope.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -262,7 +260,6 @@
     <Compile Include="mame\drivers\driver_tp84.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\driver_turbo.cs" />
     <Compile Include="mame\drivers\driver_williams.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -273,15 +270,20 @@
     <Compile Include="mame\drivers\driver_zaxxon.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\drivers\gng.cs" />
+    <Compile Include="mame\drivers\driver_gng.cs" />
+    <Compile Include="mame\drivers\namcos1.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\drivers\pleiads.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_turbo.cs" />
+    <Compile Include="mame\drivers\driver_retofinv.cs" />
+    <Compile Include="mame\drivers\driver_vigilant.cs" />
     <Compile Include="mame\machine\8255ppi.cs" />
     <Compile Include="mame\machine\atari_vg.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\machine\namcos1.cs" />
     <Compile Include="mame\machine\segacrpt.cs" />
     <Compile Include="mame\png.cs" />
     <Compile Include="mame\soundhardware\Seibu.cs" />
@@ -292,8 +294,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\sound\FM.cs" />
+    <Compile Include="mame\sound\m72.cs" />
+    <Compile Include="mame\sound\nes_apu.cs" />
     <Compile Include="mame\videohardware\cinemat.cs" />
-    <Compile Include="mame\videohardware\namcos1.cs" />
     <Compile Include="mame\videohardware\Vector.cs" />
     <Compile Include="mame\fileio.cs" />
     <Compile Include="mame\gfxobj.cs" />

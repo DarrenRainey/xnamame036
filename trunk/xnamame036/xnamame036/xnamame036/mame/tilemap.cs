@@ -40,7 +40,7 @@ namespace xnamame036.mame
             public int scrollx_delta, scrolly_delta;
 
             public int type;
-            public int enable;
+            public bool enable;
             public int attributes;
             public int transparent_pen;
             public uint[] transmask = new uint[4];
@@ -161,8 +161,8 @@ namespace xnamame036.mame
             for (value = 0; value < 0x100; value++)
             {
                 data = 0;
-                for (bit = 0; bit < 8; bit++) 
-                    if (((value >> bit) & 1) != 0) 
+                for (bit = 0; bit < 8; bit++)
+                    if (((value >> bit) & 1) != 0)
                         data |= 0x80 >> bit;
                 flip_bit_table[value] = (byte)data;
             }
@@ -203,17 +203,17 @@ namespace xnamame036.mame
         }
         static void dispose_tile_info(tilemap tilemap)
         {
-            tilemap.pendata=null;
-            tilemap.maskdata=null;
-            tilemap.paldata=null;
-            tilemap.pen_usage=null;
-            tilemap.priority=null;
-            tilemap.visible=null;
-            tilemap.dirty_vram=null;
-            tilemap.dirty_pixels=null;
-            tilemap.flags=null;
-            tilemap.priority_row=null;
-            tilemap.visible_row=null;
+            tilemap.pendata = null;
+            tilemap.maskdata = null;
+            tilemap.paldata = null;
+            tilemap.pen_usage = null;
+            tilemap.priority = null;
+            tilemap.visible = null;
+            tilemap.dirty_vram = null;
+            tilemap.dirty_pixels = null;
+            tilemap.flags = null;
+            tilemap.priority_row = null;
+            tilemap.visible_row = null;
         }
         void tilemap_close()
         {
@@ -340,15 +340,15 @@ namespace xnamame036.mame
             int bi = 0, di = 0, si = 0;
             for (; ; )
             {
-                byte data = bitmask[bi++]; 
-                if ((data & 0x80) != 0) dest[di+0] = source[si+0];
-                if ((data & 0x40) != 0) dest[di+1] = source[si + 1];
-                if ((data & 0x20) != 0) dest[di+2] = source[si + 2];
-                if ((data & 0x10) != 0) dest[di+3] = source[si + 3];
-                if ((data & 0x08) != 0) dest[di+4] = source[si + 4];
-                if ((data & 0x04) != 0) dest[di+5] = source[si + 5];
-                if ((data & 0x02) != 0) dest[di+6] = source[si + 6];
-                if ((data & 0x01) != 0) dest[di+7] = source[si + 7];
+                byte data = bitmask[bi++];
+                if ((data & 0x80) != 0) dest[di + 0] = source[si + 0];
+                if ((data & 0x40) != 0) dest[di + 1] = source[si + 1];
+                if ((data & 0x20) != 0) dest[di + 2] = source[si + 2];
+                if ((data & 0x10) != 0) dest[di + 3] = source[si + 3];
+                if ((data & 0x08) != 0) dest[di + 4] = source[si + 4];
+                if ((data & 0x04) != 0) dest[di + 5] = source[si + 5];
+                if ((data & 0x02) != 0) dest[di + 6] = source[si + 6];
+                if ((data & 0x01) != 0) dest[di + 7] = source[si + 7];
                 if (--count == 0) break;
                 si += 8;
                 di += 8;
@@ -356,18 +356,18 @@ namespace xnamame036.mame
         }
         static void draw8x8x8BPP(int xpos, int ypos)
         {
-            int x1 = xpos; 
-            int y1 = ypos; 
+            int x1 = xpos;
+            int y1 = ypos;
             int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
-            if (x1 < blit.clip_left) 
-                x1 = blit.clip_left; 
+            if (x1 < blit.clip_left)
+                x1 = blit.clip_left;
             if (x2 > blit.clip_right)
-                x2 = blit.clip_right; 
+                x2 = blit.clip_right;
             if (y1 < blit.clip_top)
                 y1 = blit.clip_top;
             if (y2 > blit.clip_bottom)
-                y2 = blit.clip_bottom; 
+                y2 = blit.clip_bottom;
             if (x1 < x2 && y1 < y2)
             { /* do nothing if totally clipped */
                 byte priority = blit.priority;
@@ -381,42 +381,42 @@ namespace xnamame036.mame
                 int y; /* current screen line to render */
                 int y_next;
                 dest_baseaddr = new _BytePtr(blit.screen.line[y1], xpos); /* convert screen coordinates to source tilemap coordinates */
-                x1 -= xpos; 
-                y1 -= ypos; 
+                x1 -= xpos;
+                y1 -= ypos;
                 x2 -= xpos;
                 y2 -= ypos;
                 source_baseaddr = new _BytePtr(blit.pixmap.line[y1]);
-                mask_baseaddr = new _BytePtr(blit.bitmask.line[y1]); 
-                c1 = x1 / 8; /* round down */ 
+                mask_baseaddr = new _BytePtr(blit.bitmask.line[y1]);
+                c1 = x1 / 8; /* round down */
                 c2 = (x2 + 8 - 1) / 8; /* round up */
-                y = y1; 
+                y = y1;
                 y_next = 8 * (y1 / 8) + 8;
                 if (y_next > y2) y_next = y2;
                 {
-                    int dy = y_next - y; 
+                    int dy = y_next - y;
                     dest_next = new _BytePtr(dest_baseaddr, dy * blit.dest_line_offset);
                     source_next = new _BytePtr(source_baseaddr, dy * blit.source_line_offset);
                     mask_next = new _BytePtr(mask_baseaddr, dy * blit.mask_line_offset);
                 }
                 for (; ; )
                 {
-                    int row = y / 8; 
+                    int row = y / 8;
                     _BytePtr mask_data = blit.mask_data_row[row];
                     _BytePtr priority_data = blit.priority_data_row[row];
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
-                    int x_start = x1; 
-                    int x_end; 
+                    int x_start = x1;
+                    int x_end;
                     int column;
                     for (column = c1; column <= c2; column++)
                     {
                         if (column == c2 || priority_data[column] != priority)
                             tile_type = TILE_TRANSPARENT;
-                        else 
+                        else
                             tile_type = mask_data[column];
                         if (tile_type != prev_tile_type)
                         {
-                            x_end = column * 8; 
+                            x_end = column * 8;
                             if (x_end < x1) x_end = x1;
                             if (x_end > x2) x_end = x2;
                             if (prev_tile_type != TILE_TRANSPARENT)
@@ -441,7 +441,7 @@ namespace xnamame036.mame
                                 { /* TILE_OPAQUE */
                                     int num_pixels = x_end - x_start;
                                     _BytePtr dest0 = new _BytePtr(dest_baseaddr, x_start);
-                                    _BytePtr source0 = new _BytePtr(source_baseaddr, x_start); 
+                                    _BytePtr source0 = new _BytePtr(source_baseaddr, x_start);
                                     int i = y;
                                     for (; ; )
                                     {
@@ -452,20 +452,20 @@ namespace xnamame036.mame
                                         source0.offset += blit.source_line_offset;
                                     }
                                 }
-                            } 
+                            }
                             x_start = x_end;
                         }
                         prev_tile_type = tile_type;
                     }
-                    if (y_next == y2) break; /* we are done! */ 
-                    dest_baseaddr = dest_next;
-                    source_baseaddr = source_next;
-                    mask_baseaddr = mask_next; 
-                    y = y_next; 
+                    if (y_next == y2) break; /* we are done! */
+                    dest_baseaddr = new _BytePtr(dest_next);
+                    source_baseaddr = new _BytePtr(source_next);
+                    mask_baseaddr = new _BytePtr(mask_next);
+                    y = y_next;
                     y_next += 8;
                     if (y_next >= y2)
                     {
-                        y_next = y2; 
+                        y_next = y2;
                     }
                     else
                     {
@@ -480,10 +480,10 @@ namespace xnamame036.mame
         static void draw_opaque8x8x8BPP(int xpos, int ypos)
         {
             int x1 = xpos;
-            int y1 = ypos; 
+            int y1 = ypos;
             int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
-            if (x1 < blit.clip_left) x1 = blit.clip_left; 
+            if (x1 < blit.clip_left) x1 = blit.clip_left;
             if (x2 > blit.clip_right) x2 = blit.clip_right;
             if (y1 < blit.clip_top) y1 = blit.clip_top;
             if (y2 > blit.clip_bottom) y2 = blit.clip_bottom;
@@ -504,7 +504,8 @@ namespace xnamame036.mame
                 y2 -= ypos;
                 source_baseaddr = new _BytePtr(blit.pixmap.line[y1]);
                 c1 = x1 / 8; /* round down */
-                c2 = (x2 + 8 - 1) / 8; /* round up */ y = y1;
+                c2 = (x2 + 8 - 1) / 8; /* round up */ 
+                y = y1;
                 y_next = 8 * (y1 / 8) + 8;
                 if (y_next > y2)
                     y_next = y2;
@@ -519,7 +520,9 @@ namespace xnamame036.mame
                     _BytePtr priority_data = new _BytePtr(blit.priority_data_row[row]);
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
-                    int x_start = x1; int x_end; int column;
+                    int x_start = x1;
+                    int x_end; 
+                    int column;
                     for (column = c1; column <= c2; column++)
                     {
                         if (column == c2 || priority_data[column] != priority)
@@ -551,8 +554,8 @@ namespace xnamame036.mame
                     }
                     if (y_next == y2)
                         break; /* we are done! */
-                    dest_baseaddr = dest_next;
-                    source_baseaddr = source_next;
+                    dest_baseaddr =new _BytePtr( dest_next);
+                    source_baseaddr = new _BytePtr(source_next);
                     y = y_next;
                     y_next += 8;
                     if (y_next >= y2)
@@ -606,16 +609,17 @@ namespace xnamame036.mame
         }
         static void draw16x16x8BPP(int xpos, int ypos)
         {
-            int x1 = xpos; int y1 = ypos;
+            int x1 = xpos;
+            int y1 = ypos;
             int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
-            if (x1 < blit.clip_left) 
+            if (x1 < blit.clip_left)
                 x1 = blit.clip_left;
             if (x2 > blit.clip_right)
                 x2 = blit.clip_right;
-            if (y1 < blit.clip_top) 
+            if (y1 < blit.clip_top)
                 y1 = blit.clip_top;
-            if (y2 > blit.clip_bottom) 
+            if (y2 > blit.clip_bottom)
                 y2 = blit.clip_bottom;
             if (x1 < x2 && y1 < y2)
             { /* do nothing if totally clipped */
@@ -638,10 +642,11 @@ namespace xnamame036.mame
                 source_baseaddr = new _BytePtr(blit.pixmap.line[y1]);
                 mask_baseaddr = new _BytePtr(blit.bitmask.line[y1]);
                 c1 = x1 / 16; /* round down */
-                c2 = (x2 + 16 - 1) / 16; /* round up */ 
+                c2 = (x2 + 16 - 1) / 16; /* round up */
                 y = y1;
                 y_next = 16 * (y1 / 16) + 16;
-                if (y_next > y2) y_next = y2;
+                if (y_next > y2)
+                    y_next = y2;
                 {
                     int dy = y_next - y;
                     dest_next = new _BytePtr(dest_baseaddr, dy * blit.dest_line_offset);
@@ -655,7 +660,8 @@ namespace xnamame036.mame
                     _BytePtr priority_data = blit.priority_data_row[row];
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
-                    int x_start = x1; int x_end;
+                    int x_start = x1;
+                    int x_end;
                     int column;
                     for (column = c1; column <= c2; column++)
                     {
@@ -663,6 +669,7 @@ namespace xnamame036.mame
                             tile_type = TILE_TRANSPARENT;
                         else
                             tile_type = mask_data[column];
+
                         if (tile_type != prev_tile_type)
                         {
                             x_end = column * 16;
@@ -709,9 +716,9 @@ namespace xnamame036.mame
                     }
                     if (y_next == y2)
                         break; /* we are done! */
-                    dest_baseaddr = dest_next;
-                    source_baseaddr = source_next;
-                    mask_baseaddr = mask_next;
+                    dest_baseaddr = new _BytePtr(dest_next);
+                    source_baseaddr = new _BytePtr(source_next);
+                    mask_baseaddr = new _BytePtr(mask_next);
                     y = y_next;
                     y_next += 16;
                     if (y_next >= y2)
@@ -729,7 +736,8 @@ namespace xnamame036.mame
         }
         static void draw_opaque16x16x8BPP(int xpos, int ypos)
         {
-            int x1 = xpos; int y1 = ypos;
+            int x1 = xpos; 
+            int y1 = ypos;
             int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
             if (x1 < blit.clip_left) x1 = blit.clip_left;
@@ -747,11 +755,11 @@ namespace xnamame036.mame
                 int y; /* current screen line to render */
                 int y_next;
                 dest_baseaddr = new _BytePtr(blit.screen.line[y1], xpos); /* convert screen coordinates to source tilemap coordinates */
-                x1 -= xpos; y1 -= ypos; 
+                x1 -= xpos; y1 -= ypos;
                 x2 -= xpos; y2 -= ypos;
                 source_baseaddr = new _BytePtr(blit.pixmap.line[y1]);
                 c1 = x1 / 16; /* round down */
-                c2 = (x2 + 16 - 1) / 16; /* round up */ 
+                c2 = (x2 + 16 - 1) / 16; /* round up */
                 y = y1; y_next = 16 * (y1 / 16) + 16;
                 if (y_next > y2)
                     y_next = y2;
@@ -767,7 +775,8 @@ namespace xnamame036.mame
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
                     int x_start = x1;
-                    int x_end; int column; for (column = c1; column <= c2; column++)
+                    int x_end; int column; 
+                    for (column = c1; column <= c2; column++)
                     {
                         if (column == c2 || priority_data[column] != priority)
                             tile_type = TILE_TRANSPARENT;
@@ -798,8 +807,8 @@ namespace xnamame036.mame
                         prev_tile_type = tile_type;
                     }
                     if (y_next == y2) break; /* we are done! */
-                    dest_baseaddr = dest_next;
-                    source_baseaddr = source_next;
+                    dest_baseaddr =new _BytePtr( dest_next);
+                    source_baseaddr = new _BytePtr(source_next);
                     y = y_next;
                     y_next += 16;
                     if (y_next >= y2)
@@ -818,24 +827,24 @@ namespace xnamame036.mame
         {
             int x1 = xpos; int y1 = ypos; int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
-            if (x1 < blit.clip_left) x1 = blit.clip_left; 
+            if (x1 < blit.clip_left) x1 = blit.clip_left;
             if (x2 > blit.clip_right) x2 = blit.clip_right;
-            if (y1 < blit.clip_top) y1 = blit.clip_top; 
+            if (y1 < blit.clip_top) y1 = blit.clip_top;
             if (y2 > blit.clip_bottom) y2 = blit.clip_bottom;
             if (x1 < x2 && y1 < y2)
             { /* do nothing if totally clipped */
                 int c1; int c2; /* leftmost and rightmost visible columns in source tilemap */
                 int r1; int r2;
-                _BytePtr[] visible_row; 
+                _BytePtr[] visible_row;
                 int span;
                 int row; /* convert screen coordinates to source tilemap coordinates */
-                x1 -= xpos; y1 -= ypos; 
-                x2 -= xpos; y2 -= ypos; 
-                r1 = y1 / 16; 
+                x1 -= xpos; y1 -= ypos;
+                x2 -= xpos; y2 -= ypos;
+                r1 = y1 / 16;
                 r2 = (y2 + 16 - 1) / 16;
                 c1 = x1 / 16; /* round down */
                 c2 = (x2 + 16 - 1) / 16; /* round up */
-                visible_row = blit.visible_row; 
+                visible_row = blit.visible_row;
                 span = c2 - c1;
                 for (row = r1; row < r2; row++)
                 {
@@ -880,7 +889,7 @@ namespace xnamame036.mame
                 }
 
                 _tilemap.tile_get_info = tile_get_info;
-                _tilemap.enable = 1;
+                _tilemap.enable = true;
                 tilemap_set_clip(_tilemap, Machine.drv.visible_area);
 
                 if (Machine.scrbitmap.depth == 16)
@@ -1008,7 +1017,7 @@ namespace xnamame036.mame
                 {
                     _tilemap.paldata[tile_index] = null;
                 }
-                Array.Clear(_tilemap.priority,0,num_tiles);
+                Array.Clear(_tilemap.priority, 0, num_tiles);
                 Array.Clear(_tilemap.visible, 0, num_tiles);
                 //memset(_tilemap.priority, 0, num_tiles);
                 //memset(_tilemap.visible, 0, num_tiles);
@@ -1051,12 +1060,10 @@ namespace xnamame036.mame
             _BytePtr[] mask_data_row = new _BytePtr[num_rows];
             if (mask_data_row != null)
             {
-                int row;
-                for (row = 0; row < num_rows; row++) mask_data_row[row] = new _BytePtr(mask_data, num_cols * row);
+                for (int row = 0; row < num_rows; row++) mask_data_row[row] = new _BytePtr(mask_data, num_cols * row);
             }
             return mask_data_row;
         }
-
         static bool create_bg_mask(tilemap _tilemap)
         {
             if ((_tilemap.type & TILEMAP_SPLIT) == 0) return true;
@@ -1088,13 +1095,13 @@ namespace xnamame036.mame
             }// SWAP(width, height);
             return osd_new_bitmap(width, height, 8);
         }
-
         static int draw_bitmask(osd_bitmap mask, int col, int row, int tile_width, int tile_height, _BytePtr maskdata, byte flags)
         {
             int is_opaque = 1, is_transparent = 1;
 
             int x, sx = tile_width * col;
             int sy, y1, y2, dy;
+            int mi = 0;
 
             if (maskdata == _TILEMAP_BITMASK_TRANSPARENT) return TILE_TRANSPARENT;
             if (maskdata == _TILEMAP_BITMASK_OPAQUE) return TILE_OPAQUE;
@@ -1120,7 +1127,7 @@ namespace xnamame036.mame
                     _BytePtr mask_dest = new _BytePtr(mask.line[sy], sx / 8);
                     for (x = tile_width / 8; x >= 0; x--)
                     {
-                        byte data = flip_bit_table[maskdata[0]]; maskdata.offset++;
+                        byte data = flip_bit_table[maskdata[mi++]];
                         if (data != 0x00) is_transparent = 0;
                         if (data != 0xff) is_opaque = 0;
                         mask_dest[x] = data;
@@ -1134,7 +1141,7 @@ namespace xnamame036.mame
                     _BytePtr mask_dest = new _BytePtr(mask.line[sy], sx / 8);
                     for (x = 0; x < tile_width / 8; x++)
                     {
-                        byte data = maskdata[0]; maskdata.offset++;
+                        byte data = maskdata[mi++];
                         if (data != 0x00) is_transparent = 0;
                         if (data != 0xff) is_opaque = 0;
                         mask_dest[x] = data;
@@ -1146,12 +1153,11 @@ namespace xnamame036.mame
             if (is_opaque != 0) return TILE_OPAQUE;
             return TILE_MASKED;
         }
-
         static void draw_mask(osd_bitmap mask, int col, int row, int tile_width, int tile_height, _BytePtr pendata, uint transmask, byte flags)
         {
             int x, bit, sx = tile_width * col;
             int sy, y1, y2, dy;
-
+            int pi = 0;
             if ((flags & TILE_FLIPY) != 0)
             {
                 y1 = tile_height * row + tile_height - 1;
@@ -1176,7 +1182,7 @@ namespace xnamame036.mame
                         byte data = 0;
                         for (bit = 0; bit < 8; bit++)
                         {
-                            byte p = pendata[0]; pendata.offset++;
+                            byte p = pendata[pi++];
                             data = (byte)((data >> 1) | (((1 << p) & transmask) != 0 ? 0x00 : 0x80));
                         }
                         mask_dest[x] = data;
@@ -1193,7 +1199,7 @@ namespace xnamame036.mame
                         byte data = 0;
                         for (bit = 0; bit < 8; bit++)
                         {
-                            byte p = pendata[0]; pendata.offset++;
+                            byte p = pendata[pi++];
                             data = (byte)((data << 1) | (((1 << p) & transmask) != 0 ? 0x00 : 0x01));
                         }
                         mask_dest[x] = data;
@@ -1205,7 +1211,7 @@ namespace xnamame036.mame
         {
             int x, sx = tile_width * col;
             int sy, y1, y2, dy;
-
+            int pi = 0;
             if (Machine.scrbitmap.depth == 16)
             {
                 if ((flags & TILE_FLIPY) != 0)
@@ -1229,8 +1235,7 @@ namespace xnamame036.mame
                         _ShortPtr dest = new _ShortPtr(pixmap.line[sy], sx);
                         for (x = tile_width; x >= 0; x--)
                         {
-                            dest.write16(x, paldata[pendata[0]]);
-                            pendata.offset++;
+                            dest.write16(x, paldata[pendata[pi++]]);
                         }
                     }
                 }
@@ -1241,8 +1246,7 @@ namespace xnamame036.mame
                         _ShortPtr dest = new _ShortPtr(pixmap.line[sy], sx);
                         for (x = 0; x < tile_width; x++)
                         {
-                            dest.write16(x, paldata[pendata[0]]);
-                            pendata.offset++;
+                            dest.write16(x, paldata[pendata[pi++]]);
                         }
                     }
                 }
@@ -1269,7 +1273,7 @@ namespace xnamame036.mame
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
                         for (x = tile_width; x >= 0; x--)
-                        { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
+                        { dest[x] = (byte)paldata[pendata[pi++]]; }
                     }
                 }
                 else
@@ -1277,8 +1281,8 @@ namespace xnamame036.mame
                     for (sy = y1; sy != y2; sy += dy)
                     {
                         _BytePtr dest = new _BytePtr(pixmap.line[sy], sx);
-                        for (x = 0; x < tile_width; x++) 
-                        { dest[x] = (byte)paldata[pendata[0]]; pendata.offset++; }
+                        for (x = 0; x < tile_width; x++)
+                        { dest[x] = (byte)paldata[pendata[pi++]]; }
                     }
                 }
             }
@@ -1313,9 +1317,9 @@ namespace xnamame036.mame
                     _tilemap = _tilemap.next;
                 }
             }
-            else if (_tilemap.enable != 0)
+            else if (_tilemap.enable)
             {
-                if (_tilemap.scrolled )
+                if (_tilemap.scrolled)
                 {
                     tilemap_draw_delegate mark_visible = _tilemap.mark_visible;
 
@@ -1520,7 +1524,7 @@ namespace xnamame036.mame
 
                 {
                     int num_pens = _tilemap.tile_width * _tilemap.tile_height; /* precalc - needed for >4bpp pen management handling */
-                    
+
                     byte[] visible = _tilemap.visible;
                     bool[] dirty_vram = _tilemap.dirty_vram;
                     bool[] dirty_pixels = _tilemap.dirty_pixels;
@@ -1569,12 +1573,12 @@ namespace xnamame036.mame
                                     if (old_pen_usage != 0)
                                     {
                                         //palette_decrease_usage_count(the_color.offset - Machine.remapped_colortable.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
-                                        palette_decrease_usage_count(the_color.offset , old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        palette_decrease_usage_count(the_color.offset, old_pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                                     }
                                     else
                                     {
                                         //palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
-                                        palette_decrease_usage_countx(the_color.offset , num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                        palette_decrease_usage_countx(the_color.offset, num_pens, pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                                     }
                                 }
                             }
@@ -1599,12 +1603,12 @@ namespace xnamame036.mame
                             if (tile_info.pen_usage != 0)
                             {
                                 //palette_increase_usage_count(tile_info.pal_data.offset - Machine.remapped_colortable.offset, tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
-                                palette_increase_usage_count(tile_info.pal_data.offset , tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_increase_usage_count(tile_info.pal_data.offset, tile_info.pen_usage, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
                             else
                             {
                                 //palette_increase_usage_countx(tile_info.pal_data.offset - Machine.remapped_colortable.offset, num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
-                                palette_increase_usage_countx(tile_info.pal_data.offset , num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_increase_usage_countx(tile_info.pal_data.offset, num_pens, tile_info.pen_data, PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
 
                             dirty_pixels[tile_index] = true;
@@ -1646,14 +1650,14 @@ namespace xnamame036.mame
                             else
                             {
                                 //palette_decrease_usage_countx(the_color.offset - Machine.remapped_colortable.offset, num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
-                                palette_decrease_usage_countx(the_color.offset , num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
+                                palette_decrease_usage_countx(the_color.offset, num_pens, _tilemap.pendata[tile_index], PALETTE_COLOR_VISIBLE | PALETTE_COLOR_CACHED);
                             }
                             _tilemap.paldata[tile_index] = null;
                         }
                         _tilemap.dirty_vram[tile_index] = true;
                     }
                 }
-                for (int i=0;i<_tilemap.num_tiles;i++)
+                for (int i = 0; i < _tilemap.num_tiles; i++)
                     _tilemap.dirty_pixels[i] = true;
             }
         }
@@ -1668,7 +1672,7 @@ namespace xnamame036.mame
                     _tilemap = _tilemap.next;
                 }
             }
-            else if (_tilemap.enable != 0)
+            else if (_tilemap.enable)
             {
                 int type = _tilemap.type;
                 int transparent_pen = _tilemap.transparent_pen;
@@ -1685,7 +1689,7 @@ namespace xnamame036.mame
                 {
                     for (int col = 0; col < _tilemap.num_cols; col++)
                     {
-                        if (dirty_pixels[tile_index] && visible[tile_index] !=0)
+                        if (dirty_pixels[tile_index] && visible[tile_index] != 0)
                         {
                             uint pen_usage = _tilemap.pen_usage[tile_index];
                             _BytePtr pendata = _tilemap.pendata[tile_index];
@@ -1798,7 +1802,7 @@ namespace xnamame036.mame
         {
             int xpos, ypos;
 
-            if (_tilemap.enable != 0)
+            if (_tilemap.enable)
             {
                 tilemap_draw_delegate draw;
 
@@ -2186,7 +2190,7 @@ namespace xnamame036.mame
                     _tilemap.colscroll[which] = value;
                 }
             }
-        }        
+        }
         public static void tilemap_set_scrolldx(tilemap tilemap, int dx, int dx_if_flipped)
         {
             tilemap.dx = dx;

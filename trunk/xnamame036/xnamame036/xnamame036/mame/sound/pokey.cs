@@ -224,11 +224,11 @@ namespace xnamame036.mame
         }
         public override int chips_clock(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return ((POKEYinterface)msound.sound_interface).baseclock;
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+           return ((POKEYinterface)msound.sound_interface).num;
         }
         public override void reset()
         {

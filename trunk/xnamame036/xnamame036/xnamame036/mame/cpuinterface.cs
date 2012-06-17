@@ -31,7 +31,7 @@ namespace xnamame036.mame
         public const int CPU_M68000 = 17;
         public const byte CPU_HD6309 = 18;
         public const int CPU_I8035 = 19;
-
+        public const int CPU_N2A03 = 20;
 
 
 
@@ -43,7 +43,7 @@ namespace xnamame036.mame
         
         public const byte CPU_M65CE02 = 124;
         public const byte CPU_M65SC02 = 125;
-        public const byte CPU_N2A03 = 126;
+        
         public const byte CPU_V33 = 130;
         public const byte CPU_V20 = 131;
         public const byte CPU_N7751 = 132;
@@ -121,6 +121,7 @@ namespace xnamame036.mame
                                              new cpu_m68000(),
                                              new cpu_hd6309(),
                                              new cpu_i8035(),
+                                             new cpu_n2a03(),
                                              //new cpu_i86(),
                                              
                                              
@@ -1450,7 +1451,7 @@ namespace xnamame036.mame
             }
 
             /* do not support on callback memory region */
-            //printf("CPU #%d PC %04x: warning - op-code execute on mapped i/o\n",	cpu_getactivecpu(),cpu_get_pc());									
+            printf("CPU #%d PC %04x: warning - op-code execute on mapped i/o\n",	cpu_getactivecpu(),cpu_get_pc());									
         }
 
 

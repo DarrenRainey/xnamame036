@@ -886,7 +886,7 @@ namespace xnamame036.mame
 
             if (color >= Machine.drv.total_colors)
             {
-                printf("error: palette_change_color() called with color %d, but only %d allocated.\n", color, Machine.drv.total_colors);
+                //printf("error: palette_change_color() called with color %d, but only %d allocated.\n", color, Machine.drv.total_colors);
                 return;
             }
 
@@ -967,6 +967,7 @@ namespace xnamame036.mame
         {
             return paletteram[offset];
         }
+        
         static void changecolor_xxxxBBBBGGGGRRRR(int color, int data)
         {
             int r = (data >> 0) & 0x0f;
@@ -1015,6 +1016,7 @@ namespace xnamame036.mame
 
             palette_change_color(color, (byte)r, (byte)g, (byte)b);
         }
+
         public static void paletteram_xBBBBBGGGGGRRRRR_w(int offset, int data)
         {
             paletteram[offset] = (byte)data;
@@ -1129,13 +1131,13 @@ namespace xnamame036.mame
         }
         static void palette_increase_usage_countx(int table_offset, int num_pens, _BytePtr pen_data, int color_flags)
         {
-            byte[] flag = new byte[256];
+            bool[] flag = new bool[256];
             Array.Clear(flag, 0, 256);
 
             while (num_pens-- != 0)
             {
                 int pen = pen_data[num_pens];
-                if (flag[pen] == 0)
+                if (!flag[pen])
                 {
                     if ((color_flags & PALETTE_COLOR_VISIBLE) != 0)
                     {
@@ -1145,7 +1147,7 @@ namespace xnamame036.mame
                     {
                         pen_cachedcount[Machine.game_colortable[table_offset + pen]]++;
                     }
-                    flag[pen] = 1;
+                    flag[pen] = true;
                 }
             }
         }
