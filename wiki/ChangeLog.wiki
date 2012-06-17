@@ -1,4 +1,9 @@
 #summary Changes done sorted descending on date
+
+===2012.06.17===
+More refactoring, found bug in tilemap so now pang etc. now displays 
+correct graphics. Also added new drivers for dkongjr,dkong3,ddragonb,ddragon2,retofinv,vigilant,pang,spang,gng,diamond.
+
 ===2012.06.10===
 Refactoring, changed colortable from _ShortPtr to ushort[]
 
