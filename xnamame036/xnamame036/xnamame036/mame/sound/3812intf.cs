@@ -26,6 +26,13 @@ namespace xnamame036.mame
         public int[] mixing_level = new int[Mame.MAX_3812];
         public handlerdelegate[] handler;
     }
+    public class YM3526interface : YM3812interface
+    {
+        public YM3526interface(int num, int baseclock, int[] mixing_level, handlerdelegate[] handler = null)
+            : base(num, baseclock, mixing_level, handler)
+        {
+        }
+    }
     public class Y8950interface:YM3812interface
     {
         public Y8950interface(int num, int baseclock, int[] mixing_level, handlerdelegate[] handler = null):base(num,baseclock,mixing_level,handler)
@@ -55,7 +62,7 @@ namespace xnamame036.mame
         }
         public override int start(Mame.MachineSound msound)
         {
-            chiptype = fm.OPL_TYPE_YM3812;
+            chiptype = FMOPL.OPL_TYPE_YM3812;
             return OPL_sh_start(msound);
         }
         public override void stop()
@@ -97,7 +104,7 @@ namespace xnamame036.mame
             public int[] aOPLFreqArray = new int[16];		/* Up to 9 channels.. */
         }
         static int chiptype;
-        static fm.FM_OPL[] F3812 = new fm.FM_OPL[Mame.MAX_3812];
+        static FMOPL.FM_OPL[] F3812 = new FMOPL.FM_OPL[Mame.MAX_3812];
 
         static non_emu3812_state[] nonemu_state;
         static double timer_step;
@@ -113,38 +120,42 @@ namespace xnamame036.mame
         }
         static int emu_YM3812_status_port_r(int chip)
         {
-            return fm.OPLRead(F3812[chip], 0);
+            return FMOPL.OPLRead(F3812[chip], 0);
         }
         static void emu_YM3812_control_port_w(int chip, int data)
         {
-            fm.OPLWrite(F3812[chip], 0, data);
+            FMOPL.OPLWrite(F3812[chip], 0, data);
         }
         static void emu_YM3812_write_port_w(int chip, int data)
         {
-            fm.OPLWrite(F3812[chip], 1, data);
+            FMOPL.OPLWrite(F3812[chip], 1, data);
         }
 
         static int emu_YM3812_read_port_r(int chip)
         {
-            return fm.OPLRead(F3812[chip], 1);
+            return FMOPL.OPLRead(F3812[chip], 1);
         }
 
 
+        static void YM3812_write_port_1_w(int offset, int data)
+        {
+            write_port_w(1, data);
+        }
         static void emu_YM3812_sh_stop()
         {
             int i;
 
             for (i = 0; i < intf.num; i++)
             {
-                fm.OPLDestroy(ref F3812[i]);
+                FMOPL.OPLDestroy(ref F3812[i]);
             }
         }
 
-
+        public static int YM3526_status_port_0_r(int offset) { return YM3812_status_port_0_r(offset); }
 
         public static int YM3812_sh_start(Mame.MachineSound msound)
         {
-            chiptype = fm.OPL_TYPE_YM3812;
+            chiptype = FMOPL.OPL_TYPE_YM3812;
             return OPL_sh_start(msound);
         }
         public static void YM3812_control_port_0_w(int offset, int data)
@@ -152,6 +163,8 @@ namespace xnamame036.mame
             if (control_port_w == null) return;
             control_port_w(0, data);
         }
+        public static void YM3526_control_port_0_w(int offset, int data) { YM3812_control_port_0_w(offset, data); }
+        public static void YM3526_write_port_0_w(int offset, int data) { YM3812_write_port_0_w(offset, data); }
         public static void YM3812_write_port_0_w(int offset, int data)
         {
             if (write_port_w == null) return;
@@ -175,7 +188,7 @@ namespace xnamame036.mame
                 int vol = intf.mixing_level[i];
                 /* emulator create */
                 
-                F3812[i] = fm.OPLCreate(chiptype, intf.baseclock, rate);
+                F3812[i] = FMOPL.OPLCreate(chiptype, intf.baseclock, rate);
                 if (F3812[i] == null) return 1;
                 /* stream setup */
                 name = Mame.sprintf("%s #%d", Mame.sound_name(msound), i);
@@ -194,9 +207,9 @@ namespace xnamame036.mame
 #endif
                 stream[i] = Mame.stream_init(name, vol, rate, i, YM3812UpdateHandler);
                 /* YM3812 setup */
-                fm.OPLSetTimerHandler(F3812[i], TimerHandler, i * 2);
-                fm.OPLSetIRQHandler(F3812[i], IRQHandler, i);
-                fm.OPLSetUpdateHandler(F3812[i], Mame.stream_update, stream[i]);
+                FMOPL.OPLSetTimerHandler(F3812[i], TimerHandler, i * 2);
+                FMOPL.OPLSetIRQHandler(F3812[i], IRQHandler, i);
+                FMOPL.OPLSetUpdateHandler(F3812[i], Mame.stream_update, stream[i]);
             }
             return 0;
         }
@@ -210,7 +223,7 @@ namespace xnamame036.mame
             int n = param >> 1;
             int c = param & 1;
             Timer[param] = null;
-            fm.OPLTimerOver(F3812[n], c);
+            FMOPL.OPLTimerOver(F3812[n], c);
         }
 
         static void TimerHandler(int c, double period)
@@ -230,7 +243,7 @@ namespace xnamame036.mame
         }
         static void YM3812UpdateHandler(int n, _ShortPtr buf, int length)
         { 
-            fm.YM3812UpdateOne(F3812[n], buf, length); 
+            FMOPL.YM3812UpdateOne(F3812[n], buf, length); 
         }
 
         
@@ -239,5 +252,13 @@ namespace xnamame036.mame
             return status_port_r(0);
         }
 
+    }
+    class YM3526 : YM3812
+    {
+        public YM3526()
+        {
+            this.sound_num = Mame.SOUND_YM3526;
+            this.name = "YM-3526";
+        }
     }
 }

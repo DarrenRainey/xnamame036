@@ -47,12 +47,21 @@ namespace xnamame036.mame
             this.buffer = buffer;
             this.offset = offset;
         }
+        public UIntSubArray(uint[] buffer, uint offset )
+        {
+            this.buffer = buffer;
+            this.offset = (int)offset;
+        }
         public uint this[int index]
         {
             get { return buffer[index + offset]; }
             set { buffer[index + offset] = value; }
         }
-
+        public uint this[uint index]
+        {
+            get { return buffer[index + offset]; }
+            set { buffer[index + offset] = value; }
+        }
     }
     public class UShortSubArray
     {

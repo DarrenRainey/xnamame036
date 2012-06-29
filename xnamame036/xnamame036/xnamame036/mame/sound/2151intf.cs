@@ -11,7 +11,7 @@ namespace xnamame036.mame
     {
         public const byte MAX_2151 = 3;
     }
-    public delegate void YM2151writehandler(int a, int b);
+    
     public delegate void YM2151irqhandler(int i);
     class YM2151interface
     {
@@ -19,8 +19,8 @@ namespace xnamame036.mame
         public int baseclock;
         public int[] volume = new int[Mame.MAX_2151];
         public YM2151irqhandler[] irqhandler = new YM2151irqhandler[Mame.MAX_2151];
-        public YM2151writehandler[] portwritehandler;
-        public YM2151interface(int num, int baseclock, int[] volume, YM2151irqhandler[] irqhandler, YM2151writehandler[] writehandler)
+        public Mame.mem_write_handler[] portwritehandler;
+        public YM2151interface(int num, int baseclock, int[] volume, YM2151irqhandler[] irqhandler, Mame.mem_write_handler[] writehandler)
         {
             this.num = num;
             this.volume = volume;
@@ -62,7 +62,7 @@ namespace xnamame036.mame
             for (int i = 0; i < intf.num; i++)
                 switch (FMMode)
                 {
-                    case CHIP_YM2151_DAC: fm.OPMResetChip(i); break;
+                    case CHIP_YM2151_DAC: FM.OPMResetChip(i); break;
                     //case CHIP_YM2151_ALT: fm.YM2151ResetChip(i); break;
                 }
         }
@@ -76,7 +76,7 @@ namespace xnamame036.mame
             {
 #if (HAS_YM2151)
                 case CHIP_YM2151_DAC:
-                    return fm.YM2151Read(0, 1);
+                    return FM.YM2151Read(0, 1);
 #endif
 #if (HAS_YM2151_ALT)
 	case CHIP_YM2151_ALT:
@@ -100,8 +100,8 @@ namespace xnamame036.mame
             {
 #if (HAS_YM2151)
                 case CHIP_YM2151_DAC:
-                    fm.YM2151Write(0, 0, (byte)lastreg0);
-                    fm.YM2151Write(0, 1, (byte)data);
+                    FM.YM2151Write(0, 0, (byte)lastreg0);
+                    FM.YM2151Write(0, 1, (byte)data);
                     break;
 #endif
 #if (HAS_YM2151_ALT)
@@ -130,7 +130,7 @@ namespace xnamame036.mame
             int c = param >> 7;
 
             Timer[n][c] = null;
-            fm.YM2151TimerOver(n, c);
+            FM.YM2151TimerOver(n, c);
         }
         static void TimerHandler(int n, int c, int count, double stepTime)
         {
@@ -185,7 +185,7 @@ namespace xnamame036.mame
                             mixed_vol >>= 16;
                             name[j] = Mame.sprintf("%s #%d Ch%d", Mame.sound_name(msound), i, j + 1);
                         }
-                        stream[i] = Mame.stream_init_multi(YM2151_NUMBUF, name, vol, rate, i, fm.OPMUpdateOne);
+                        stream[i] = Mame.stream_init_multi(YM2151_NUMBUF, name, vol, rate, i, FM.OPMUpdateOne);
                     }
                     /* Set Timer handler */
                     for (i = 0; i < intf.num; i++)
@@ -194,11 +194,11 @@ namespace xnamame036.mame
                         Timer[i][0] = null;
                         Timer[i][1] = null;
                     }
-                    if (fm.OPMInit(intf.num, intf.baseclock, Mame.Machine.sample_rate, TimerHandler, IRQHandler) == 0)
+                    if (FM.OPMInit(intf.num, intf.baseclock, Mame.Machine.sample_rate, TimerHandler, IRQHandler) == 0)
                     {
                         /* set port handler */
                         for (i = 0; i < intf.num; i++)
-                            fm.OPMSetPortHander(i, intf.portwritehandler[i]);
+                            FM.OPMSetPortHandler(i, intf.portwritehandler[i]);
                         return 0;
                     }
                     /* error */

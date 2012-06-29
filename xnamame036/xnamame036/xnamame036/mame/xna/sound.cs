@@ -80,7 +80,7 @@ namespace xnamame036.mame
             stream_buffer_size = (uint)(stream_buffer_size * nBlockAlign) / 4;
             stream_buffer_size =(uint)( (stream_buffer_size * 30) / Machine.drv.frames_per_second);
             stream_buffer_size = (stream_buffer_size / 1024) * 1024;
-            System.Console.WriteLine("stream_buffer_size {0}", stream_buffer_size);
+            
             /* compute how many samples to generate this frame */
             samples_left_over = samples_per_frame;
             snd_samples_this_frame = (uint)samples_left_over;
@@ -93,7 +93,7 @@ namespace xnamame036.mame
             audio_buffer_length = (int)(NUM_BUFFERS * snd_samples_this_frame )-1;
 
             soundInstance = new DynamicSoundEffectInstance(Machine.sample_rate, stereo ? AudioChannels.Stereo : AudioChannels.Mono);
-            System.Console.WriteLine("{0}/{1}", audio_buffer_length, soundInstance.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(31)));
+            
 #if UseCallbackEventHandler
             soundInstance.BufferNeeded += new EventHandler<EventArgs>(DynamicSoundInstance_BufferNeeded);
 #endif

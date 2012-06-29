@@ -72,7 +72,7 @@ namespace xnamame036.mame
         public const byte SOUND_MSM5205 = 14;
         public const byte SOUND_ADPCM = 15;
         public const byte SOUND_NES = 16;
-
+        public const byte SOUND_YM3526= 17;
         public const byte SOUND_SEGAPCM = 99;
 
         public delegate int CustomSoundStart(MachineSound msound);
@@ -131,6 +131,7 @@ namespace xnamame036.mame
                                       new MSM5205(),
                                       new ADPCM(),
                                       new nes_apu(),
+                                      new YM3526(),
                                   };
         int sound_start()
         {
