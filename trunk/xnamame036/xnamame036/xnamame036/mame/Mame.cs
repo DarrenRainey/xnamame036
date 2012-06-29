@@ -136,10 +136,11 @@ namespace xnamame036.mame
             //main("ddragonb");
             //main("ddragon2");
 
-            //main("retofinv");
             //main("vigilant"); // Some glitches when drawing occurs at side of screen
+            
             //main("pang"); 
             //main("spang"); 
+            //main("block");
 
             //main("gng");
             //main("diamond");
@@ -155,14 +156,19 @@ namespace xnamame036.mame
             //These drivers have problems that should be fixable
             //main("turbo");     //Graphics not drawn correctly. Some offset problem ?             
             //main("ajax");// Border left around the screen
-
+            
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
-
+            //main("bublbobl"); // Graphics only partially drawn
             //main("defender"); //graphics/palette problems
+
+            //main("retofinv"); // major graphics glitches
 
 
             //-------------------------------------------------
             //These drivers I would like to implement
+
+            main("nemesis");
+
             //main("pacmania");
             
             
@@ -191,7 +197,7 @@ namespace xnamame036.mame
             
 
             //main("baraduke"); // tilemap & input port. Will not work with 8-bit graphics ?
-           main("irobot");//6809 graphics missing, 
+           //main("irobot");//6809 graphics missing, 
            // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
             main("raiden");  //cpu problems ?
@@ -309,12 +315,10 @@ namespace xnamame036.mame
         }
         int init_machine()
         {
-            int i;
-
             if (code_init() != 0)
                 goto _out;
 
-            for (i = 0; i < MAX_MEMORY_REGIONS; i++)
+            for (int i = 0; i < MAX_MEMORY_REGIONS; i++)
             {
                 Machine.memory_region[i] = null;
                 Machine.memory_region_length[i] = 0;
@@ -388,7 +392,6 @@ namespace xnamame036.mame
         int run_machine()
         {
             int res = 1;
-
 
             if (vh_open() == 0)
             {
@@ -567,7 +570,6 @@ namespace xnamame036.mame
                 return 1;
             }
 
-            //blit_buffer = new uint[drv.screen_width * drv.screen_height];
             blit_buffer = new uint[Machine.scrbitmap.width*Machine.scrbitmap.height];
             back_buffer = new byte[Machine.scrbitmap.line[0].buffer.Length];
             /* create spriteram buffers if necessary */
@@ -605,7 +607,6 @@ namespace xnamame036.mame
                 vh_close();
                 return 1;
             }
-
 
             osd_create_backbuffer(Machine.scrbitmap.width,Machine.scrbitmap.height);
 

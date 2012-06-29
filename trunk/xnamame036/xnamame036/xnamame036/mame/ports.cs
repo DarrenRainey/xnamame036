@@ -29,7 +29,8 @@ namespace xnamame036.mame
         public const string Upright = "Upright";
         public const string Cocktail = "Cocktail";
         public const string Bonus_Life = "Bonus Life";
-
+        public const string Service_Mode = "Service Mode";
+        public const string Unused = "Unused";
         public static string DEF_STR(string key) { return ipdn_defaultstrings[key]; }
         static ports()
         {

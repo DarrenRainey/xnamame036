@@ -375,7 +375,7 @@ new Mame.GfxLayout(
             video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE;
             sound_attributes = 0;
             sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295, driver_pang.okim6295_interface));
-            //sound.Add(new Mame.MachineSound(Mame.SOUND_YM2413, driver_pang.ym2413_interface));
+            sound.Add(new Mame.MachineSound(Mame.SOUND_YM2413, driver_pang.ym2413_interface));
         }
         public override void init_machine()
         {
@@ -621,7 +621,7 @@ new Mame.GfxLayout(
             input_type = 3;
             nvram_size = 0x80;
             nvram = new _BytePtr(Mame.memory_region(Mame.REGION_CPU1), 0xe000);	/* NVRAM */
-            kabuki.spang_decode();
+            kabuki.pang_decode();
         }
         Mame.RomModule[] rom_spang()
         {
@@ -658,6 +658,163 @@ new Mame.GfxLayout(
             flags = Mame.ROT0;
             input_ports = input_ports_pang();
             rom = rom_spang();
+            drv.HasNVRAMhandler = true;
+        }
+    }
+    class driver_block : Mame.GameDriver
+    {
+        public override void driver_init()
+        {
+            driver_mitchell.input_type = 2;
+            driver_mitchell.nvram_size = 0x80;
+            driver_mitchell.nvram = new _BytePtr(Mame.memory_region(Mame.REGION_CPU1), 0xff80);	/* NVRAM */
+            kabuki.block_decode();
+        }
+        Mame.RomModule[] rom_block()
+        {
+            ROM_START("block");
+            ROM_REGION(2 * 0x50000, Mame.REGION_CPU1);	/* 320k for code + 320k for decrypted opcodes */
+            ROM_LOAD("ble_05.rom", 0x00000, 0x08000, 0xc12e7f4c);
+            ROM_LOAD("ble_06.rom", 0x10000, 0x20000, 0xcdb13d55);
+            ROM_LOAD("ble_07.rom", 0x30000, 0x20000, 0x1d114f13);
+
+            ROM_REGION(0x100000, Mame.REGION_GFX1 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("bl_08.rom", 0x000000, 0x20000, 0xaa0f4ff1);	/* chars */
+            ROM_RELOAD(0x040000, 0x20000);
+            ROM_LOAD("bl_09.rom", 0x020000, 0x20000, 0x6fa8c186);
+            ROM_RELOAD(0x060000, 0x20000);
+            ROM_LOAD("bl_18.rom", 0x080000, 0x20000, 0xc0acafaf);
+            ROM_RELOAD(0x0c0000, 0x20000);
+            ROM_LOAD("bl_19.rom", 0x0a0000, 0x20000, 0x1ae942f5);
+            ROM_RELOAD(0x0e0000, 0x20000);
+
+            ROM_REGION(0x040000, Mame.REGION_GFX2 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("bl_16.rom", 0x000000, 0x20000, 0xfadcaff7);	/* sprites */
+            ROM_LOAD("bl_17.rom", 0x020000, 0x20000, 0x5f8cab42);
+
+            ROM_REGION(0x80000, Mame.REGION_SOUND1);	/* OKIM */
+            ROM_LOAD("bl_01.rom", 0x00000, 0x20000, 0xc2ec2abb);
+            return ROM_END;
+        }
+        public static Mame.InputPortTiny[] input_ports_block()
+        {
+
+            INPUT_PORTS_START("block");
+            PORT_START();     /* DSW */
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* USED - handled in port5_r */
+            PORT_BITX(0x02, 0x02, (uint)inptports.IPT_SERVICE, DEF_STR("Service Mode"), (ushort)Mame.InputCodes.KEYCODE_F2, IP_JOY_NONE);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* unused? */
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* USED - handled in port5_r */
+            PORT_BIT(0x70, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* unused? */
+            PORT_BIT(0x80, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* data from EEPROM */
+
+            PORT_START();      /* IN0 */
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x02, IP_ACTIVE_LOW, (uint)inptports.IPT_START2);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);    /* probably unused */
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (uint)inptports.IPT_START1);
+            PORT_BIT(0x10, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);   /* probably unused */
+            PORT_BIT(0x20, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);   /* probably unused */
+            PORT_BIT(0x40, IP_ACTIVE_LOW, (uint)inptports.IPT_COIN2);
+            PORT_BIT(0x80, IP_ACTIVE_LOW, (uint)inptports.IPT_COIN1);
+
+            PORT_START();     /* IN1 */
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x02, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* dial direction */
+            PORT_BIT(0x10, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x20, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x40, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x80, IP_ACTIVE_LOW, (uint)inptports.IPT_BUTTON1);
+
+            PORT_START();     /* IN2 */
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x02, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);	/* dial direction */
+            PORT_BIT(0x10, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x20, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x40, IP_ACTIVE_LOW, (uint)inptports.IPT_UNKNOWN);
+            PORT_BIT(0x80, IP_ACTIVE_LOW, (uint)inptports.IPT_BUTTON1 | IPF_PLAYER2);
+
+            PORT_START();    /* DIAL1 */
+            PORT_ANALOG(0xff, 0x00, (uint)inptports.IPT_DIAL, 50, 20, 0, 0);
+
+            PORT_START();     /* DIAL2 */
+            PORT_ANALOG(0xff, 0x00, (uint)inptports.IPT_DIAL | IPF_PLAYER2, 50, 20, 0, 0);
+            return INPUT_PORTS_END;
+        }
+        public driver_block()
+        {
+            drv = new machine_driver_pang();
+            year = "1991";
+            name = "block";
+            description = "Block BLock (World)";
+            manufacturer = "Cpcom";
+            flags = Mame.ROT270;
+            input_ports = input_ports_block();
+            rom = rom_block();
+            drv.HasNVRAMhandler = true;
+        }
+    }
+    public class driver_blockbl : Mame.GameDriver
+    {
+        static void bootleg_decode()
+        {
+            _BytePtr rom = Mame.memory_region(Mame.REGION_CPU1);
+            int diff = Mame.memory_region_length(Mame.REGION_CPU1) / 2;
+
+            Mame.memory_set_opcode_base(0, new _BytePtr(rom, diff));
+        }
+        Mame.RomModule[] rom_blockbl()
+        {
+
+            ROM_START("blockbl");
+            ROM_REGION(2 * 0x50000, Mame.REGION_CPU1);/* 320k for code + 320k for decrypted opcodes */
+            ROM_LOAD("m7.l6", 0x50000, 0x08000, 0x3b576fd9);  /* Decrypted opcode + data */
+            ROM_CONTINUE(0x00000, 0x08000);
+            ROM_LOAD("m5.l3", 0x60000, 0x20000, 0x7c988bb7);  /* Decrypted opcode + data */
+            ROM_CONTINUE(0x10000, 0x20000);
+            ROM_LOAD("m6.l5", 0x30000, 0x20000, 0x5768d8eb);  /* Decrypted data */
+
+            ROM_REGION(0x100000, Mame.REGION_GFX1 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("m12.o10", 0x000000, 0x20000, 0x963154d9);	/* chars */
+            ROM_RELOAD(0x040000, 0x20000);
+            ROM_LOAD("m13.o14", 0x020000, 0x20000, 0x069480bb);
+            ROM_RELOAD(0x060000, 0x20000);
+            ROM_LOAD("m4.j17", 0x080000, 0x20000, 0x9e3b6f4f);
+            ROM_RELOAD(0x0c0000, 0x20000);
+            ROM_LOAD("m3.j20", 0x0a0000, 0x20000, 0x629d58fe);
+            ROM_RELOAD(0x0e0000, 0x20000);
+
+            ROM_REGION(0x040000, Mame.REGION_GFX2 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("m11.o7", 0x000000, 0x10000, 0x255180a5);	/* sprites */
+            ROM_LOAD("m10.o5", 0x010000, 0x10000, 0x3201c088);
+            ROM_LOAD("m9.o3", 0x020000, 0x10000, 0x29357fe4);
+            ROM_LOAD("m8.o2", 0x030000, 0x10000, 0xabd665d1);
+
+            ROM_REGION(0x80000, Mame.REGION_SOUND1);	/* OKIM */
+            ROM_LOAD("bl_01.rom", 0x00000, 0x20000, 0xc2ec2abb);
+            return ROM_END;
+        }
+        public override void driver_init()
+        {
+            driver_mitchell.input_type = 2;
+            driver_mitchell.nvram_size = 0x80;
+            driver_mitchell.nvram = new _BytePtr(Mame.memory_region(Mame.REGION_CPU1), 0xff80);	/* NVRAM */
+            bootleg_decode();
+        }
+        public driver_blockbl()
+        {
+            drv = new machine_driver_pang();
+            year = "1990";
+            name = "blockbl";
+            description = "Block lLock (bootleg)";
+            manufacturer = "bootleg";
+            flags = Mame.ROT270;
+            input_ports = driver_block.input_ports_block();
+            rom = rom_blockbl();
             drv.HasNVRAMhandler = true;
         }
     }

@@ -1412,7 +1412,10 @@ namespace xnamame036.mame
         {
             change_pc_generic(pc, ABITS2_20, ABITS_MIN_20, 0, cpu_setOPbase20);
         }
-
+        static void change_pc24(uint pc)
+        {
+            change_pc_generic(pc, ABITS2_24, ABITS_MIN_24, 0, cpu_setOPbase24);
+        }
 
         public delegate void setopbase(int pc, int shift);
         //#define SETOPBASE(name,abits,shift)														
@@ -1453,8 +1456,6 @@ namespace xnamame036.mame
             /* do not support on callback memory region */
             printf("CPU #%d PC %04x: warning - op-code execute on mapped i/o\n",	cpu_getactivecpu(),cpu_get_pc());									
         }
-
-
         static void cpu_setOPbase20(int pc, int shift)
         {
             byte hw;
@@ -1491,6 +1492,30 @@ namespace xnamame036.mame
 
             /* do not support on callback memory region */
             //printf("CPU #%d PC %04x: warning - op-code execute on mapped i/o\n",	cpu_getactivecpu(),cpu_get_pc());									
+        }
+        static void cpu_setOPbase24(int pc, int shift)
+        {
+            byte hw; 
+            pc = (int)((uint)pc >> shift); 
+            if (OPbasefunc!=null)
+            { 
+            pc = OPbasefunc(pc);
+                if (pc == -1)
+                    return;
+        }
+            hw = cur_mrhard[(uint)pc >> (ABITS2_24 + ABITS_MIN_24)]; 
+            if (hw >= MH_HARDMAX)
+            { 
+                hw -= MH_HARDMAX;
+                hw = readhardware[(hw << MH_SBITS) + (((uint)pc >> ABITS_MIN_24) & MHMASK(ABITS2_24))]; 
+            } 
+            ophw = hw; 
+            if (hw <= HT_BANKMAX) 
+            {
+                SET_OP_RAMROM(new _BytePtr(cpu_bankbase[hw] , - memoryreadoffset[hw]));
+                return;
+            }
+            printf( "CPU #%d PC %04x: warning - op-code execute on mapped i/o\n", cpu_getactivecpu(),cpu_get_pc());
         }
 
         static void SET_OP_RAMROM(_BytePtr _base)

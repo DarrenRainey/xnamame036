@@ -37,7 +37,7 @@ namespace xnamame036.mame
         }
         public override void reset()
         {
-            for (int i = 0; i < intf.num; i++) fm.YM2203ResetChip(i);
+            for (int i = 0; i < intf.num; i++) FM.YM2203ResetChip(i);
         }
         public override int start(Mame.MachineSound msound)
         {
@@ -55,10 +55,10 @@ namespace xnamame036.mame
                 int volume;
                 string name = Mame.sprintf("%s #%d FM", Mame.sound_name(msound), i);
                 volume = intf.mixing_level[i] >> 16; /* high 16 bit */
-                stream[i] = Mame.stream_init(name, volume, Mame.Machine.sample_rate, i, fm.YM2203UpdateOne/*YM2203UpdateCallback*/);
+                stream[i] = Mame.stream_init(name, volume, Mame.Machine.sample_rate, i, FM.YM2203UpdateOne/*YM2203UpdateCallback*/);
             }
             /* Initialize FM emurator */
-            if (fm.YM2203Init(intf.num, intf.baseclock, Mame.Machine.sample_rate, TimerHandler, IRQHandler) == 0)
+            if (FM.YM2203Init(intf.num, intf.baseclock, Mame.Machine.sample_rate, TimerHandler, IRQHandler) == 0)
             {
                 /* Ready */
                 return 0;
@@ -69,7 +69,7 @@ namespace xnamame036.mame
         }
         public override void stop()
         {
-            fm.YM2203Shutdown();
+            FM.YM2203Shutdown();
         }
         public override void update()
         {
@@ -81,7 +81,7 @@ namespace xnamame036.mame
             int c = param >> 7;
 
             Timer[n][c] = null;
-            fm.YM2203TimerOver(n, c);
+            FM.YM2203TimerOver(n, c);
         }
         static void FMTimerInit()
         {
@@ -122,58 +122,58 @@ namespace xnamame036.mame
 
 
 
-        public static int YM2203_status_port_0_r(int offset) { return fm.YM2203Read(0, 0); }
-        public static int YM2203_status_port_1_r(int offset) { return fm.YM2203Read(1, 0); }
-        public static int YM2203_status_port_2_r(int offset) { return fm.YM2203Read(2, 0); }
-        public static int YM2203_status_port_3_r(int offset) { return fm.YM2203Read(3, 0); }
-        public static int YM2203_status_port_4_r(int offset) { return fm.YM2203Read(4, 0); }
+        public static int YM2203_status_port_0_r(int offset) { return FM.YM2203Read(0, 0); }
+        public static int YM2203_status_port_1_r(int offset) { return FM.YM2203Read(1, 0); }
+        public static int YM2203_status_port_2_r(int offset) { return FM.YM2203Read(2, 0); }
+        public static int YM2203_status_port_3_r(int offset) { return FM.YM2203Read(3, 0); }
+        public static int YM2203_status_port_4_r(int offset) { return FM.YM2203Read(4, 0); }
 
-        public static int YM2203_read_port_0_r(int offset) { return fm.YM2203Read(0, 1); }
-        public static int YM2203_read_port_1_r(int offset) { return fm.YM2203Read(1, 1); }
-        public static int YM2203_read_port_2_r(int offset) { return fm.YM2203Read(2, 1); }
-        public static int YM2203_read_port_3_r(int offset) { return fm.YM2203Read(3, 1); }
-        public static int YM2203_read_port_4_r(int offset) { return fm.YM2203Read(4, 1); }
+        public static int YM2203_read_port_0_r(int offset) { return FM.YM2203Read(0, 1); }
+        public static int YM2203_read_port_1_r(int offset) { return FM.YM2203Read(1, 1); }
+        public static int YM2203_read_port_2_r(int offset) { return FM.YM2203Read(2, 1); }
+        public static int YM2203_read_port_3_r(int offset) { return FM.YM2203Read(3, 1); }
+        public static int YM2203_read_port_4_r(int offset) { return FM.YM2203Read(4, 1); }
 
         public static void YM2203_control_port_0_w(int offset, int data)
         {
-            fm.YM2203Write(0, 0, (byte)data);
+            FM.YM2203Write(0, 0, (byte)data);
         }
         public static void YM2203_control_port_1_w(int offset, int data)
         {
-            fm.YM2203Write(1, 0, (byte)data);
+            FM.YM2203Write(1, 0, (byte)data);
         }
         public static void YM2203_control_port_2_w(int offset, int data)
         {
-            fm.YM2203Write(2, 0, (byte)data);
+            FM.YM2203Write(2, 0, (byte)data);
         }
         public static void YM2203_control_port_3_w(int offset, int data)
         {
-            fm.YM2203Write(3, 0, (byte)data);
+            FM.YM2203Write(3, 0, (byte)data);
         }
         public static void YM2203_control_port_4_w(int offset, int data)
         {
-            fm.YM2203Write(4, 0, (byte)data);
+            FM.YM2203Write(4, 0, (byte)data);
         }
 
         public static void YM2203_write_port_0_w(int offset, int data)
         {
-            fm.YM2203Write(0, 1, (byte)data);
+            FM.YM2203Write(0, 1, (byte)data);
         }
         public static void YM2203_write_port_1_w(int offset, int data)
         {
-            fm.YM2203Write(1, 1, (byte)data);
+            FM.YM2203Write(1, 1, (byte)data);
         }
         public static void YM2203_write_port_2_w(int offset, int data)
         {
-            fm.YM2203Write(2, 1, (byte)data);
+            FM.YM2203Write(2, 1, (byte)data);
         }
         public static void YM2203_write_port_3_w(int offset, int data)
         {
-            fm.YM2203Write(3, 1, (byte)data);
+            FM.YM2203Write(3, 1, (byte)data);
         }
         public static void YM2203_write_port_4_w(int offset, int data)
         {
-            fm.YM2203Write(4, 1, (byte)data);
+            FM.YM2203Write(4, 1, (byte)data);
         }
     }
 }

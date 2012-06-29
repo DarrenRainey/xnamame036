@@ -267,7 +267,7 @@ namespace xnamame036.mame.drivers
             }
             public override void vh_stop()
             {
-                throw new NotImplementedException();
+               //nothing
             }
             public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
             {

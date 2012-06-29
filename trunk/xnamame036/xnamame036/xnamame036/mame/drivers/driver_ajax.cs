@@ -132,7 +132,7 @@ new YM2151interface(
     1,
     3579545,	/* 3.58 MHz */
     new int[] { YM2151.YM3012_VOL(50, Mame.MIXER_PAN_LEFT, 50, Mame.MIXER_PAN_RIGHT) },
-    null,new YM2151writehandler[] { null }
+    null, new Mame.mem_write_handler[] { null }
 );
 
         static int firq_enable;

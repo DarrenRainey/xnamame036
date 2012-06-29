@@ -592,9 +592,13 @@ namespace xnamame036.mame
             {
                 m6805.irq_callback = callback;
             }
-            public override void set_irq_line(int irqline, int linestate)
+            public override void set_irq_line(int irqline, int state)
             {
-                throw new NotImplementedException();
+                if (m6805.irq_state[0] == state) return;
+
+                m6805.irq_state[0] = state;
+                if (state != CLEAR_LINE)
+                    m6805.pending_interrupts |= M6805_INT_IRQ;
             }
             public override void set_nmi_line(int linestate)
             {
@@ -2808,6 +2812,15 @@ namespace xnamame036.mame
             {
                 base.reset(param);
                 m6805.subtype = SUBTYPE_M68705;
+            }
+            public override string cpu_info(object context, int regnum)
+            {
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "M68705";
+                    case CPU_INFO_VERSION: return "1.1";
+                }
+                return base.cpu_info(context, regnum);
             }
         }
         class cpu_hd63705 : cpu_m6805

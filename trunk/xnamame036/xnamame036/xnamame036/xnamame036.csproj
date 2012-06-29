@@ -116,12 +116,19 @@
     <Compile Include="mame\cpu\Dummy.cs" />
     <Compile Include="mame\cpu\i8039\i8039.cs" />
     <Compile Include="mame\cpu\i8085\cpu_i8085.cs" />
-    <Compile Include="mame\cpu\i86\cpu_i86.cs" />
+    <Compile Include="mame\cpu\i86\cpu_i86.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\cpu\konami\cpu_konami.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\cpu\m6502\cpu_m6502.cs" />
     <Compile Include="mame\cpu\m68000\m68000.cs" />
+    <Compile Include="mame\cpu\m68000\m68kopac.cs" />
+    <Compile Include="mame\cpu\m68000\m68kops.cs" />
+    <Compile Include="mame\cpu\m68000\m86kcpu.cs" />
+    <Compile Include="mame\cpu\m68000\m86kopdm.cs" />
+    <Compile Include="mame\cpu\m68000\m86kopnz.cs" />
     <Compile Include="mame\cpu\m6800\cpu_m6800.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -138,6 +145,9 @@
     <Compile Include="mame\DataFile.cs" />
     <Compile Include="mame\DrawGfx.cs" />
     <Compile Include="mame\driver.cs" />
+    <Compile Include="mame\drivers\driver_brkthru.cs" />
+    <Compile Include="mame\drivers\driver_bublbobl.cs" />
+    <Compile Include="mame\drivers\driver_battlane.cs" />
     <Compile Include="mame\drivers\driver_baraduke.cs" />
     <Compile Include="mame\drivers\driver_ddragon.cs" />
     <Compile Include="mame\drivers\driver_1942.cs">
@@ -206,6 +216,7 @@
     <Compile Include="mame\drivers\driver_jackal.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_kaneko16.cs" />
     <Compile Include="mame\drivers\driver_kyugo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -230,6 +241,7 @@
     <Compile Include="mame\drivers\driver_mpatrol.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_nemesis.cs" />
     <Compile Include="mame\drivers\driver_pacman.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -271,6 +283,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\drivers\driver_gng.cs" />
+    <Compile Include="mame\drivers\gottlieb.cs" />
     <Compile Include="mame\drivers\namcos1.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -287,15 +300,14 @@
     <Compile Include="mame\machine\segacrpt.cs" />
     <Compile Include="mame\png.cs" />
     <Compile Include="mame\soundhardware\Seibu.cs" />
-    <Compile Include="mame\sound\1fm.cs">
+    <Compile Include="mame\sound\FM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\sound\1fm_opl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="mame\sound\FM.cs" />
+    <Compile Include="mame\sound\FMOPL.cs" />
+    <Compile Include="mame\sound\k005289.cs" />
     <Compile Include="mame\sound\m72.cs" />
     <Compile Include="mame\sound\nes_apu.cs" />
+    <Compile Include="mame\sound\YMDELTAT.cs" />
     <Compile Include="mame\videohardware\cinemat.cs" />
     <Compile Include="mame\videohardware\Vector.cs" />
     <Compile Include="mame\fileio.cs" />

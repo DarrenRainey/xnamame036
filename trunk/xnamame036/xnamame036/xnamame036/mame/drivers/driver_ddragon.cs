@@ -138,7 +138,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
             1,			/* 1 chip */
             3579545,	/* ??? */
             new int[] { YM2151.YM3012_VOL(60, Mame.MIXER_PAN_LEFT, 60, Mame.MIXER_PAN_RIGHT) },
-            new YM2151irqhandler[] { dd_irq_handler }, new YM2151writehandler[] { null }
+            new YM2151irqhandler[] { dd_irq_handler }, new Mame.mem_write_handler[] { null }
         );
 
         static ADPCMinterface adpcm_interface =

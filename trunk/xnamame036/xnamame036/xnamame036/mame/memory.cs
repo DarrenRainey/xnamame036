@@ -472,6 +472,8 @@ namespace xnamame036.mame
         }
         public static byte cpu_readop(uint a) { return OP_ROM.buffer[OP_ROM.offset + a]; }
         public static byte cpu_readop_arg(uint a) { return OP_RAM.buffer[OP_RAM.offset + a]; }
+        public static uint cpu_readop16(uint a){return OP_ROM.READ_WORD((int)a);}
+        public static uint cpu_readop_arg16(uint a) { return OP_RAM.READ_WORD((int)a); }
 
         int memory_init()
         {
@@ -1005,9 +1007,13 @@ namespace xnamame036.mame
 #endif
         public static void COMBINE_WORD_MEM(_BytePtr a, int o,int d)
         {
-            a.write16(o,(ushort)(a.read16(o & ((d) >> 16)) | (d)));
+            a.WRITE_WORD(o, (ushort)(a.READ_WORD(o) & ((d) >> 16) | d));
+            //a.write16(o,(ushort)(a.read16(o & ((d) >> 16)) | (d)));
         }
-
+        public static int COMBINE_WORD(int w, int d)
+        {
+            return (((w) & ((d) >> 16)) | ((d) & 0xffff));
+        }
         public static int cpu_readmem16(int address)
         {
             MHELE hw = cur_mrhard[(uint)address >> (ABITS2_16 + ABITS_MIN_16)];
@@ -1127,6 +1133,101 @@ namespace xnamame036.mame
             /* fall back to handler */
             return memoryreadhandler[hw](address - memoryreadoffset[hw]);
         }
+
+        public static int cpu_readmem24(int address)
+        {
+            MHELE hw; hw = cur_mrhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+            if (1 == 0 && hw == HT_RAM) return cpu_bankbase[HT_RAM][address];
+            else if (1 != 0 && hw <= HT_BANKMAX)
+            {
+                
+                    return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];               
+            }
+            if (hw >= MH_HARDMAX)
+            {
+                hw -= MH_HARDMAX;
+                hw = readhardware[(hw << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                if (1 == 0 && hw == HT_RAM) return cpu_bankbase[HT_RAM][address];
+                else if (1 != 0 && hw <= HT_BANKMAX)
+                {
+                   
+                        return cpu_bankbase[hw][BYTE_XOR_BE(address) - memoryreadoffset[hw]];                    
+                }
+            }
+
+                int shift = (address & 1) << 3;
+                int data = memoryreadhandler[hw]((address & ~1) - memoryreadoffset[hw]);
+               
+                    return (data >> (shift ^ 8)) & 0xff;
+
+
+        }
+        public static int cpu_readmem24_word(int address)
+        {
+            MHELE hw; 
+            if (0 == 1 || (address & 1) == 0)
+            {
+                hw = cur_mrhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+                if (hw <= HT_BANKMAX)
+                    return cpu_bankbase[hw].READ_WORD(address - memoryreadoffset[hw]);
+                if (hw >= MH_HARDMAX)
+                {
+                    hw -= MH_HARDMAX;
+                    hw = readhardware[(hw << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                    if (hw <= HT_BANKMAX)
+                        return cpu_bankbase[hw].READ_WORD(address - memoryreadoffset[hw]);
+                }
+                return memoryreadhandler[hw](address - memoryreadoffset[hw]);
+            }
+            
+            {
+                int data = cpu_readmem24(address) << 8;
+                return data | (cpu_readmem24(address + 1) & 0xff);
+            }
+            
+        }
+        public static int cpu_readmem24_dword(int address)
+        {
+            ushort word1, word2; MHELE hw1, hw2;
+           
+            if (0 == 1 || (address & 1) == 0)
+            {
+                int address2 = (int)((address + 2) & ((1U << (ABITS1_24 + ABITS2_24 + ABITS_MIN_24 - 1)) | ((1U << (ABITS1_24 + ABITS2_24 + ABITS_MIN_24 - 1)) - 1)));
+                hw1 = cur_mrhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+                hw2 = cur_mrhard[(uint)address2 >> (ABITS2_24 + ABITS_MIN_24)];
+                if (hw1 >= MH_HARDMAX)
+                {
+                    hw1 -= MH_HARDMAX;
+                    hw1 = readhardware[(hw1 << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                }
+                if (hw2 >= MH_HARDMAX)
+                {
+                    hw2 -= MH_HARDMAX;
+                    hw2 = readhardware[(hw2 << MH_SBITS) + (((uint)address2 >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                }
+                if (hw1 <= HT_BANKMAX)
+                    word1 = cpu_bankbase[hw1].READ_WORD(address - memoryreadoffset[hw1]);
+                else
+                    word1 = (ushort)memoryreadhandler[hw1](address - memoryreadoffset[hw1]);
+                if (hw2 <= HT_BANKMAX)
+                    word2 = cpu_bankbase[hw2].READ_WORD(address2 - memoryreadoffset[hw2]);
+                else
+                    word2 = (ushort)memoryreadhandler[hw2](address2 - memoryreadoffset[hw2]);
+                
+                    return (word1 << 16) | (word2 & 0xffff);
+              
+            }
+            
+            {
+                int data = cpu_readmem24(address) << 24;
+                data |= cpu_readmem24_word(address + 1) << 8;
+                return data | (cpu_readmem24(address + 3) & 0xff);
+            }
+           
+        }
+
+
+
         public static void cpu_writemem20(int address, int data)
         {
             /* first-level lookup */
@@ -1156,6 +1257,112 @@ namespace xnamame036.mame
             }
 
             memorywritehandler[hw](address - memorywriteoffset[hw], data);
+        }
+        static void cpu_writemem24(int address, int data)
+        {
+            MHELE hw;
+            hw = cur_mwhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+            if (1 == 0 && hw == HT_RAM)
+            {
+                cpu_bankbase[HT_RAM][address] = (byte)data;
+                return;
+            }
+            else if (1 != 0 && hw <= HT_BANKMAX)
+            {
+                cpu_bankbase[hw][BYTE_XOR_BE(address) - memorywriteoffset[hw]] = (byte)data;
+
+                return;
+            }
+            if (hw >= MH_HARDMAX)
+            {
+                hw -= MH_HARDMAX;
+                hw = writehardware[(hw << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                if (1 == 0 && hw == HT_RAM)
+                {
+                    cpu_bankbase[HT_RAM][address] = (byte)data;
+                    return;
+                }
+                else if (1 != 0 && hw <= HT_BANKMAX)
+                {
+                    if (1 == 1) cpu_bankbase[hw][BYTE_XOR_BE(address) - memorywriteoffset[hw]] = (byte)data;
+                    else if (1 == 2) cpu_bankbase[hw][BYTE_XOR_LE(address) - memorywriteoffset[hw]] = (byte)data;
+                    return;
+                }
+            }
+            if (1 != 0)
+            {
+                int shift = (address & 1) << 3; if (1 == 1) shift ^= 8;
+                data = (int)((0xff000000 >> shift) | ((data & 0xff) << shift));
+                address &= ~1;
+            }
+            memorywritehandler[hw](address - memorywriteoffset[hw], data);
+        }
+        public static void cpu_writemem24_word(int address, int data)
+        {
+            MHELE hw;
+
+            if (0 == 1 || (address & 1) == 0)
+            {
+                hw = cur_mwhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+                if (hw <= HT_BANKMAX)
+                {
+                    cpu_bankbase[hw].WRITE_WORD(address - memorywriteoffset[hw], (ushort)data);
+                    return;
+                }
+                if (hw >= MH_HARDMAX)
+                {
+                    hw -= MH_HARDMAX;
+                    hw = writehardware[(hw << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))];
+                    if (hw <= HT_BANKMAX)
+                    {
+                        cpu_bankbase[hw].WRITE_WORD(address - memorywriteoffset[hw], (ushort)data);
+                        return;
+                    }
+                }
+                memorywritehandler[hw](address - memorywriteoffset[hw], data & 0xffff);
+            }
+
+                cpu_writemem24(address, data >> 8); cpu_writemem24(address + 1, data & 0xff);
+        }
+
+        static void cpu_writemem24_dword(int address, int data)
+        { 
+            ushort word1, word2;
+            MHELE hw1, hw2; 
+           
+            if (0 == 1 || (address & 1)==0)
+            { 
+                int address2 = (int)((address + 2) & ((1U << (ABITS1_24 + ABITS2_24 + ABITS_MIN_24 - 1)) | ((1U << (ABITS1_24 + ABITS2_24 + ABITS_MIN_24 - 1)) - 1)));
+                hw1 = cur_mwhard[(uint)address >> (ABITS2_24 + ABITS_MIN_24)];
+                hw2 = cur_mwhard[(uint)address2 >> (ABITS2_24 + ABITS_MIN_24)];
+                if (hw1 >= MH_HARDMAX) 
+                {
+                    hw1 -= MH_HARDMAX;
+                    hw1 = writehardware[(hw1 << MH_SBITS) + (((uint)address >> ABITS_MIN_24) & MHMASK(ABITS2_24))]; 
+                } 
+                        if (hw2 >= MH_HARDMAX) 
+                        {
+                            hw2 -= MH_HARDMAX;
+                            hw2 = writehardware[(hw2 << MH_SBITS) + (((uint)address2 >> ABITS_MIN_24) & MHMASK(ABITS2_24))]; 
+                        } 
+ 
+                    word1 =(ushort)(data >> 16);
+                    word2 =(ushort)(data & 0xffff); 
+ 
+                if (hw1 <= HT_BANKMAX) 
+                    cpu_bankbase[hw1].WRITE_WORD(address - memorywriteoffset[hw1], word1); 
+                else 
+                    memorywritehandler[hw1](address - memorywriteoffset[hw1], word1); 
+                if (hw2 <= HT_BANKMAX) 
+                    cpu_bankbase[hw2].WRITE_WORD(address2 - memorywriteoffset[hw2], word2);
+                else 
+                    memorywritehandler[hw2](address2 - memorywriteoffset[hw2], word2); 
+            } 
+ 
+                cpu_writemem24(address, data >> 24); 
+                cpu_writemem24_word(address + 1, (data >> 8) & 0xffff);
+                    cpu_writemem24(address + 3, data & 0xff);
+
         }
 
         public static int cpu_readport(int port)

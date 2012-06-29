@@ -617,38 +617,38 @@ namespace xnamame036.mame.drivers
 
         static namcos1_slice_timer[] normal_slice = { null };
 
-        
-static YM2151interface ym2151_interface =
-new YM2151interface(
-	1,			/* 1 chip */
-	3579580,	/* 3.58 MHZ */
-	new int []{ YM2151.YM3012_VOL(80,Mame.MIXER_PAN_LEFT,80,Mame.MIXER_PAN_RIGHT) },
-	new YM2151irqhandler[]{ namcos1_sound_interrupt },
-	new YM2151writehandler[]{ null }
-);
 
-static Namco_interface namco_interface =
-new Namco_interface(
-	23920/2,	/* sample rate (approximate value) */
-	8,			/* number of voices */
-	50, 		/* playback volume */
-	-1, 		/* memory region */
-	true			/* stereo */
-);
-static void namcos1_sound_interrupt(int irq)
-{
-    Mame.cpu_set_irq_line(2, Mame.cpu_m6809.M6809_FIRQ_LINE, irq != 0 ? Mame.ASSERT_LINE : Mame.CLEAR_LINE);
-}
-/*
-	namcos1 has tow 8bit dac channel. But They are mixed before pre-amp.
-	And,they are connected with pre-amp through active LPF.
-	LFP info : Fco = 3.3KHz , g = -12dB/oct
-*/
-static Mame.DACinterface dac_interface =
-new Mame.DACinterface(
-	1,			/* 2 channel , but they are mixed by the driver */
-	new int[]{ 100 	}	/* mixing level */
-);
+        static YM2151interface ym2151_interface =
+        new YM2151interface(
+            1,			/* 1 chip */
+            3579580,	/* 3.58 MHZ */
+            new int[] { YM2151.YM3012_VOL(80, Mame.MIXER_PAN_LEFT, 80, Mame.MIXER_PAN_RIGHT) },
+            new YM2151irqhandler[] { namcos1_sound_interrupt },
+            new Mame.mem_write_handler[] { null }
+        );
+
+        static Namco_interface namco_interface =
+        new Namco_interface(
+            23920 / 2,	/* sample rate (approximate value) */
+            8,			/* number of voices */
+            50, 		/* playback volume */
+            -1, 		/* memory region */
+            true			/* stereo */
+        );
+        static void namcos1_sound_interrupt(int irq)
+        {
+            Mame.cpu_set_irq_line(2, Mame.cpu_m6809.M6809_FIRQ_LINE, irq != 0 ? Mame.ASSERT_LINE : Mame.CLEAR_LINE);
+        }
+        /*
+            namcos1 has tow 8bit dac channel. But They are mixed before pre-amp.
+            And,they are connected with pre-amp through active LPF.
+            LFP info : Fco = 3.3KHz , g = -12dB/oct
+        */
+        static Mame.DACinterface dac_interface =
+        new Mame.DACinterface(
+            1,			/* 2 channel , but they are mixed by the driver */
+            new int[] { 100 }	/* mixing level */
+        );
         public class machine_driver_namcos1 : Mame.MachineDriver
         {
             public machine_driver_namcos1()
@@ -723,11 +723,11 @@ new Mame.DACinterface(
             }
             public override void nvram_handler(object file, int read_or_write)
             {
-                if (read_or_write!=0)
+                if (read_or_write != 0)
                     Mame.osd_fwrite(file, nvram, nvram_size[0]);
                 else
                 {
-                    if (file!=null)
+                    if (file != null)
                         Mame.osd_fread(file, nvram, nvram_size[0]);
                 }
             }
@@ -1559,7 +1559,7 @@ new Mame.DACinterface(
                 }
             }
             else
-            Mame.OP_RAM = Mame.OP_ROM = new _BytePtr(namcos1_banks[0, bank].bank_pointer, -bank << 13);
+                Mame.OP_RAM = Mame.OP_ROM = new _BytePtr(namcos1_banks[0, bank].bank_pointer, -bank << 13);
             /* memory.c output warning - op-code execute on mapped i/o	*/
             /* but it is necessary to continue cpu_setOPbase16 function */
             /* for update current operationhardware(ophw) code			*/

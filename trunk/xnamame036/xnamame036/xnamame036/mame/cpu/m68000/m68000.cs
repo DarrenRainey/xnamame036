@@ -7,8 +7,10 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
-        public class cpu_m68000:cpu_interface
+        public partial class cpu_m68000 : cpu_interface
         {
+            public delegate void opcode();
+
             const byte MC68000_INT_NONE = 0;
             const byte MC68000_IRQ_1 = 1;
             const byte MC68000_IRQ_2 = 2;
@@ -22,6 +24,7 @@ namespace xnamame036.mame
             const byte MC68000_CPU_MDOE_68000 = 1;
             const byte MC68000_CPU_MODE_68010 = 2;
             const byte MC68000_CPU_MODE_68020 = 4;
+
             public cpu_m68000()
             {
                 cpu_num = CPU_M68000;
@@ -39,6 +42,7 @@ namespace xnamame036.mame
                 abits1 = ABITS1_24;
                 abits2 = ABITS2_24;
                 abitsmin = ABITS_MIN_24;
+                icount = m68k_clks_left;
             }
             public override void burn(int cycles)
             {
@@ -50,7 +54,15 @@ namespace xnamame036.mame
             }
             public override string cpu_info(object context, int regnum)
             {
-                throw new NotImplementedException();
+                switch (regnum)
+                {
+                    case CPU_INFO_NAME: return "68000";
+                    case CPU_INFO_FAMILY: return "Motorola 68K";
+                    case CPU_INFO_VERSION: return "2.1";
+                    case CPU_INFO_FILE: return "m68000.cs";
+                    case CPU_INFO_CREDITS: return "Copyright 1999 Karl Stenerud. All rights reserved. (2.1 fixes HJB)";
+                }
+                throw new Exception();
             }
             public override void cpu_state_load(object file)
             {
@@ -66,7 +78,7 @@ namespace xnamame036.mame
             }
             public override int execute(int cycles)
             {
-                throw new NotImplementedException();
+                return m68k_execute(cycles);
             }
             public override uint get_context(ref object reg)
             {
@@ -74,11 +86,11 @@ namespace xnamame036.mame
             }
             public override void create_context(ref object reg)
             {
-                throw new NotImplementedException();
+                reg = new m68k_cpu_context();
             }
             public override uint get_pc()
             {
-                throw new NotImplementedException();
+                return m68k_peek_pc();
             }
             public override uint get_reg(int regnum)
             {
@@ -102,7 +114,7 @@ namespace xnamame036.mame
             }
             public override void reset(object param)
             {
-                throw new NotImplementedException();
+                m68k_pulse_reset(param);            
             }
             public override void set_context(object reg)
             {
@@ -110,11 +122,22 @@ namespace xnamame036.mame
             }
             public override void set_irq_callback(irqcallback callback)
             {
-                throw new NotImplementedException();
+                m68k_set_int_ack_callback(callback);
             }
-            public override void set_irq_line(int irqline, int linestate)
+            public override void set_irq_line(int irqline, int state)
             {
-                throw new NotImplementedException();
+                switch (state)
+                {
+                    case CLEAR_LINE:
+                        m68k_clear_irq(irqline);
+                        return;
+                    case ASSERT_LINE:
+                        m68k_assert_irq(irqline);
+                        return;
+                    default:
+                        m68k_assert_irq(irqline);
+                        return;
+                }
             }
             public override void set_nmi_line(int linestate)
             {
@@ -122,7 +145,7 @@ namespace xnamame036.mame
             }
             public override void set_op_base(int pc)
             {
-                throw new NotImplementedException();
+                cpu_setOPbase24(pc,0);
             }
             public override void set_pc(uint val)
             {
@@ -135,6 +158,78 @@ namespace xnamame036.mame
             public override void set_sp(uint val)
             {
                 throw new NotImplementedException();
-            }   }
+            }
+            class m68k_cpu_context
+            {
+                uint mode;         /* CPU Operation Mode (68000, 68010, or 68020) */
+                uint sr;           /* Status Register */
+                uint ppc;		   /* Previous program counter */
+                uint pc;           /* Program Counter */
+                uint[] d = new uint[8];         /* Data Registers */
+                uint[] a = new uint[8];         /* Address Registers */
+                uint usp;          /* User Stack Pointer */
+                uint isp;          /* Interrupt Stack Pointer */
+                uint msp;          /* Master Stack Pointer */
+                uint vbr;          /* Vector Base Register.  Used in 68010+ */
+                uint sfc;          /* Source Function Code.  Used in 68010+ */
+                uint dfc;          /* Destination Function Code.  Used in 68010+ */
+                uint stopped;      /* Stopped state: only interrupt can restart */
+                uint halted;       /* Halted state: only reset can restart */
+                uint int_state;	   /* Current interrupt line states -- ASG: changed from ints_pending */
+                uint int_cycles;   /* Extra cycles taken due to interrupts -- ASG: added */
+                uint pref_addr;    /* Last prefetch address */
+                uint pref_data;    /* Data in the prefetch queue */
+                //int  (*int_ack_callback)(int int_level); /* Interrupt Acknowledge */
+                //void (*bkpt_ack_callback)(int data);     /* Breakpoint Acknowledge */
+                //void (*reset_instr_callback)(void);      /* Called when a RESET instruction is encountered */
+                //void (*pc_changed_callback)(int new_pc); /* Called when the PC changes by a large amount */
+                //void (*set_fc_callback)(int new_fc);     /* Called when the CPU function code changes */
+                //void (*instr_hook_callback)(void);       /* Called every instruction cycle prior to execution */
+            }
+            class m68k_cpu_core
+            {
+                public uint mode; /* CPU Operation Mode: 68000, 68010, or 68020 */
+                public uint[] dr = new uint[8]; /* Data Registers */
+                public uint[] ar = new uint[8]; /* Address Registers */
+                public uint ppc; /* Previous program counter */
+                public uint pc; /* Program Counter */
+                public uint[] sp = new uint[4]; /* User, Interrupt, and Master Stack Pointers */
+                public uint vbr; /* Vector Base Register (68010+) */
+                public uint sfc; /* Source Function Code Register (m68010+) */
+                public uint dfc; /* Destination Function Code Register (m68010+) */
+                public uint cacr; /* Cache Control Register (m68020+) */
+                public uint caar; /* Cacge Address Register (m68020+) */
+                public uint ir; /* Instruction Register */
+                public uint t1_flag; /* Trace 1 */
+                public uint t0_flag; /* Trace 0 */
+                public uint s_flag; /* Supervisor */
+                public uint m_flag; /* Master/Interrupt state */
+                public uint x_flag; /* Extend */
+                public uint n_flag; /* Negative */
+                public uint not_z_flag; /* Zero, inverted for speedups */
+                public uint v_flag; /* Overflow */
+                public uint c_flag; /* Carry */
+                public uint int_mask; /* I0-I2 */
+                public uint int_state; /* Current interrupt state -- ASG: changed from ints_pending */
+                public uint stopped; /* Stopped state */
+                public uint halted; /* Halted state */
+                public uint int_cycles; /* ASG: extra cycles from generated interrupts */
+                public uint pref_addr; /* Last prefetch address */
+                public uint pref_data; /* Data in the prefetch queue */
+
+                /* Callbacks to host */
+                public irqcallback int_ack_callback; /* Interrupt Acknowledge */
+                public _void_set_int_callback bkpt_ack_callback; /* Breakpoint Acknowledge */
+                public opcode reset_instr_callback; /* Called when a RESET instruction is encountered */
+                public _void_set_int_callback pc_changed_callback; /* Called when the PC changes by a large amount */
+                public _void_set_int_callback set_fc_callback; /* Called when the CPU function code changes */
+                public opcode instr_hook_callback; /* Called every instruction cycle prior to execution */
+
+            } ;
+            delegate void _void_set_int_callback(int i);
+            //delegate int _int_set_int_callback(int i);
+            static int[] m68k_clks_left=new int[1];
+            static opcode[] m68k_instruction_jump_table = new opcode[0x10000];
+        }
     }
 }

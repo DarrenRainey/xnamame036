@@ -915,48 +915,48 @@ namespace xnamame036.mame.drivers
             }
         }
 
-        public static void  gaplus_vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
+        public static void gaplus_vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
+        {
+            uint pi = 0, cpi = 0;
+            for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
             {
-                uint pi = 0, cpi = 0;
-                for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
-                {
-                    /* red component */
-                    int bit0 = (color_prom[cpi] >> 0) & 0x01;
-                    int bit1 = (color_prom[cpi] >> 1) & 0x01;
-                    int bit2 = (color_prom[cpi] >> 2) & 0x01;
-                    int bit3 = (color_prom[cpi] >> 3) & 0x01;
-                    palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
-                    /* green component */
-                    bit0 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 0) & 0x01;
-                    bit1 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 1) & 0x01;
-                    bit2 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 2) & 0x01;
-                    bit3 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 3) & 0x01;
-                    palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
-                    /* blue component */
-                    bit0 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 0) & 0x01;
-                    bit1 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 1) & 0x01;
-                    bit2 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 2) & 0x01;
-                    bit3 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 3) & 0x01;
-                    palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
+                /* red component */
+                int bit0 = (color_prom[cpi] >> 0) & 0x01;
+                int bit1 = (color_prom[cpi] >> 1) & 0x01;
+                int bit2 = (color_prom[cpi] >> 2) & 0x01;
+                int bit3 = (color_prom[cpi] >> 3) & 0x01;
+                palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
+                /* green component */
+                bit0 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 0) & 0x01;
+                bit1 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 1) & 0x01;
+                bit2 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 2) & 0x01;
+                bit3 = (color_prom[cpi + Mame.Machine.drv.total_colors] >> 3) & 0x01;
+                palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
+                /* blue component */
+                bit0 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 0) & 0x01;
+                bit1 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 1) & 0x01;
+                bit2 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 2) & 0x01;
+                bit3 = (color_prom[cpi + 2 * Mame.Machine.drv.total_colors] >> 3) & 0x01;
+                palette[pi++] = (byte)(0x0e * bit0 + 0x1f * bit1 + 0x43 * bit2 + 0x8f * bit3);
 
-                    cpi++;
-                }
-
-                cpi += 2 * Mame.Machine.drv.total_colors;
-                /* color_prom now points to the beginning of the lookup table */
-
-
-                /* characters use colors 240-255 */
-                for (int i = 0; i < TOTAL_COLORS(0); i++)
-                    COLOR(colortable, 0, i, 240 + (color_prom[cpi++] & 0x0f));
-
-                /* sprites */
-                for (int i = 0; i < TOTAL_COLORS(2); i++)
-                {
-                    COLOR(colortable, 2, i, (color_prom[cpi] & 0x0f) + ((color_prom[cpi + (uint)TOTAL_COLORS(2)] & 0x0f) << 4));
-                    cpi++;
-                }
+                cpi++;
             }
+
+            cpi += 2 * Mame.Machine.drv.total_colors;
+            /* color_prom now points to the beginning of the lookup table */
+
+
+            /* characters use colors 240-255 */
+            for (int i = 0; i < TOTAL_COLORS(0); i++)
+                COLOR(colortable, 0, i, 240 + (color_prom[cpi++] & 0x0f));
+
+            /* sprites */
+            for (int i = 0; i < TOTAL_COLORS(2); i++)
+            {
+                COLOR(colortable, 2, i, (color_prom[cpi] & 0x0f) + ((color_prom[cpi + (uint)TOTAL_COLORS(2)] & 0x0f) << 4));
+                cpi++;
+            }
+        }
 
         public static void gaplus_init_machine()
         {
@@ -1342,20 +1342,20 @@ namespace xnamame036.mame.drivers
             {
                 switch (offset)
                 {
-                    case 0:return (Mame.readinputport(2) >> 4);	/* coin 1 & 2 */
-                    case 1:return (Mame.readinputport(3) & 0x0f);	/* 1P controls */
-                    case 2:return (Mame.readinputport(3) >> 4);	/* 2P controls */
-                    case 3:return (Mame.readinputport(2) & 0x0f);	/* start 1 & 2 and button 1 & 2 */
-                    default:return driver_gaplus.gaplus_customio_1[offset];
+                    case 0: return (Mame.readinputport(2) >> 4);	/* coin 1 & 2 */
+                    case 1: return (Mame.readinputport(3) & 0x0f);	/* 1P controls */
+                    case 2: return (Mame.readinputport(3) >> 4);	/* 2P controls */
+                    case 3: return (Mame.readinputport(2) & 0x0f);	/* start 1 & 2 and button 1 & 2 */
+                    default: return driver_gaplus.gaplus_customio_1[offset];
                 }
             }
             else if (mode == 8)  /* IO tests chip 1 */
             {
                 switch (offset)
                 {
-                    case 0:return 0x06;
-                    case 1:return 0x09;
-                    default:return driver_gaplus.gaplus_customio_1[offset];
+                    case 0: return 0x06;
+                    case 1: return 0x09;
+                    default: return driver_gaplus.gaplus_customio_1[offset];
                 }
             }
             return driver_gaplus.gaplus_customio_1[offset];
@@ -1370,8 +1370,8 @@ namespace xnamame036.mame.drivers
                 switch (offset)
                 {
                     case 0:
-                    case 1:return 0x0f;
-                    default:return driver_gaplus.gaplus_customio_2[offset];
+                    case 1: return 0x0f;
+                    default: return driver_gaplus.gaplus_customio_2[offset];
                 }
             }
             else if (mode == 4)     /* this values are read only by the game on power up */
@@ -1382,7 +1382,7 @@ namespace xnamame036.mame.drivers
                         val = Mame.readinputport(0) & 0x0f;	/* credits/coin 1P & fighters */
                         break;
                     case 2:
-                        val =Mame.readinputport(1) >> 5;		/* bonus life */
+                        val = Mame.readinputport(1) >> 5;		/* bonus life */
                         break;
                     case 4:
                         val = Mame.readinputport(1) & 0x07;	/* rank */
@@ -1409,20 +1409,20 @@ namespace xnamame036.mame.drivers
             {
                 switch (offset)
                 {
-                    case 0:return ((Mame.readinputport(0) & 0x20) >> 3) ^ ~(Mame.readinputport(1) & 0x08); /* cabinet & test mode */;
-                    case 2:return 0x0f;
-                    default:return driver_gaplus.gaplus_customio_3[offset];
+                    case 0: return ((Mame.readinputport(0) & 0x20) >> 3) ^ ~(Mame.readinputport(1) & 0x08); /* cabinet & test mode */;
+                    case 2: return 0x0f;
+                    default: return driver_gaplus.gaplus_customio_3[offset];
                 }
             }
             else
             {
                 switch (offset)
                 {
-                    case 0:return ((Mame.readinputport(0) & 0x20) >> 3) ^ ~(Mame.readinputport(1) & 0x08); /* cabinet & test mode */;
-                    case 1:return 0x0f;
-                    case 2:return 0x0e;
-                    case 3:return 0x01;
-                    default:return driver_gaplus.gaplus_customio_3[offset];
+                    case 0: return ((Mame.readinputport(0) & 0x20) >> 3) ^ ~(Mame.readinputport(1) & 0x08); /* cabinet & test mode */;
+                    case 1: return 0x0f;
+                    case 2: return 0x0e;
+                    case 3: return 0x01;
+                    default: return driver_gaplus.gaplus_customio_3[offset];
                 }
             }
         }
@@ -1520,75 +1520,75 @@ namespace xnamame036.mame.drivers
         }
         Mame.InputPortTiny[] input_ports_galaga3()
         {
-        
-INPUT_PORTS_START( "galaga3" );
-	PORT_START (); /* DSW0 */
-	PORT_DIPNAME( 0x03, 0x00, DEF_STR( "Coin A" ) );
-	PORT_DIPSETTING(    0x03, DEF_STR( "3C_1C" ) );
-	PORT_DIPSETTING(    0x02, DEF_STR( "2C_1C" ) );
-	PORT_DIPSETTING(    0x00, DEF_STR( "1C_1C" ) );
-	PORT_DIPSETTING(    0x01, DEF_STR( "1C_2C" ) );
-	PORT_DIPNAME( 0x0c, 0x00, DEF_STR( "Lives" ) );
-	PORT_DIPSETTING(    0x04, "2" );
-	PORT_DIPSETTING(    0x00, "3" );
-	PORT_DIPSETTING(    0x08, "4" );
-	PORT_DIPSETTING(    0x0c, "5" );
-	PORT_DIPNAME( 0x10, 0x10, DEF_STR( "Unknown" ) );
-	PORT_DIPSETTING(    0x10, DEF_STR( "Off" ) );
-	PORT_DIPSETTING(    0x00, DEF_STR( "On" ) );
-	PORT_DIPNAME( 0x20, 0x00, DEF_STR( "Cabinet" ) );
-	PORT_DIPSETTING(    0x00, DEF_STR( "Upright" ) );
-	PORT_DIPSETTING(    0x20, DEF_STR( "Cocktail" ) );
-	PORT_DIPNAME( 0xc0, 0x00, DEF_STR( "Coin B" ) );
-	PORT_DIPSETTING(    0xc0, DEF_STR( "3C_1C" ) );
-	PORT_DIPSETTING(    0x80, DEF_STR( "2C_1C" ) );
-	PORT_DIPSETTING(    0x00, DEF_STR( "1C_1C" ) );
-	PORT_DIPSETTING(    0x40, DEF_STR( "1C_2C" ) );
 
-	PORT_START (); /* DSW1 */
-	PORT_DIPNAME( 0x07, 0x00, DEF_STR( "Difficulty" ) );
-	PORT_DIPSETTING(    0x00, "0" );
-	PORT_DIPSETTING(    0x01, "1" );
-	PORT_DIPSETTING(    0x02, "2" );
-	PORT_DIPSETTING(    0x03, "3" );
-	PORT_DIPSETTING(    0x04, "4" );
-	PORT_DIPSETTING(    0x05, "5" );
-	PORT_DIPSETTING(    0x06, "6" );
-	PORT_DIPSETTING(    0x07, "7" );
-	PORT_SERVICE( 0x08, IP_ACTIVE_HIGH );
-	PORT_BITX( 0x10,    0x00, (uint)inptports.IPT_DIPSWITCH_NAME | IPF_CHEAT, "Rack Test",(ushort)Mame.InputCodes.KEYCODE_F1, IP_JOY_NONE );
-	PORT_DIPSETTING(    0x00, DEF_STR( "Off" ) );
-	PORT_DIPSETTING(    0x10, DEF_STR( "On" ) );
-	PORT_DIPNAME( 0xe0, 0xe0, DEF_STR( "Bonus Life" ) );
-	PORT_DIPSETTING(    0xa0, "30k 80k and every 100k" );
-	PORT_DIPSETTING(    0x80, "30k 100k and every 100k" );
-	PORT_DIPSETTING(    0x60, "30k 100k and every 150k" );
-	PORT_DIPSETTING(    0x00, "30k 100k and every 200k" );
-	PORT_DIPSETTING(    0x40, "30k 100k and every 300k" );
-	PORT_DIPSETTING(    0xe0, "50k 150k and every 150k" );
-	PORT_DIPSETTING(    0xc0, "50k 150k and every 200k" );
-	PORT_DIPSETTING(    0x20, "30k 150k" );
+            INPUT_PORTS_START("galaga3");
+            PORT_START(); /* DSW0 */
+            PORT_DIPNAME(0x03, 0x00, DEF_STR("Coin A"));
+            PORT_DIPSETTING(0x03, DEF_STR("3C_1C"));
+            PORT_DIPSETTING(0x02, DEF_STR("2C_1C"));
+            PORT_DIPSETTING(0x00, DEF_STR("1C_1C"));
+            PORT_DIPSETTING(0x01, DEF_STR("1C_2C"));
+            PORT_DIPNAME(0x0c, 0x00, DEF_STR("Lives"));
+            PORT_DIPSETTING(0x04, "2");
+            PORT_DIPSETTING(0x00, "3");
+            PORT_DIPSETTING(0x08, "4");
+            PORT_DIPSETTING(0x0c, "5");
+            PORT_DIPNAME(0x10, 0x10, DEF_STR("Unknown"));
+            PORT_DIPSETTING(0x10, DEF_STR("Off"));
+            PORT_DIPSETTING(0x00, DEF_STR("On"));
+            PORT_DIPNAME(0x20, 0x00, DEF_STR("Cabinet"));
+            PORT_DIPSETTING(0x00, DEF_STR("Upright"));
+            PORT_DIPSETTING(0x20, DEF_STR("Cocktail"));
+            PORT_DIPNAME(0xc0, 0x00, DEF_STR("Coin B"));
+            PORT_DIPSETTING(0xc0, DEF_STR("3C_1C"));
+            PORT_DIPSETTING(0x80, DEF_STR("2C_1C"));
+            PORT_DIPSETTING(0x00, DEF_STR("1C_1C"));
+            PORT_DIPSETTING(0x40, DEF_STR("1C_2C"));
 
-	PORT_START();  /* IN0 */
-	PORT_BIT( 0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1 );
-	PORT_BIT( 0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1 | IPF_PLAYER2);
-	PORT_BIT( 0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_START1 );
-	PORT_BIT( 0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_START2 );
-	PORT_BIT( 0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN1 );
-	PORT_BIT( 0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN2 );
-		/* 0x40 service switch (not implemented yet) */
+            PORT_START(); /* DSW1 */
+            PORT_DIPNAME(0x07, 0x00, DEF_STR("Difficulty"));
+            PORT_DIPSETTING(0x00, "0");
+            PORT_DIPSETTING(0x01, "1");
+            PORT_DIPSETTING(0x02, "2");
+            PORT_DIPSETTING(0x03, "3");
+            PORT_DIPSETTING(0x04, "4");
+            PORT_DIPSETTING(0x05, "5");
+            PORT_DIPSETTING(0x06, "6");
+            PORT_DIPSETTING(0x07, "7");
+            PORT_SERVICE(0x08, IP_ACTIVE_HIGH);
+            PORT_BITX(0x10, 0x00, (uint)inptports.IPT_DIPSWITCH_NAME | IPF_CHEAT, "Rack Test", (ushort)Mame.InputCodes.KEYCODE_F1, IP_JOY_NONE);
+            PORT_DIPSETTING(0x00, DEF_STR("Off"));
+            PORT_DIPSETTING(0x10, DEF_STR("On"));
+            PORT_DIPNAME(0xe0, 0xe0, DEF_STR("Bonus Life"));
+            PORT_DIPSETTING(0xa0, "30k 80k and every 100k");
+            PORT_DIPSETTING(0x80, "30k 100k and every 100k");
+            PORT_DIPSETTING(0x60, "30k 100k and every 150k");
+            PORT_DIPSETTING(0x00, "30k 100k and every 200k");
+            PORT_DIPSETTING(0x40, "30k 100k and every 300k");
+            PORT_DIPSETTING(0xe0, "50k 150k and every 150k");
+            PORT_DIPSETTING(0xc0, "50k 150k and every 200k");
+            PORT_DIPSETTING(0x20, "30k 150k");
 
-	PORT_START (); /* IN1 */
-    PORT_BIT(0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP | IPF_8WAY);
-    PORT_BIT(0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY);
-    PORT_BIT(0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN | IPF_8WAY);
-    PORT_BIT(0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT | IPF_8WAY);
-    PORT_BIT(0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP | IPF_8WAY | IPF_PLAYER2);
-    PORT_BIT(0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY | IPF_PLAYER2);
-    PORT_BIT(0x40, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN | IPF_8WAY | IPF_PLAYER2);
-    PORT_BIT(0x80, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT | IPF_8WAY | IPF_PLAYER2);
+            PORT_START();  /* IN0 */
+            PORT_BIT(0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1);
+            PORT_BIT(0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_BUTTON1 | IPF_PLAYER2);
+            PORT_BIT(0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_START1);
+            PORT_BIT(0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_START2);
+            PORT_BIT(0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN1);
+            PORT_BIT(0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_COIN2);
+            /* 0x40 service switch (not implemented yet) */
 
-return INPUT_PORTS_END;
+            PORT_START(); /* IN1 */
+            PORT_BIT(0x01, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP | IPF_8WAY);
+            PORT_BIT(0x02, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY);
+            PORT_BIT(0x04, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN | IPF_8WAY);
+            PORT_BIT(0x08, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT | IPF_8WAY);
+            PORT_BIT(0x10, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_UP | IPF_8WAY | IPF_PLAYER2);
+            PORT_BIT(0x20, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_RIGHT | IPF_8WAY | IPF_PLAYER2);
+            PORT_BIT(0x40, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_DOWN | IPF_8WAY | IPF_PLAYER2);
+            PORT_BIT(0x80, IP_ACTIVE_HIGH, (uint)inptports.IPT_JOYSTICK_LEFT | IPF_8WAY | IPF_PLAYER2);
+
+            return INPUT_PORTS_END;
         }
         public driver_galaga3()
         {

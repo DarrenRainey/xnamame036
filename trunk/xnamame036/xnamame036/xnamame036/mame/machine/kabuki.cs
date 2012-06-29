@@ -71,5 +71,8 @@ namespace xnamame036.mame
                 kabuki_decode(new _BytePtr(rom, i), new _BytePtr(rom, i + diff), new _BytePtr(rom, i), 0x8000, 0x4000, swap_key1, swap_key2, addr_key, xor_key);
         }
         public static void pang_decode() { mitchell_decode(0x01234567, 0x76543210, 0x6548, 0x24); }
+        public static void spang_decode() { mitchell_decode(0x45670123, 0x45670123, 0x5852, 0x43); }
+        public static void block_decode() { mitchell_decode(0x02461357, 0x64207531, 0x0002, 0x01); }
+
     }
 }

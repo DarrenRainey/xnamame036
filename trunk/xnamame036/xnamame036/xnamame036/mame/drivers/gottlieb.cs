@@ -78,7 +78,7 @@ namespace xnamame036.mame.drivers
                             driver_gottlieb.nvram[i] = 0xff;
                 }
             }
-            public override void vh_init_palette(_BytePtr palette, _ShortPtr colortable, _BytePtr color_prom)
+            public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 //nothing
             }
@@ -156,7 +156,7 @@ namespace xnamame036.mame.drivers
                                 sx, sy,
                                 Mame.Machine.drv.visible_area,
                                 background_priority !=0? Mame.TRANSPARENCY_THROUGH : Mame.TRANSPARENCY_PEN,
-                                background_priority !=0? Mame.Machine.pens.read16(0) : 0);
+                                background_priority !=0? Mame.Machine.pens[0] : 0);
                 }
             }
             public override void vh_eof_callback()
