@@ -621,7 +621,7 @@ new Mame.GfxLayout(
             input_type = 3;
             nvram_size = 0x80;
             nvram = new _BytePtr(Mame.memory_region(Mame.REGION_CPU1), 0xe000);	/* NVRAM */
-            kabuki.pang_decode();
+            kabuki.spang_decode();
         }
         Mame.RomModule[] rom_spang()
         {
@@ -750,8 +750,8 @@ new Mame.GfxLayout(
             drv = new machine_driver_pang();
             year = "1991";
             name = "block";
-            description = "Block BLock (World)";
-            manufacturer = "Cpcom";
+            description = "Block Block (World)";
+            manufacturer = "Capcom";
             flags = Mame.ROT270;
             input_ports = input_ports_block();
             rom = rom_block();
@@ -816,6 +816,16 @@ new Mame.GfxLayout(
             input_ports = driver_block.input_ports_block();
             rom = rom_blockbl();
             drv.HasNVRAMhandler = true;
+        }
+    }
+    class blockj : driver_pang
+    {
+        public override void driver_init()
+        {
+            base.driver_init();
+        }
+        public blockj()
+        {
         }
     }
 }

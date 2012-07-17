@@ -305,11 +305,9 @@ namespace xnamame036.mame.drivers
             switch (offset)
             {
                 case 0:
-                    return (current_frame >> 0) & 0xff;
-                    break;
+                    return (current_frame >> 0) & 0xff;                    
                 case 1:
-                    return (current_frame >> 8) & 0xff;
-                    break;
+                    return (current_frame >> 8) & 0xff;                    
                 case 2:
                     if (lasermpx == 1)
                         /* bits 0-2 frame number MSN */
@@ -320,8 +318,7 @@ namespace xnamame036.mame.drivers
                         /* bit 7 missing audio clock */
                         return ((current_frame >> 16) & 0x07) | 0x10 | (Mame.rand() & 0x28);
                     else	/* read audio buffer */
-                        return Mame.rand();
-                    break;
+                        return Mame.rand();                    
             }
 
             return 0;

@@ -604,7 +604,7 @@ namespace xnamame036.mame
 			length -= r;
 		}
 		return totread;
-		break;
+		
 	case kZippedFile:
 	case kRAMFile:
 		/* reading from the RAM image of a file */
@@ -679,7 +679,7 @@ namespace xnamame036.mame
 
             return err;
 
-            return (int)((FakeFileHandle)file).file.Position;
+            //return (int)((FakeFileHandle)file).file.Position;
         }
         int osd_fsize(object file)
         {

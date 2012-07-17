@@ -85,4 +85,26 @@ namespace xnamame036.mame
             set { buffer[index + offset] = value; }
         }
     }
+    public class ShortSubArray
+    {
+        short[] buffer;
+        public int offset;
+
+        public ShortSubArray(int size) { this.buffer = new short[size]; this.offset = 0; }
+        public ShortSubArray(ShortSubArray subarray, int offset = 0)
+        {
+            this.buffer = subarray.buffer;
+            this.offset = subarray.offset + offset;
+        }
+        public ShortSubArray(short[] buffer, int offset = 0)
+        {
+            this.buffer = buffer;
+            this.offset = offset;
+        }
+        public short this[int index]
+        {
+            get { return buffer[index + offset]; }
+            set { buffer[index + offset] = value; }
+        }
+    }
 }

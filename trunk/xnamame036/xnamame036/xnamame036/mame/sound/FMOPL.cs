@@ -21,7 +21,7 @@ namespace xnamame036.mame
         static int num_lock = 0;
         const double WHITE_NOISE_db = 6.0;
 
-        public struct OPL_SLOT
+        public class OPL_SLOT
         {
             public int TL;		/* total level     :TL << 8            */
             public int TLL;		/* adjusted now TL                     */
@@ -48,10 +48,12 @@ namespace xnamame036.mame
             public byte ams;		/* ams flag                            */
             public byte vib;		/* vibrate flag                        */
             /* wave selector */
-            public IntSubArray wavetable;
+            public IntSubArray[] wavetable;
+            public int wti = 0;
         }
         public class OPL_CH
         {
+            public OPL_CH() { SLOT[0] = new OPL_SLOT(); SLOT[1] = new OPL_SLOT(); }
             public OPL_SLOT[] SLOT = new OPL_SLOT[2];
             public byte CON;
             public byte FB;
@@ -566,8 +568,9 @@ namespace xnamame036.mame
                                     int c;
                                     for (c = 0; c < OPL.max_ch; c++)
                                     {
-                                        OPL.P_CH[c].SLOT[SLOT1].wavetable = SIN_TABLE[0];
-                                        OPL.P_CH[c].SLOT[SLOT2].wavetable = SIN_TABLE[0];
+                                        OPL.P_CH[c].SLOT[SLOT1].wti = 0;
+                                        OPL.P_CH[c].SLOT[SLOT1].wavetable = SIN_TABLE;
+                                        OPL.P_CH[c].SLOT[SLOT2].wavetable = SIN_TABLE;
                                     }
                                 }
                             }
@@ -832,7 +835,8 @@ namespace xnamame036.mame
                 {
                     /* wave table */
                     //throw new Exception();
-                    CH.SLOT[s].wavetable = SIN_TABLE[0];
+                    CH.SLOT[s].wti = 0;
+                    CH.SLOT[s].wavetable = SIN_TABLE;
                     /* CH.SLOT[s].evm = ENV_MOD_RR; */
                     CH.SLOT[s].evc = EG_OFF;
                     CH.SLOT[s].eve = EG_OFF + 1;
@@ -854,9 +858,7 @@ namespace xnamame036.mame
         }
         public static FM_OPL OPLCreate(int type, int clock, int rate)
         {
-            byte[] ptr;
             FM_OPL OPL;
-            int state_size;
             int max_ch = 9; /* normaly 9 channels */
 
             if (OPL_LockTable() == -1) return null;
@@ -1023,8 +1025,8 @@ namespace xnamame036.mame
         }
         static int OP_OUT(OPL_SLOT slot, int env, int con)
         {
-            throw new Exception();
-          //  return slot.wavetable[((slot.Cnt + con) / (0x1000000 / SIN_ENT)) & (SIN_ENT - 1)][env];
+            
+            return slot.wavetable[((slot.Cnt + con) / (0x1000000 / SIN_ENT)) & (SIN_ENT - 1)][env];
         }
         static uint OPL_CALC_SLOT(OPL_SLOT SLOT)
         {

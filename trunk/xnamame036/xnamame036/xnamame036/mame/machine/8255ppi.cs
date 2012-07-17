@@ -118,8 +118,7 @@ namespace xnamame036.mame
                         return 0x0ff;
 
                         //return chip.control;
-                        break;
-                }
+                        }
 
                 Mame.printf( "8255 chip %d: Port %c is being read but has no handler", which, 'A' + offset);
 

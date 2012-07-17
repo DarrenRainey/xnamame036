@@ -56,7 +56,7 @@ namespace xnamame036.mame
         }
         static int memrdwd_flip(int offset) { return (VECTORRAM(offset + 1) | (VECTORRAM(offset) << 8)); }
 
-        const byte VEC_PAL_WHITE = 1, VEC_PAL_AQUA = 2, VEC_PAL_BZONE = 3, VEC_PAL_SWARS = 5, VEC_PAL_MULTI = 4, VEC_PAL_ASTDELUX = 6;
+        public const byte VEC_PAL_WHITE = 1, VEC_PAL_AQUA = 2, VEC_PAL_BZONE = 3, VEC_PAL_SWARS = 5, VEC_PAL_MULTI = 4, VEC_PAL_ASTDELUX = 6;
         const byte RED = 0x04;
         const byte GREEN = 0x02;
         const byte BLUE = 0x01;
@@ -76,7 +76,7 @@ namespace xnamame036.mame
                 palette[3 * i + 2] = (byte)((rgb & BLUE) != 0 ? inten : 0);
             }
         }
-        static void avg_init_palette(int paltype, byte[] palette, ushort[] colortable, _BytePtr color_prom)
+        public static void avg_init_palette(int paltype, byte[] palette, ushort[] colortable, _BytePtr color_prom)
         {
             int i, j, k;
 
@@ -181,8 +181,6 @@ namespace xnamame036.mame
         {
             avg_init_palette(VEC_PAL_WHITE, palette, colortable, color_prom);
         }
-
-
 
         const int BZONE_TOP = 0x0050;
         const int MHAVOC_YWINDOW = 0x0048;
@@ -810,6 +808,10 @@ namespace xnamame036.mame
 #endif
             }
         }
+        public static void avgdvg_reset(int offset, int data)
+        {
+            avgdvg_clr_busy(0);
+        }
         public static void avgdvg_go(int offset, int data)
         {
             if (busy)
@@ -925,6 +927,9 @@ namespace xnamame036.mame
             else
                 Vector.vector_vh_update(bitmap, full_refresh);
         }
-
+        public static int avg_start_starwars()
+{
+	return avgdvg_init (USE_AVG_SWARS);
+}
     }
 }

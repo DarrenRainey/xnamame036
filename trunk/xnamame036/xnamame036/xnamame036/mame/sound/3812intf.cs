@@ -54,11 +54,11 @@ namespace xnamame036.mame
         }
         public override int chips_clock(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return ((YM3812interface)msound.sound_interface).baseclock;
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-            throw new NotImplementedException();
+            return ((YM3812interface)msound.sound_interface).num;
         }
         public override int start(Mame.MachineSound msound)
         {
@@ -92,21 +92,9 @@ namespace xnamame036.mame
         static statusport_read status_port_r;
         const int ym3812_StdClock = 3579545;
 
-        class non_emu3812_state
-        {
-            public int address_register;
-            public byte status_register;
-            public byte timer_register;
-            public uint timer1_val;
-            public uint timer2_val;
-            public object timer1;
-            public object timer2;
-            public int[] aOPLFreqArray = new int[16];		/* Up to 9 channels.. */
-        }
         static int chiptype;
         static FMOPL.FM_OPL[] F3812 = new FMOPL.FM_OPL[Mame.MAX_3812];
 
-        static non_emu3812_state[] nonemu_state;
         static double timer_step;
         static int OPL_sh_start(Mame.MachineSound msound)
         {

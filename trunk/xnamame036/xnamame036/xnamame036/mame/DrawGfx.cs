@@ -106,7 +106,7 @@ namespace xnamame036.mame
         plot_pixel_proc[] pps_8_nd = { pp_8_nd, pp_8_nd_fx, pp_8_nd_fy, pp_8_nd_fxy, pp_8_nd_s, pp_8_nd_fx_s, pp_8_nd_fy_s, pp_8_nd_fxy_s };
         plot_pixel_proc[] pps_8_d = { pp_8_d, pp_8_d_fx, pp_8_d_fy, pp_8_d_fxy, pp_8_d_s, pp_8_d_fx_s, pp_8_d_fy_s, pp_8_d_fxy_s };
 
-        plot_pixel_proc[] pps_16_d= {pp_16_d,   pp_16_d_fx,   pp_16_d_fy, 	 pp_16_d_fxy,
+        plot_pixel_proc[] pps_16_d = {pp_16_d,   pp_16_d_fx,   pp_16_d_fy, 	 pp_16_d_fxy,
 		  pp_16_d_s, pp_16_d_fx_s, pp_16_d_fy_s, pp_16_d_fxy_s };
         read_pixel_proc[] rps_8 = { rp_8, rp_8_fx, rp_8_fy, rp_8_fxy, rp_8_s, rp_8_fx_s, rp_8_fy_s, rp_8_fxy_s };
         read_pixel_proc[] rps_16 = { rp_16, rp_16_fx, rp_16_fy, rp_16_fxy, rp_16_s, rp_16_fx_s, rp_16_fy_s, rp_16_fxy_s };
@@ -125,9 +125,9 @@ namespace xnamame036.mame
         static void pp_16_d_fy(osd_bitmap b, int x, int y, int p) { int newy = b.height - 1 - y; new _ShortPtr(b.line[newy]).write16(x, (ushort)p); osd_mark_dirty(x, newy, x, newy, 0); }
         static void pp_16_d_fxy(osd_bitmap b, int x, int y, int p) { int newx = b.width - 1 - x; int newy = b.height - 1 - y; new _ShortPtr(b.line[newy]).write16(newx, (ushort)p); osd_mark_dirty(newx, newy, newx, newy, 0); }
         static void pp_16_d_s(osd_bitmap b, int x, int y, int p) { new _ShortPtr(b.line[x]).write16(y, (ushort)p); osd_mark_dirty(y, x, y, x, 0); }
-static void pp_16_d_fx_s(osd_bitmap b, int x, int y, int p) { int newy = b.width - 1 - y; new _ShortPtr(b.line[x]).write16(newy, (ushort)p); osd_mark_dirty(newy, x, newy, x, 0); }
-static void pp_16_d_fy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; new _ShortPtr(b.line[newx]).write16(y, (ushort)p); osd_mark_dirty(y, newx, y, newx, 0); }
-static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; int newy = b.width - 1 - y; new _ShortPtr(b.line[newx]).write16(newy, (ushort)p); osd_mark_dirty(newy, newx, newy, newx, 0); }
+        static void pp_16_d_fx_s(osd_bitmap b, int x, int y, int p) { int newy = b.width - 1 - y; new _ShortPtr(b.line[x]).write16(newy, (ushort)p); osd_mark_dirty(newy, x, newy, x, 0); }
+        static void pp_16_d_fy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; new _ShortPtr(b.line[newx]).write16(y, (ushort)p); osd_mark_dirty(y, newx, y, newx, 0); }
+        static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.height - 1 - x; int newy = b.width - 1 - y; new _ShortPtr(b.line[newx]).write16(newy, (ushort)p); osd_mark_dirty(newy, newx, newy, newx, 0); }
 
 
         static int rp_16(osd_bitmap b, int x, int y) { return b.line[y].read16(x); }
@@ -586,16 +586,16 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
             int end;
             int trans4;
             _IntPtr sd4;
-            int si = 0;
+            
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             trans4 = transpen * 0x01010101;
             while (srcheight != 0)
             {
                 end = (int)(dstdata.offset + srcwidth);
-                while (((long)si & 3) != 0 && dstdata.offset < end) /* longword align */
+                while ((srcdata.offset & 3) != 0 && dstdata.offset < end) /* longword align */
                 {
-                    int col = srcdata[si++];
+                    int col = srcdata[0];srcdata.offset++;
                     if (col != transpen)
                         dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
@@ -608,27 +608,27 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
                     {
                         uint xod4 = (uint)(col4 ^ trans4);
                         if ((xod4 & 0x000000ff) != 0)
-                            dstdata[BL0] = (byte)paldata[(int)(col4 & 0xff)];
+                            dstdata[ BL0] = (byte)paldata[(int)(col4 & 0xff)];
                         if ((xod4 & 0x0000ff00) != 0)
-                            dstdata[BL1] = (byte)paldata[(int)((col4 >> 8) & 0xff)];
+                            dstdata[ BL1] = (byte)paldata[(int)((col4 >> 8) & 0xff)];
                         if ((xod4 & 0x00ff0000) != 0)
                             dstdata[BL2] = (byte)paldata[(int)((col4 >> 16) & 0xff)];
                         if ((xod4 & 0xff000000) != 0)
-                            dstdata[BL3] = (byte)paldata[(int)(col4 >> 24)];
+                            dstdata[ BL3] = (byte)paldata[(int)(col4 >> 24)];
                     }
                     sd4.offset += 4;
                     dstdata.offset += 4;
                 }
                 srcdata = new _BytePtr(sd4);
-                si = 0;
+                
                 while (dstdata.offset < end)
                 {
-                    int col = srcdata[si++];
+                    int col = srcdata[0];srcdata.offset++;
                     if (col != transpen)
                         dstdata[0] = (byte)paldata[col];
                     dstdata.offset++;
                 }
-                si+= srcmodulo;
+                srcdata.offset += srcmodulo;
                 dstdata.offset += dstmodulo;
                 srcheight--;
             }
@@ -691,54 +691,54 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_transmask8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
-           int end;
-	_IntPtr sd4;
+            int end;
+            _IntPtr sd4;
 
-	srcmodulo -= srcwidth;
-	dstmodulo -= srcwidth;
+            srcmodulo -= srcwidth;
+            dstmodulo -= srcwidth;
 
-	while (srcheight!=0)
-	{
-		end = dstdata.offset + srcwidth;
-		while (((long)srcdata.offset & 3)!=0 && dstdata.offset < end)	/* longword align */
-		{
-			int col;
+            while (srcheight != 0)
+            {
+                end = dstdata.offset + srcwidth;
+                while (((long)srcdata.offset & 3) != 0 && dstdata.offset < end)	/* longword align */
+                {
+                    int col;
 
-			col = srcdata[0];srcdata.offset++;
-			if ( ((1<<col)&transmask) == 0) dstdata[0] = (byte)paldata[col];
-			dstdata.offset++;
-		}
-		sd4 = new _IntPtr(srcdata);
-		while (dstdata.offset <= end - 4)
-		{
-			int col;
-			uint col4;
+                    col = srcdata[0]; srcdata.offset++;
+                    if (((1 << col) & transmask) == 0) dstdata[0] = (byte)paldata[col];
+                    dstdata.offset++;
+                }
+                sd4 = new _IntPtr(srcdata);
+                while (dstdata.offset <= end - 4)
+                {
+                    int col;
+                    uint col4;
 
-			col4 = sd4.read32(0);sd4.offset+=4;
-			col = (int)((col4 >>  0) & 0xff);
-			if ( ((1<<col)&transmask) == 0) dstdata[BL0] = (byte)paldata[col];
-			col = (int)((col4 >>  8) & 0xff);
-			if ( ((1<<col)&transmask) == 0) dstdata[BL1] =(byte) paldata[col];
-			col =(int)( (col4 >> 16) & 0xff);
-			if ( ((1<<col)&transmask) == 0) dstdata[BL2] = (byte)paldata[col];
-			col = (int)((col4 >> 24) & 0xff);
-			if ( ((1<<col)&transmask) == 0) dstdata[BL3] = (byte)paldata[col];
-			dstdata.offset += 4;
-		}
-		srcdata = new _BytePtr(sd4);
-		while (dstdata.offset < end)
-		{
-			int col;
+                    col4 = sd4.read32(0); sd4.offset += 4;
+                    col = (int)((col4 >> 0) & 0xff);
+                    if (((1 << col) & transmask) == 0) dstdata[BL0] = (byte)paldata[col];
+                    col = (int)((col4 >> 8) & 0xff);
+                    if (((1 << col) & transmask) == 0) dstdata[BL1] = (byte)paldata[col];
+                    col = (int)((col4 >> 16) & 0xff);
+                    if (((1 << col) & transmask) == 0) dstdata[BL2] = (byte)paldata[col];
+                    col = (int)((col4 >> 24) & 0xff);
+                    if (((1 << col) & transmask) == 0) dstdata[BL3] = (byte)paldata[col];
+                    dstdata.offset += 4;
+                }
+                srcdata = new _BytePtr(sd4);
+                while (dstdata.offset < end)
+                {
+                    int col;
 
-			col = srcdata[0];srcdata.offset++;
-			if ( ((1<<col)&transmask) == 0) dstdata[0] = (byte)paldata[col];
-			dstdata.offset++;
-		}
+                    col = srcdata[0]; srcdata.offset++;
+                    if (((1 << col) & transmask) == 0) dstdata[0] = (byte)paldata[col];
+                    dstdata.offset++;
+                }
 
-		srcdata.offset += srcmodulo;
-		dstdata.offset += dstmodulo;
-		srcheight--;
-	}
+                srcdata.offset += srcmodulo;
+                dstdata.offset += dstmodulo;
+                srcheight--;
+            }
         }
         static void blockmove_transmask_flipx8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo, UShortSubArray paldata, int transmask)
         {
@@ -749,7 +749,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
             FuncDict["blockmove_transcolor8"] = "blockmove_transcolor8";
             int end;
             //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ) / 2);
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset) / 2);
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             while (srcheight != 0)
@@ -772,7 +772,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
             FuncDict["blockmove_transcolor_flipx8"] = "blockmove_transcolor_flipx8";
             int end;
             //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset ));
+            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset));
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
             while (srcheight != 0)
@@ -1094,7 +1094,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         }
         static void blockmove_opaque_noremap8(_BytePtr srcdata, int srcwidth, int srcheight, int srcmodulo, _BytePtr dstdata, int dstmodulo)
         {
-            FuncDict["blockmove_opaque_noremap8"]="blockmove_opaque_noremap8";
+            FuncDict["blockmove_opaque_noremap8"] = "blockmove_opaque_noremap8";
             while (srcheight != 0)
             {
                 Buffer.BlockCopy(srcdata.buffer, (int)srcdata.offset, dstdata.buffer, (int)dstdata.offset, srcwidth);
@@ -1541,7 +1541,7 @@ static void pp_16_d_fxy_s(osd_bitmap b, int x, int y, int p) { int newx = b.heig
         {
             throw new Exception();
         }
-        public static void drawgfxzoom(osd_bitmap dest_bmp, GfxElement gfx,uint code, uint color, bool flipx, bool flipy, int sx, int sy,rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
+        public static void drawgfxzoom(osd_bitmap dest_bmp, GfxElement gfx, uint code, uint color, bool flipx, bool flipy, int sx, int sy, rectangle clip, int transparency, int transparent_color, int scalex, int scaley)
         {
             FuncDict["drawgfxzoom"] = "drawgfxzoom";
             rectangle myclip = new rectangle();

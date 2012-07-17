@@ -220,8 +220,19 @@ namespace xnamame036.mame.drivers
         public static Mame.IOWritePort[] sonofphx_sub_writeport = { new Mame.IOWritePort(0x00 + 0, 0x00 + 0, ay8910.AY8910_control_port_0_w), new Mame.IOWritePort(0x00 + 1, 0x00 + 1, ay8910.AY8910_write_port_0_w), new Mame.IOWritePort(0x40 + 0, 0x40 + 0, ay8910.AY8910_control_port_1_w), new Mame.IOWritePort(0x40 + 1, 0x40 + 1, ay8910.AY8910_write_port_1_w), new Mame.IOWritePort(-1) };
         public static Mame.IOReadPort[] flashgal_sub_readport = { new Mame.IOReadPort(0x00 + 2, 0x00 + 2, ay8910.AY8910_read_port_0_r), new Mame.IOReadPort(-1) };
         public static Mame.IOWritePort[] flashgal_sub_writeport = { new Mame.IOWritePort(0x00 + 0, 0x00 + 0, ay8910.AY8910_control_port_0_w), new Mame.IOWritePort(0x00 + 1, 0x00 + 1, ay8910.AY8910_write_port_0_w), new Mame.IOWritePort(0x40 + 0, 0x40 + 0, ay8910.AY8910_control_port_1_w), new Mame.IOWritePort(0x40 + 1, 0x40 + 1, ay8910.AY8910_write_port_1_w), new Mame.IOWritePort(-1) };
-        public static Mame.IOReadPort[] srdmissn_sub_readport = { new Mame.IOReadPort(0x80 + 2, 0x80 + 2, ay8910.AY8910_read_port_0_r), new Mame.IOReadPort(-1) };
-        public static Mame.IOWritePort[] srdmissn_sub_writeport = { new Mame.IOWritePort(0x80 + 0, 0x80 + 0, ay8910.AY8910_control_port_0_w), new Mame.IOWritePort(0x80 + 1, 0x80 + 1, ay8910.AY8910_write_port_0_w), new Mame.IOWritePort(0x84 + 0, 0x84 + 0, ay8910.AY8910_control_port_1_w), new Mame.IOWritePort(0x84 + 1, 0x84 + 1, ay8910.AY8910_write_port_1_w), new Mame.IOWritePort(-1) };
+        public static Mame.IOReadPort[] srdmissn_sub_readport = 
+        {
+            new Mame.IOReadPort(0x80 + 2, 0x80 + 2, ay8910.AY8910_read_port_0_r), 
+            new Mame.IOReadPort(-1) 
+        };
+        public static Mame.IOWritePort[] srdmissn_sub_writeport = 
+        { 
+           new Mame.IOWritePort(0x80 + 0, 0x80 + 0, ay8910.AY8910_control_port_0_w),
+           new Mame.IOWritePort(0x80 + 1, 0x80 + 1, ay8910.AY8910_write_port_0_w), 
+           new Mame.IOWritePort(0x84 + 0, 0x84 + 0, ay8910.AY8910_control_port_1_w), 
+           new Mame.IOWritePort(0x84 + 1, 0x84 + 1, ay8910.AY8910_write_port_1_w), 
+           new Mame.IOWritePort(-1) 
+        };
 
         public static Mame.MemoryReadAddress[] gyrodine_readmem = { new Mame.MemoryReadAddress(0x0000, 0x7fff, Mame.MRA_ROM), new Mame.MemoryReadAddress(0x8000, 0x87ff, Generic.videoram_r), new Mame.MemoryReadAddress(0x8800, 0x8fff, Generic.colorram_r), new Mame.MemoryReadAddress(0x9000, 0x97ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0x9800, 0x9fff, special_spriteram_r), new Mame.MemoryReadAddress(0xa000, 0xa7ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0xf000, 0xf000 + 0x7ff, shared_ram_r), new Mame.MemoryReadAddress(0xf800, 0xffff, shared_ram_r), new Mame.MemoryReadAddress(-1) };
         public static Mame.MemoryWriteAddress[] gyrodine_writemem = { new Mame.MemoryWriteAddress(0x0000, 0x7fff, Mame.MWA_ROM), new Mame.MemoryWriteAddress(0x8000, 0x87ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size), new Mame.MemoryWriteAddress(0x8800, 0x8fff, Generic.colorram_w, Generic.colorram), new Mame.MemoryWriteAddress(0x9000, 0x97ff, Mame.MWA_RAM, kyugo_videoram, kyugo_videoram_size), new Mame.MemoryWriteAddress(0x9800, 0x9fff, Mame.MWA_RAM, Generic.spriteram_2), new Mame.MemoryWriteAddress(0xa000, 0xa7ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size), new Mame.MemoryWriteAddress(0xa800, 0xa800, Mame.MWA_RAM, kyugo_back_scrollY_lo), new Mame.MemoryWriteAddress(0xb000, 0xb000, kyugo_gfxctrl_w), new Mame.MemoryWriteAddress(0xb800, 0xb800, Mame.MWA_RAM, kyugo_back_scrollX), new Mame.MemoryWriteAddress(0xf000, 0xf000 + 0x7ff, shared_ram_w, shared_ram), new Mame.MemoryWriteAddress(0xf800, 0xffff, shared_ram_w), new Mame.MemoryWriteAddress(0xe000, 0xe000, Mame.watchdog_reset_w), new Mame.MemoryWriteAddress(-1) };
@@ -230,8 +241,34 @@ namespace xnamame036.mame.drivers
         public static Mame.MemoryWriteAddress[] sonofphx_writemem = { new Mame.MemoryWriteAddress(0x0000, 0x7fff, Mame.MWA_ROM), new Mame.MemoryWriteAddress(0x8000, 0x87ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size), new Mame.MemoryWriteAddress(0x8800, 0x8fff, Generic.colorram_w, Generic.colorram), new Mame.MemoryWriteAddress(0x9000, 0x97ff, Mame.MWA_RAM, kyugo_videoram, kyugo_videoram_size), new Mame.MemoryWriteAddress(0x9800, 0x9fff, Mame.MWA_RAM, Generic.spriteram_2), new Mame.MemoryWriteAddress(0xa000, 0xa7ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size), new Mame.MemoryWriteAddress(0xa800, 0xa800, Mame.MWA_RAM, kyugo_back_scrollY_lo), new Mame.MemoryWriteAddress(0xb000, 0xb000, kyugo_gfxctrl_w), new Mame.MemoryWriteAddress(0xb800, 0xb800, Mame.MWA_RAM, kyugo_back_scrollX), new Mame.MemoryWriteAddress(0xf000, 0xf000 + 0x7ff, shared_ram_w, shared_ram), new Mame.MemoryWriteAddress(0xf800, 0xffff, shared_ram_w), new Mame.MemoryWriteAddress(0x0000, 0x0000, Mame.watchdog_reset_w), new Mame.MemoryWriteAddress(-1) };
         public static Mame.MemoryReadAddress[] flashgal_readmem = { new Mame.MemoryReadAddress(0x0000, 0x7fff, Mame.MRA_ROM), new Mame.MemoryReadAddress(0x8000, 0x87ff, Generic.videoram_r), new Mame.MemoryReadAddress(0x8800, 0x8fff, Generic.colorram_r), new Mame.MemoryReadAddress(0x9000, 0x97ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0x9800, 0x9fff, special_spriteram_r), new Mame.MemoryReadAddress(0xa000, 0xa7ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0xf000, 0xf000 + 0x7ff, shared_ram_r), new Mame.MemoryReadAddress(0xf800, 0xffff, shared_ram_r), new Mame.MemoryReadAddress(-1) };
         public static Mame.MemoryWriteAddress[] flashgal_writemem = { new Mame.MemoryWriteAddress(0x0000, 0x7fff, Mame.MWA_ROM), new Mame.MemoryWriteAddress(0x8000, 0x87ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size), new Mame.MemoryWriteAddress(0x8800, 0x8fff, Generic.colorram_w, Generic.colorram), new Mame.MemoryWriteAddress(0x9000, 0x97ff, Mame.MWA_RAM, kyugo_videoram, kyugo_videoram_size), new Mame.MemoryWriteAddress(0x9800, 0x9fff, Mame.MWA_RAM, Generic.spriteram_2), new Mame.MemoryWriteAddress(0xa000, 0xa7ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size), new Mame.MemoryWriteAddress(0xa800, 0xa800, Mame.MWA_RAM, kyugo_back_scrollY_lo), new Mame.MemoryWriteAddress(0xb000, 0xb000, kyugo_gfxctrl_w), new Mame.MemoryWriteAddress(0xb800, 0xb800, Mame.MWA_RAM, kyugo_back_scrollX), new Mame.MemoryWriteAddress(0xf000, 0xf000 + 0x7ff, shared_ram_w, shared_ram), new Mame.MemoryWriteAddress(0xf800, 0xffff, shared_ram_w), new Mame.MemoryWriteAddress(0x0000, 0x0000, Mame.watchdog_reset_w), new Mame.MemoryWriteAddress(-1) };
-        public static Mame.MemoryReadAddress[] srdmissn_readmem = { new Mame.MemoryReadAddress(0x0000, 0x7fff, Mame.MRA_ROM), new Mame.MemoryReadAddress(0x8000, 0x87ff, Generic.videoram_r), new Mame.MemoryReadAddress(0x8800, 0x8fff, Generic.colorram_r), new Mame.MemoryReadAddress(0x9000, 0x97ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0x9800, 0x9fff, special_spriteram_r), new Mame.MemoryReadAddress(0xa000, 0xa7ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0xe000, 0xe000 + 0x7ff, shared_ram_r), new Mame.MemoryReadAddress(0xf800, 0xffff, shared_ram_r), new Mame.MemoryReadAddress(-1) };
-        public static Mame.MemoryWriteAddress[] srdmissn_writemem = { new Mame.MemoryWriteAddress(0x0000, 0x7fff, Mame.MWA_ROM), new Mame.MemoryWriteAddress(0x8000, 0x87ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size), new Mame.MemoryWriteAddress(0x8800, 0x8fff, Generic.colorram_w, Generic.colorram), new Mame.MemoryWriteAddress(0x9000, 0x97ff, Mame.MWA_RAM, kyugo_videoram, kyugo_videoram_size), new Mame.MemoryWriteAddress(0x9800, 0x9fff, Mame.MWA_RAM, Generic.spriteram_2), new Mame.MemoryWriteAddress(0xa000, 0xa7ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size), new Mame.MemoryWriteAddress(0xa800, 0xa800, Mame.MWA_RAM, kyugo_back_scrollY_lo), new Mame.MemoryWriteAddress(0xb000, 0xb000, kyugo_gfxctrl_w), new Mame.MemoryWriteAddress(0xb800, 0xb800, Mame.MWA_RAM, kyugo_back_scrollX), new Mame.MemoryWriteAddress(0xe000, 0xe000 + 0x7ff, shared_ram_w, shared_ram), new Mame.MemoryWriteAddress(0xf800, 0xffff, shared_ram_w), new Mame.MemoryWriteAddress(0x0000, 0x0000, Mame.watchdog_reset_w), new Mame.MemoryWriteAddress(-1) };
+        public static Mame.MemoryReadAddress[] srdmissn_readmem = 
+        {
+            new Mame.MemoryReadAddress(0x0000, 0x7fff, Mame.MRA_ROM), 
+            new Mame.MemoryReadAddress(0x8000, 0x87ff, Generic.videoram_r),
+            new Mame.MemoryReadAddress(0x8800, 0x8fff, Generic.colorram_r),
+            new Mame.MemoryReadAddress(0x9000, 0x97ff, Mame.MRA_RAM), 
+            new Mame.MemoryReadAddress(0x9800, 0x9fff, special_spriteram_r), 
+            new Mame.MemoryReadAddress(0xa000, 0xa7ff, Mame.MRA_RAM), 
+            new Mame.MemoryReadAddress(0xe000, 0xe000 + 0x7ff, shared_ram_r),
+            new Mame.MemoryReadAddress(0xf800, 0xffff, shared_ram_r),
+            new Mame.MemoryReadAddress(-1) 
+        };
+        public static Mame.MemoryWriteAddress[] srdmissn_writemem =
+        {
+            new Mame.MemoryWriteAddress(0x0000, 0x7fff, Mame.MWA_ROM),
+            new Mame.MemoryWriteAddress(0x8000, 0x87ff, Generic.videoram_w, Generic.videoram, Generic.videoram_size), 
+            new Mame.MemoryWriteAddress(0x8800, 0x8fff, Generic.colorram_w, Generic.colorram), 
+            new Mame.MemoryWriteAddress(0x9000, 0x97ff, Mame.MWA_RAM, kyugo_videoram, kyugo_videoram_size), 
+            new Mame.MemoryWriteAddress(0x9800, 0x9fff, Mame.MWA_RAM, Generic.spriteram_2), 
+            new Mame.MemoryWriteAddress(0xa000, 0xa7ff, Mame.MWA_RAM, Generic.spriteram, Generic.spriteram_size),
+            new Mame.MemoryWriteAddress(0xa800, 0xa800, Mame.MWA_RAM, kyugo_back_scrollY_lo),
+            new Mame.MemoryWriteAddress(0xb000, 0xb000, kyugo_gfxctrl_w), 
+            new Mame.MemoryWriteAddress(0xb800, 0xb800, Mame.MWA_RAM, kyugo_back_scrollX),
+            new Mame.MemoryWriteAddress(0xe000, 0xe000 + 0x7ff, shared_ram_w, shared_ram), 
+            new Mame.MemoryWriteAddress(0xf800, 0xffff, shared_ram_w), 
+            new Mame.MemoryWriteAddress(0x0000, 0x0000, Mame.watchdog_reset_w), 
+            new Mame.MemoryWriteAddress(-1) }
+            ;
         public static Mame.MemoryReadAddress[] gyrodine_sub_readmem = { new Mame.MemoryReadAddress(0x0000, 0x1fff, Mame.MRA_ROM), new Mame.MemoryReadAddress(0x4000, 0x4000 + 0x7ff, shared_ram_r), new Mame.MemoryReadAddress(0x0000, 0x0000 + 0x7ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0x8080, 0x8080, Mame.input_port_2_r), new Mame.MemoryReadAddress(0x8040, 0x8040, Mame.input_port_3_r), new Mame.MemoryReadAddress(0x8000, 0x8000, Mame.input_port_4_r), new Mame.MemoryReadAddress(-1) };
         public static Mame.MemoryWriteAddress[] gyrodine_sub_writemem = { new Mame.MemoryWriteAddress(0x0000, 0x1fff, Mame.MWA_ROM), new Mame.MemoryWriteAddress(0x4000, 0x4000 + 0x7ff, shared_ram_w), new Mame.MemoryWriteAddress(0x0000, 0x0000 + 0x7ff, Mame.MWA_RAM), new Mame.MemoryWriteAddress(-1) };
         public static Mame.MemoryReadAddress[] sonofphx_sub_readmem = { new Mame.MemoryReadAddress(0x0000, 0x7fff, Mame.MRA_ROM), new Mame.MemoryReadAddress(0xa000, 0xa000 + 0x7ff, shared_ram_r), new Mame.MemoryReadAddress(0x0000, 0x0000 + 0x7ff, Mame.MRA_RAM), new Mame.MemoryReadAddress(0xc080, 0xc080, Mame.input_port_2_r), new Mame.MemoryReadAddress(0xc040, 0xc040, Mame.input_port_3_r), new Mame.MemoryReadAddress(0xc000, 0xc000, Mame.input_port_4_r), new Mame.MemoryReadAddress(-1) };

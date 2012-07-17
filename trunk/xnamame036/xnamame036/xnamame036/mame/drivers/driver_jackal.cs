@@ -123,7 +123,7 @@ namespace xnamame036.mame.drivers
             128 * 8	/* every char takes 32 consecutive bytes */
         );
 
-        static new Mame.GfxLayout topgunbl_spritelayout8 =
+        static  Mame.GfxLayout topgunbl_spritelayout8 =
             new Mame.GfxLayout(
             8, 8,	/* 8*8 characters */
             4096,	/* 4096 characters */

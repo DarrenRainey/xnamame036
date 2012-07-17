@@ -62,7 +62,7 @@ new uint[]{ 0*8, 1*8, 2*8, 3*8, 4*8, 5*8, 6*8, 7*8,
 32 * 8	/* every sprite takes 32 consecutive bytes */
  );
         public static int flipscreen;
-        public static new _BytePtr sprite_height_prom = new _BytePtr(1);
+        public static  _BytePtr sprite_height_prom = new _BytePtr(1);
         static int kidniki_background_bank;
         public static int irem_background_hscroll;
         public static int irem_background_vscroll;

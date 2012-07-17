@@ -99,22 +99,19 @@ namespace xnamame036.mame.drivers
 
         static _BytePtr irobot_combase_mb;
         static _BytePtr irobot_combase;
+        static byte irobot_bufsel, irobot_alphamap;
 
 
         static void irobot_paletteram_w(int offset, int data)
         {
-            int r, g, b;
-            int bits, intensity;
-            int color;
-
-            color = ((data << 1) | (offset & 0x01)) ^ 0x1ff;
-            intensity = color & 0x07;
-            bits = (color >> 3) & 0x03;
-            b = 8 * bits * intensity;
+            int color = ((data << 1) | (offset & 0x01)) ^ 0x1ff;
+            int intensity = color & 0x07;
+            int bits = (color >> 3) & 0x03;
+            int b = 8 * bits * intensity;
             bits = (color >> 5) & 0x03;
-            g = 8 * bits * intensity;
+            int g = 8 * bits * intensity;
             bits = (color >> 7) & 0x03;
-            r = 8 * bits * intensity;
+            int r = 8 * bits * intensity;
             Mame.palette_change_color((offset >> 1) & 0x3F, (byte)r, (byte)g, (byte)b);
         }
 
@@ -126,7 +123,6 @@ namespace xnamame036.mame.drivers
             return x;
 #endif
         }
-        static byte irobot_bufsel, irobot_alphamap;
         static void irobot_rom_banksel(int offset, int data)
         {
             _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU1);

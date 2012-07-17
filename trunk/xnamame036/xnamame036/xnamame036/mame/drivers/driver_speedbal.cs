@@ -204,6 +204,7 @@ namespace xnamame036.mame.drivers
             public override void vh_init_palette(byte[] palette, ushort[] colortable, _BytePtr color_prom)
             {
                 return;
+#if false
                 uint cpi = 0, pi = 0;
                 for (int i = 0; i < Mame.Machine.drv.total_colors; i++)
                 {
@@ -238,7 +239,7 @@ namespace xnamame036.mame.drivers
                 /* sprites */
                 for (int i = 0; i < TOTAL_COLORS(2); i++)
                     COLOR(colortable, 2, i, color_prom[cpi++] & 0x0f);
-
+#endif
             }
             public override int vh_start()
             {

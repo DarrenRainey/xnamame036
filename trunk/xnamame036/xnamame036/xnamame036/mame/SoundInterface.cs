@@ -73,6 +73,10 @@ namespace xnamame036.mame
         public const byte SOUND_ADPCM = 15;
         public const byte SOUND_NES = 16;
         public const byte SOUND_YM3526= 17;
+        public const byte SOUND_K005289 = 18;
+        public const byte SOUND_VLM5030 = 19;
+        public const byte SOUND_TMS5220 = 20;
+
         public const byte SOUND_SEGAPCM = 99;
 
         public delegate int CustomSoundStart(MachineSound msound);
@@ -132,6 +136,9 @@ namespace xnamame036.mame
                                       new ADPCM(),
                                       new nes_apu(),
                                       new YM3526(),
+                                      new k005289(),
+                                      new vlm5030(),
+                                      new tms5220()
                                   };
         int sound_start()
         {
@@ -283,7 +290,7 @@ namespace xnamame036.mame
         {
             return latch;
         }
-        static void soundlatch_clear_w(int offset, int data)
+        public static void soundlatch_clear_w(int offset, int data)
         {
             latch = cleared_value;
         }

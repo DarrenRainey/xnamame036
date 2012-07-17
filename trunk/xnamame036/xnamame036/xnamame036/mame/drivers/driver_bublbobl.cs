@@ -362,7 +362,7 @@ new YM3526interface(
                     /* skip empty sprites */
                     /* this is dword aligned so the UINT32 * cast shouldn't give problems */
                     /* on any architecture */
-                    if (bublbobl_objectram.read32(offs) == 0)
+                    if (bublbobl_objectram.READ_DWORD(offs) == 0)
                         continue;
 
                     gfx_num = bublbobl_objectram[offs + 1];

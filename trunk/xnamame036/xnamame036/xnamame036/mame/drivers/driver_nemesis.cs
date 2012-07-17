@@ -158,7 +158,7 @@ namespace xnamame036.mame.drivers
         static Mame.GfxLayout spritelayout3232 =
         new Mame.GfxLayout(
             32, 32,	/* 32*32 sprites */
-            128,	/* 128 sprites */
+            256,	/* 128 sprites */
             4,	/* 4 bits per pixel */
             new uint[] { 0, 1, 2, 3 }, /* the two bitplanes are merged in the same nibble */
             new uint[]{ 0*4, 1*4, 2*4, 3*4, 4*4, 5*4, 6*4, 7*4,
@@ -234,8 +234,31 @@ namespace xnamame036.mame.drivers
     new Mame.GfxDecodeInfo(0, 0x0, spritelayout168, 0, 0x80 ),	/* the game dynamically modifies this */
     new Mame.GfxDecodeInfo(0, 0x0, spritelayout6464, 0, 0x80 ),	/* the game dynamically modifies this */
 };
+        static AY8910interface ay8910_interface =
+new AY8910interface(
+    2,      		/* 2 chips */
+    14318180 / 8,     /* 1.78975 Mhz */
+    new int[] { 30, 30 },
+    new AY8910portRead[] { nemesis_portA_r, null },
+    new AY8910portRead[] { null, null },
+    new AY8910portWrite[] { null, k005289.k005289_control_A_w },
+    new AY8910portWrite[] { null, k005289.k005289_control_B_w },
+    new AY8910handler[] { null, null }
+);
 
+        static k005289_interface k005289_interface =
+        new k005289_interface(
+            3579545 / 2,		/* clock speed */
+            22,				/* playback volume */
+            Mame.REGION_SOUND1	/* prom memory region */
+        );
 
+        static VLM5030interface gx400_vlm5030_interface = new VLM5030interface(3579545, 100, 0, 0x0800, 0);
+
+        static int nemesis_portA_r(int offset)
+{
+	return Mame.cpu_gettotalcycles() / 1024;
+}
         static int nemesis_videoram1_r(int offset)
         {
             return nemesis_videoram1.READ_WORD(offset);
@@ -408,14 +431,14 @@ namespace xnamame036.mame.drivers
             sprite1632_dirty = new bool[256];
             for (int i = 0; i < 256; i++) sprite1632_dirty[i] = true;
 
-            sprite3232_dirty = new bool[128];
+            sprite3232_dirty = new bool[256];
             for (int i = 0; i < 128; i++) sprite3232_dirty[i] = true;
 
             sprite168_dirty = new bool[1024];
             for (int i = 0; i < 1024; i++) sprite168_dirty[i] = true;
 
             sprite816_dirty = new bool[1024];
-            for (int i = 0; i < 1024; i++) sprite816_dirty[i] = true;
+            for (int i = 0; i < 32; i++) sprite816_dirty[i] = true;
 
             sprite6464_dirty = new bool[32];
             for (int i = 0; i < 32; i++) sprite6464_dirty[i] = true;
@@ -1439,7 +1462,9 @@ namespace xnamame036.mame.drivers
                 color_table_len = 2048;
                 video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE;
                 sound_attributes = 0;
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_AY8910, ay8910_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_K005289, k005289_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_VLM5030, gx400_vlm5030_interface));
                 //throw new Exception();
             }
             public override void init_machine()

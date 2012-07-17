@@ -165,7 +165,7 @@ namespace xnamame036.mame
 
         public override void stop()
         {
-            throw new NotImplementedException();
+            sample_list = null;
         }
         public override void reset()
         {
@@ -223,6 +223,27 @@ namespace xnamame036.mame
             Mame.stream_update(voice.stream, 0);
             return voice.playing ? 1 : 0;
         }
+
+        public static void ADPCM_setvol(int num, int vol)
+        {
+            ADPCMVoice voice = adpcm[num];
+
+            /* bail if we're not playing anything */
+            if (Mame.Machine.sample_rate == 0)
+                return;
+
+            /* range check the numbers */
+            if (num >= num_voices)
+            {
+                Mame.printf("error: ADPCM_setvol() called with channel = %d, but only %d channels allocated\n", num, num_voices);
+                return;
+            }
+
+            /* update the ADPCM voice */
+            Mame.stream_update(voice.stream, 0);
+            voice.volume = (uint)vol;
+        }
+
     }
     class okim6295 : Mame.snd_interface
     {
@@ -645,6 +666,7 @@ namespace xnamame036.mame
         }
         public override void stop()
         {
+            sample_list = null;
             throw new NotImplementedException();
         }
         public override void reset()

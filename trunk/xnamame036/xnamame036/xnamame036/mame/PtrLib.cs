@@ -44,12 +44,18 @@ namespace xnamame036.mame
         }
         public ushort READ_WORD(int index)
         {
-            return (ushort)(buffer[offset + 1 + index] << 8 | buffer[offset + index]);
+            return BitConverter.ToUInt16(buffer, index + offset);
+            //return (ushort)(buffer[offset + 1 + index] << 8 | buffer[offset + index]);
         }
             public void WRITE_WORD(int index, ushort value)
             {
-           buffer[offset + index] = (byte)value;
-            buffer[offset + index  + 1] = (byte)(value >> 8);
+                Buffer.BlockCopy(BitConverter.GetBytes(value), 0, buffer, (offset + index), 2);
+           //buffer[offset + index] = (byte)value;
+            //buffer[offset + index  + 1] = (byte)(value >> 8);
+            }
+            public uint READ_DWORD(int index)
+            {
+                return BitConverter.ToUInt32(buffer, index+offset);
             }
         public ushort read16(int index)
         {
@@ -96,11 +102,11 @@ namespace xnamame036.mame
             bsize = 4;
             buffer = new byte[size];
         }
-        public _IntPtr(_BytePtr bp)
+        public _IntPtr(_BytePtr bp,int offset=0)
         {
             bsize = 4;
             this.buffer = bp.buffer;
-            this.offset = bp.offset;
+            this.offset = bp.offset+offset;
         }
         public _IntPtr(_IntPtr ip, int offset)
         {
