@@ -95,7 +95,7 @@ namespace xnamame036.mame
             //main("1943"); // Some transparent color problems now
             //main("zaxxon");
             //main("szaxxon");
-           // main("galaga");
+            // main("galaga");
             //main("digdug");
             //main("dkong");
             //main("mario");
@@ -114,7 +114,7 @@ namespace xnamame036.mame
             //main("qix"); 
             //main("mpatrol");  //last imaged
             //main("pbaction");
-           // main("citycon");
+            // main("citycon");
             //main("jackal");
             //main("speedbal"); 
             //main("gyruss"); 
@@ -132,33 +132,57 @@ namespace xnamame036.mame
             //
             //main("dkong3");
 
+            //main("brkthru");//6809
 
             //main("ddragonb");
             //main("ddragon2");
 
             //main("vigilant"); // Some glitches when drawing occurs at side of screen
-            
+
             //main("pang"); 
             //main("spang"); 
-            //main("block");
+            //main("block"); 
+
+            //tnzs gamges
+            //--------------
+            //main("arkanoi2");
+            //main("tnzs");
+            //main("tnz2");
+            //main("troangel");
+            //main("extrmatn");
+           // main("drtoppel");
+            //main("plumppop");
 
             //main("gng");
             //main("diamond");
+            //main("bublbobl"); // Sound not complete
+
+            //Tecmo games
+            //main("rygar");
+            //main("silkworm");
+            //main("gemini");
+
 
             //Here are some vector games
+            //----------------------------------------------------
             //main("zektor");
             //main("tacscan");
             //main("asteroid");
             //main("llander");//artwork/overlay not implemented
             //main("speedfrk"); //ccpu (vector game)
+            //main("starwars"); //no sound/speech
+
+
 
             //-------------------------------------------------
             //These drivers have problems that should be fixable
             //main("turbo");     //Graphics not drawn correctly. Some offset problem ?             
             //main("ajax");// Border left around the screen
             
+            //main("vulgus");// Graphics not correct. Transparency problems?
+
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
-            //main("bublbobl"); // Graphics only partially drawn
+
             //main("defender"); //graphics/palette problems
 
             //main("retofinv"); // major graphics glitches
@@ -166,23 +190,31 @@ namespace xnamame036.mame
 
             //-------------------------------------------------
             //These drivers I would like to implement
+            //main("atetris"); // To test the m6502 cpu implementation
+            main("skykid");
+            main("drgnbstr");
+            main("labrunr");
 
-            main("nemesis");
 
-            //main("pacmania");
+            //main("blockout");//m68000
+            //main("nemesis"); //m68000           
             
-            
+
+            main("terracre");  //m68000          
+
             //main("battlane");
-            //main("brkthru");
 
 
+            //namcos1 games
+            //main("pacmania");
             //main("galaga88");   //6809,hd63701                    
+
             //main("marble");//m68010,m6502
-            
-            
-            
+
+
+
             //main("kangaroo"); //z80
-            
+
             //main("gtmr"); // 68000 
             //main("gtmre"); // 68000
             //main("qbert"); // I8086,M6502
@@ -193,21 +225,21 @@ namespace xnamame036.mame
             //These drivers have major problems
             //main("xsleena"); // tilemap problems ? Stops in an infinite loop somewhare
             //main("xevious");//tilemap problems ?
-            
-            
+
+
 
             //main("baraduke"); // tilemap & input port. Will not work with 8-bit graphics ?
-           //main("irobot");//6809 graphics missing, 
-           // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
-            //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
+            //main("irobot");//6809 graphics missing, 
+            // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
+            main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
             main("raiden");  //cpu problems ?
-            
+
         }
         public void main(string game)
         {
             int res;
             InitGameDriverList();
-            init_ticker();            
+            init_ticker();
 
             if (soundcard == 0)
             {    /* silence, this would be -1 if unknown in which case all roms are loaded */
@@ -442,7 +474,7 @@ namespace xnamame036.mame
 
                             if (drv.HasNVRAMhandler)
                             {
-                                object f= osd_fopen(Machine.gamedrv.name, null, OSD_FILETYPE_NVRAM, 0);
+                                object f = osd_fopen(Machine.gamedrv.name, null, OSD_FILETYPE_NVRAM, 0);
                                 drv.nvram_handler(f, 0);
                                 if (f != null) osd_fclose(f);
                             }
@@ -556,7 +588,7 @@ namespace xnamame036.mame
                         return 1;
                     }
                     if (Machine.remapped_colortable != null)
-                        Machine.gfx[i].colortable = new UShortSubArray(Machine.remapped_colortable, (int)drv.gfxdecodeinfo[i].color_codes_start );
+                        Machine.gfx[i].colortable = new UShortSubArray(Machine.remapped_colortable, (int)drv.gfxdecodeinfo[i].color_codes_start);
                     Machine.gfx[i].total_colors = drv.gfxdecodeinfo[i].total_color_codes;
                 }
             }
@@ -570,7 +602,7 @@ namespace xnamame036.mame
                 return 1;
             }
 
-            blit_buffer = new uint[Machine.scrbitmap.width*Machine.scrbitmap.height];
+            blit_buffer = new uint[Machine.scrbitmap.width * Machine.scrbitmap.height];
             back_buffer = new byte[Machine.scrbitmap.line[0].buffer.Length];
             /* create spriteram buffers if necessary */
             if ((drv.video_attributes & VIDEO_BUFFERS_SPRITERAM) != 0)
@@ -608,7 +640,7 @@ namespace xnamame036.mame
                 return 1;
             }
 
-            osd_create_backbuffer(Machine.scrbitmap.width,Machine.scrbitmap.height);
+            osd_create_backbuffer(Machine.scrbitmap.width, Machine.scrbitmap.height);
 
             return 0;
         }

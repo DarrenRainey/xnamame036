@@ -1,7 +1,10 @@
-﻿using System;
+﻿#define bizhawk_cpu
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BizHawk.Emulation.CPUs.M68000;
 
 namespace xnamame036.mame
 {
@@ -11,20 +14,21 @@ namespace xnamame036.mame
         {
             public delegate void opcode();
 
-            const byte MC68000_INT_NONE = 0;
-            const byte MC68000_IRQ_1 = 1;
-            const byte MC68000_IRQ_2 = 2;
-            const byte MC68000_IRQ_3 = 3;
-            const byte MC68000_IRQ_4 = 4;
-            const byte MC68000_IRQ_5 = 5;
-            const byte MC68000_IRQ_6 = 6;
-            const byte MC68000_IRQ_7 = 7;
-            const int MC68000_INT_ACK_AUTOVECTOR = -1;
-            const int MC68000_INT_ACK_SPURIOUS = -2;
-            const byte MC68000_CPU_MDOE_68000 = 1;
-            const byte MC68000_CPU_MODE_68010 = 2;
-            const byte MC68000_CPU_MODE_68020 = 4;
+            public const byte MC68000_INT_NONE = 0;
+            public const byte MC68000_IRQ_1 = 1;
+            public const byte MC68000_IRQ_2 = 2;
+            public const byte MC68000_IRQ_3 = 3;
+            public const byte MC68000_IRQ_4 = 4;
+            public const byte MC68000_IRQ_5 = 5;
+            public const byte MC68000_IRQ_6 = 6;
+            public const byte MC68000_IRQ_7 = 7;
+            public const int MC68000_INT_ACK_AUTOVECTOR = -1;
+            public const int MC68000_INT_ACK_SPURIOUS = -2;
+            public const byte MC68000_CPU_MDOE_68000 = 1;
+            public const byte MC68000_CPU_MODE_68010 = 2;
+            public const byte MC68000_CPU_MODE_68020 = 4;
 
+            MC68000 M68k_cpu = new MC68000();
             public cpu_m68000()
             {
                 cpu_num = CPU_M68000;

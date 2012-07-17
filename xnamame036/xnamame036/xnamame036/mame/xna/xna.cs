@@ -37,6 +37,8 @@ namespace xnamame036.mame
         }
         static void osd_create_backbuffer(int width, int height)
         {
+            //width = Machine.drv.visible_area.max_x - Machine.drv.visible_area.min_x;
+            //height = Machine.drv.visible_area.max_y - Machine.drv.visible_area.min_y;
             win_video_window = new Texture2D(Game1.graphics.GraphicsDevice, width, height);
             blitterThread = new Thread(blitscreen_dirty1_vga);
             blitterThread.Start();

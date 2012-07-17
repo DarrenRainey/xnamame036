@@ -1016,7 +1016,70 @@ namespace xnamame036.mame
 
             palette_change_color(color, (byte)r, (byte)g, (byte)b);
         }
+        static void changecolor_xxxxBBBBRRRRGGGG(int color, int data)
+        {
+            int r = (data >> 4) & 0x0f;
+            int g = (data >> 0) & 0x0f;
+            int b = (data >> 8) & 0x0f;
 
+            r = (r << 4) | r;
+            g = (g << 4) | g;
+            b = (b << 4) | b;
+
+            palette_change_color(color, (byte)r, (byte)g, (byte)b);
+        }
+        static void changecolor_xRRRRRGGGGGBBBBB(int color, int data)
+{
+	int r,g,b;
+
+
+	r = (data >> 10) & 0x1f;
+	g = (data >>  5) & 0x1f;
+	b = (data >>  0) & 0x1f;
+
+	r = (r << 3) | (r >> 2);
+	g = (g << 3) | (g >> 2);
+	b = (b << 3) | (b >> 2);
+
+    palette_change_color(color, (byte)r, (byte)g, (byte)b);
+}
+
+        public static void paletteram_xxxxBBBBRRRRGGGG_swap_w(int offset, int data)
+        {
+            paletteram[offset] = (byte)data;
+            changecolor_xxxxBBBBRRRRGGGG(offset / 2, paletteram[offset | 1] | (paletteram[offset & ~1] << 8));
+        }
+        public static void paletteram_xRRRRRGGGGGBBBBB_w(int offset, int data)
+        {
+            paletteram[offset] = (byte)data;
+            changecolor_xRRRRRGGGGGBBBBB(offset / 2, paletteram[offset & ~1] | (paletteram[offset | 1] << 8));
+        }
+        public static void paletteram_RRRGGGBB_w(int offset, int data)
+        {
+            int r, g, b;
+            int bit0, bit1, bit2;
+
+
+            paletteram[offset] = (byte)data;
+
+            /* red component */
+            bit0 = (data >> 5) & 0x01;
+            bit1 = (data >> 6) & 0x01;
+            bit2 = (data >> 7) & 0x01;
+            r = 0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2;
+            /* green component */
+            bit0 = (data >> 2) & 0x01;
+            bit1 = (data >> 3) & 0x01;
+            bit2 = (data >> 4) & 0x01;
+            g = 0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2;
+            /* blue component */
+            bit0 = 0;
+            bit1 = (data >> 0) & 0x01;
+            bit2 = (data >> 1) & 0x01;
+            b = 0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2;
+
+            palette_change_color(offset, (byte)r, (byte)g, (byte)b);
+        }
         public static void paletteram_xBBBBBGGGGGRRRRR_w(int offset, int data)
         {
             paletteram[offset] = (byte)data;

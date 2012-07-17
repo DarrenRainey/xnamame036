@@ -193,7 +193,7 @@ namespace xnamame036.mame
         static void gfxobj_update_one(gfx_object_list object_list)
         {
             throw new Exception();
-#if true
+#if false
             gfx_object _object;
             gfx_object start_object, last_object;
             int dx, start_priority, end_priority;

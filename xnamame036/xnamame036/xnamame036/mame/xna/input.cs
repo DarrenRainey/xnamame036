@@ -368,15 +368,15 @@ namespace xnamame036.mame
                 switch (dir)
                 {
                     case 1:
-                        return joy[joy_num].stick[stick].axis[axis].Pos; break;
+                        return joy[joy_num].stick[stick].axis[axis].Pos; 
                     case 2:
-                        return joy[joy_num].stick[stick].axis[axis].Neg; break;
+                        return joy[joy_num].stick[stick].axis[axis].Neg; 
                     default:
-                        return false; break;
+                        return false; 
                 }
             }
 
-            return false;
+            
         }
         static JoystickInfo[] joylist = new JoystickInfo[256];
         class GamepadInfo

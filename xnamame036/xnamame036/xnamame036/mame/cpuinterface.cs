@@ -115,7 +115,7 @@ namespace xnamame036.mame
                                              new cpu_m68705(),
                                              new cpu_hd63705(),
                                              new cpu_konami(),
-                                             new cpu_m6502(),
+                                             new cpu_m6502_2(),
                                              new cpu_ccpu(),
                                              new cpu_v30(),
                                              new cpu_m68000(),
@@ -1085,21 +1085,21 @@ namespace xnamame036.mame
                                 default: irq_line = 0; break;
                             }
                             break;
-                        //case CPU_M68000:
-                        //    switch (num)
-                        //    {
-                        //    case MC68000_IRQ_1: 	irq_line = 1; LOG((errorlog,"M68K IRQ1\n")); break;
-                        //    case MC68000_IRQ_2: 	irq_line = 2; LOG((errorlog,"M68K IRQ2\n")); break;
-                        //    case MC68000_IRQ_3: 	irq_line = 3; LOG((errorlog,"M68K IRQ3\n")); break;
-                        //    case MC68000_IRQ_4: 	irq_line = 4; LOG((errorlog,"M68K IRQ4\n")); break;
-                        //    case MC68000_IRQ_5: 	irq_line = 5; LOG((errorlog,"M68K IRQ5\n")); break;
-                        //    case MC68000_IRQ_6: 	irq_line = 6; LOG((errorlog,"M68K IRQ6\n")); break;
-                        //    case MC68000_IRQ_7: 	irq_line = 7; LOG((errorlog,"M68K IRQ7\n")); break;
-                        //    default:				irq_line = 0; LOG((errorlog,"M68K unknown\n"));
-                        //    }
-                        //    /* until now only auto vector interrupts supported */
-                        //    num = MC68000_INT_ACK_AUTOVECTOR;
-                        //    break;
+                        case CPU_M68000:
+                            switch (num)
+                            {
+                            case cpu_m68000.MC68000_IRQ_1: 	irq_line = 1;  break;
+                            case cpu_m68000.MC68000_IRQ_2: irq_line = 2; break;
+                            case cpu_m68000.MC68000_IRQ_3: irq_line = 3; break;
+                            case cpu_m68000.MC68000_IRQ_4: irq_line = 4; break;
+                            case cpu_m68000.MC68000_IRQ_5: irq_line = 5; break;
+                            case cpu_m68000.MC68000_IRQ_6: irq_line = 6; break;
+                            case cpu_m68000.MC68000_IRQ_7: irq_line = 7; break;
+                            default: irq_line = 0; break;
+                            }
+                            /* until now only auto vector interrupts supported */
+                            num = cpu_m68000.MC68000_INT_ACK_AUTOVECTOR;
+                            break;
                         //case CPU_M68010:
                         //    switch (num)
                         //    {
@@ -1580,6 +1580,12 @@ namespace xnamame036.mame
             }
 
             return ret;
+        }
+        public static int m68_level1_irq()
+        {
+            int cpunum = (activecpu < 0) ? 0 : activecpu;
+            if (interrupt_enable[cpunum] == 0) return cpu_m68000.MC68000_INT_NONE;
+            return cpu_m68000.MC68000_IRQ_1;
         }
     }
 }

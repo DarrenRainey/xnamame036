@@ -324,7 +324,7 @@ namespace xnamame036.mame.drivers
             Mame.cpu_setbank(1, new _BytePtr(RAM, bankaddress));
         }
 
-        static int c1942_interrupt()
+        public static int c1942_interrupt()
         {
             if (Mame.cpu_getiloops() != 0) return 0x00cf;	/* RST 08h */
             else return 0x00d7;	/* RST 10h - vblank */

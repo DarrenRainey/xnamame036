@@ -656,7 +656,7 @@ namespace xnamame036.mame.drivers
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6809, 49152000 / 32, main_readmem, main_writemem, null, null, Mame.interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6809, 49152000 / 32, sub_readmem, sub_writemem, null, null, Mame.interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_M6809, 49152000 / 32, sound_readmem, sound_writemem, null, null, Mame.interrupt, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_HD63701, 49152000 / 8 / 3, mcu_readmem, mcu_writemem, mcu_readport, mcu_writeport, Mame.interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_HD63701, 49152000 / 8 / 4, mcu_readmem, mcu_writemem, mcu_readport, mcu_writeport, Mame.interrupt, 1));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_REAL_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 0;

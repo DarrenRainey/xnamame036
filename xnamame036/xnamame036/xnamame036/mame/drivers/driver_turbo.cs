@@ -32,7 +32,7 @@ namespace xnamame036.mame.drivers
         const int VIEW_HEIGHT = 28 * 8;
 
         /* sprite tracking */
-        struct sprite_params_data
+        class sprite_params_data
         {
             public UIntSubArray _base;
             public int offset, rowbytes;
@@ -50,7 +50,7 @@ namespace xnamame036.mame.drivers
         /* misc other stuff */
         static ushort[] back_expanded_data;
         static ushort[] road_expanded_palette;
-        static byte drew_frame;
+        static bool drew_frame;
 
 
 
@@ -382,7 +382,7 @@ namespace xnamame036.mame.drivers
                 color_table_len = 512 + 6;
                 video_attributes = Mame.VIDEO_TYPE_RASTER;
                 sound_attributes = 0;
-                sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
+                //sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
             }
             public override void init_machine()
             {
@@ -398,17 +398,15 @@ namespace xnamame036.mame.drivers
                 int cpi = 0;
                 for (int i = 0; i < 512; i++, cpi++)
                 {
-                    int bit0, bit1, bit2;
-
                     /* bits 4,5,6 of the index are inverted before being used as addresses */
                     /* to save ourselves lots of trouble, we will undo the inversion when */
                     /* generating the palette */
                     int adjusted_index = i ^ 0x70;
 
                     /* red component */
-                    bit0 = (color_prom[cpi] >> 0) & 1;
-                    bit1 = (color_prom[cpi] >> 1) & 1;
-                    bit2 = (color_prom[cpi] >> 2) & 1;
+                    int bit0 = (color_prom[cpi] >> 0) & 1;
+                    int bit1 = (color_prom[cpi] >> 1) & 1;
+                    int bit2 = (color_prom[cpi] >> 2) & 1;
                     palette[adjusted_index * 3 + 0] = (byte)(0x21 * bit0 + 0x47 * bit1 + 0x97 * bit2);
 
                     /* green component */
@@ -447,19 +445,18 @@ namespace xnamame036.mame.drivers
             }
             public override int vh_start()
             {
-                int i, j, sprite_length, sprite_bank_size, back_length;
                 uint[] sprite_expand = new uint[16];
                 uint[] dst;
                 ushort[] bdst;
                 _BytePtr src;
 
                 /* allocate the expanded sprite data */
-                sprite_length = Mame.memory_region_length(Mame.REGION_GFX1);
-                sprite_bank_size = sprite_length / 8;
-                sprite_expanded_data = new uint[sprite_length];
+                int sprite_length = Mame.memory_region_length(Mame.REGION_GFX1);
+                int sprite_bank_size = sprite_length / 8;
+                sprite_expanded_data = new uint[sprite_length*2];
 
                 /* allocate the expanded background data */
-                back_length = Mame.memory_region_length(Mame.REGION_GFX3);
+                int back_length = Mame.memory_region_length(Mame.REGION_GFX3);
                 back_expanded_data = new ushort[back_length];
 
                 /* allocate the expanded road palette */
@@ -480,7 +477,7 @@ namespace xnamame036.mame.drivers
                 collision_map = new _BytePtr(Mame.memory_region(Mame.REGION_PROMS), 0x0b60);
 
                 /* compute the sprite expansion array */
-                for (i = 0; i < 16; i++)
+                for (int i = 0; i < 16; i++)
                 {
                     uint value = 0;
                     if ((i & 1) != 0) value |= 0x00000001;
@@ -497,11 +494,11 @@ namespace xnamame036.mame.drivers
                 /* expand the sprite ROMs */
                 src = new _BytePtr(sprite_gfxdata);
                 dst = sprite_expanded_data;
-                for (i = 0; i < 8; i++)
+                for (int i = 0; i < 8; i++)
                 {
                     int di = 0;
                     /* expand this bank */
-                    for (j = 0; j < sprite_bank_size; j++)
+                    for (int j = 0; j < sprite_bank_size; j++)
                     {
                         dst[di++] = sprite_expand[src[0] >> 4];
                         dst[di++] = sprite_expand[src[0] & 15];
@@ -509,7 +506,7 @@ namespace xnamame036.mame.drivers
                     }
 
                     /* shift for the next bank */
-                    for (j = 0; j < 16; j++)
+                    for (int j = 0; j < 16; j++)
                         if (sprite_expand[j] != 0x12345678) sprite_expand[j] <<= 1;
                 }
 
@@ -517,13 +514,13 @@ namespace xnamame036.mame.drivers
                 src = new _BytePtr(back_gfxdata);
                 bdst = back_expanded_data;
                 int bdi = 0;
-                for (i = 0; i < back_length / 2; i++, src.offset++)
+                for (int i = 0; i < back_length / 2; i++, src.offset++)
                 {
                     int bits1 = src[0];
                     int bits2 = src[back_length / 2];
                     int newbits = 0;
 
-                    for (j = 0; j < 8; j++)
+                    for (int j = 0; j < 8; j++)
                     {
                         newbits |= ((bits1 >> (j ^ 7)) & 1) << (j * 2);
                         newbits |= ((bits2 >> (j ^ 7)) & 1) << (j * 2 + 1);
@@ -535,7 +532,7 @@ namespace xnamame036.mame.drivers
                 src = road_palette;
                 bdst = road_expanded_palette;
                 bdi = 0;
-                for (i = 0; i < 0x20; i++, src.offset++)
+                for (int i = 0; i < 0x20; i++, src.offset++)
                     bdst[bdi++] = (ushort)(src[0] | (src[0x20] << 8));
 
                 /* set the default drawing parameters */
@@ -570,7 +567,10 @@ namespace xnamame036.mame.drivers
                 }
 
                 /* other stuff */
-                drew_frame = 0;
+                drew_frame = false;
+
+                for (int i = 0; i < 16; i++)
+                    sprite_params[i] = new sprite_params_data();
 
                 /* return success */
                 return 0;
@@ -585,10 +585,10 @@ namespace xnamame036.mame.drivers
             static void update_sprite_info()
             {
                 sprite_params_data data;
-                int i, di = 0; ;
+                int  di = 0; ;
 
                 /* first loop over all sprites and update those whose scanlines intersect ours */
-                for (i = 0; i < 16; i++, di++)
+                for (int i = 0; i < 16; i++, di++)
                 {
                     data = sprite_params[di];
                     _BytePtr sprite_base = new _BytePtr(Generic.spriteram, 16 * i);
@@ -605,20 +605,18 @@ namespace xnamame036.mame.drivers
                 }
 
                 /* now find the X positions */
-                for (i = 0; i < 0x200; i++)
+                for (int i = 0; i < 0x200; i++)
                 {
                     int value = turbo_sprite_position[i];
                     if (value != 0)
                     {
                         int _base = (i & 0x100) >> 5;
-                        int which;
-                        for (which = 0; which < 8; which++)
+                        for (int which = 0; which < 8; which++)
                             if ((value & (1 << which)) != 0)
                                 sprite_params[_base + which].xoffs = i & 0xff;
                     }
                 }
             }
-
             static void draw_one_sprite(sprite_params_data data, uint[] dest, int xclip, int scanline)
             {
                 int xstep = data.xscale;
@@ -656,7 +654,6 @@ namespace xnamame036.mame.drivers
                     xcurr += xstep;
                 }
             }
-
             static void draw_road_sprites(uint[] dest, int scanline)
             {
                 sprite_params_data[] param_list =
@@ -676,8 +673,6 @@ namespace xnamame036.mame.drivers
                         draw_one_sprite(data, dest, 0, scanline);
                 }
             }
-
-
             static void draw_offroad_sprites(uint[] dest, int road_column, int scanline)
             {
                 sprite_params_data[] param_list =
@@ -700,8 +695,6 @@ namespace xnamame036.mame.drivers
                         draw_one_sprite(data, dest, road_column, scanline);
                 }
             }
-
-
             static void draw_scores(Mame.osd_bitmap bitmap)
             {
                 Mame.rectangle clip;
@@ -761,9 +754,6 @@ namespace xnamame036.mame.drivers
                     Mame.drawgfx(bitmap, Mame.Machine.gfx[2], 'O', 0, false, false, 2 * 8, 4 * 8, Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);
                 }
             }
-
-
-
             public override void vh_update(Mame.osd_bitmap bitmap, int full_refresh)
             {
                 /* update the sprite data */
@@ -779,17 +769,17 @@ namespace xnamame036.mame.drivers
                 draw_scores(bitmap);
 
                 /* indicate that we drew this frame, so that the eof callback doesn't bother doing anything */
-                drew_frame = 1;
+                drew_frame = true;
             }
             public override void vh_eof_callback()
             {
                 /* only do collision checking if we didn't draw */
-                if (drew_frame == 0)
+                if (!drew_frame)
                 {
                     update_sprite_info();
                     draw_minimal(Mame.Machine.scrbitmap);
                 }
-                drew_frame = 0;
+                drew_frame = false;
             }
             static void draw_everything_core_8(Mame.osd_bitmap bitmap)
             {
@@ -931,7 +921,6 @@ namespace xnamame036.mame.drivers
             {
                 throw new Exception();
             }
-
             static void draw_minimal(Mame.osd_bitmap bitmap)
             {
                 _BytePtr _base = new _BytePtr(bitmap.line[starty], startx);
@@ -1068,6 +1057,7 @@ namespace xnamame036.mame.drivers
             }
 
         }
+
         public override void driver_init()
         {
             byte[] led_number_data =
@@ -1091,8 +1081,108 @@ namespace xnamame036.mame.drivers
             Array.Clear(Mame.memory_region(Mame.REGION_GFX4).buffer, Mame.memory_region(Mame.REGION_GFX4).offset, Mame.memory_region_length(Mame.REGION_GFX4));//	memset(memory_region(REGION_GFX4), 0, memory_region_length(REGION_GFX4));
             Buffer.BlockCopy(led_number_data, 0, Mame.memory_region(Mame.REGION_GFX4).buffer, Mame.memory_region(Mame.REGION_GFX4).offset, led_number_data.Length);//memcpy(memory_region(REGION_GFX4), led_number_data, sizeof(led_number_data));
             Buffer.BlockCopy(led_tach_data, 0, Mame.memory_region(Mame.REGION_GFX4).buffer, Mame.memory_region(Mame.REGION_GFX4).offset + 0x100, led_tach_data.Length);// memcpy(memory_region(REGION_GFX4) + 0x100, led_tach_data, sizeof(led_tach_data));
-
+            //rom_decode();
         }
+
+        static void rom_decode()
+        {
+            /*
+             * The table is arranged this way (second half is mirror image of first)
+             *
+             *		0  1  2	 3	4  5  6	 7	8  9  A	 B	C  D  E	 F
+             *
+             * 0   00 00 00 00 01 01 01 01 02 02 02 02 03 03 03 03
+             * 1   04 04 04 04 05 05 05 05 06 06 06 06 07 07 07 07
+             * 2   08 08 08 08 09 09 09 09 0A 0A 0A 0A 0B 0B 0B 0B
+             * 3   0C 0C 0C 0C 0D 0D 0D 0D 0E 0E 0E 0E 0F 0F 0F 0F
+             * 4   10 10 10 10 11 11 11 11 12 12 12 12 13 13 13 13
+             * 5   14 14 14 14 15 15 15 15 16 16 16 16 17 17 17 17
+             * 6   18 18 18 18 19 19 19 19 1A 1A 1A 1A 1B 1B 1B 1B
+             * 7   1C 1C 1C 1C 1D 1D 1D 1D 1E 1E 1E 1E 1F 1F 1F 1F
+             * 8   1F 1F 1F 1F 1E 1E 1E 1E 1D 1D 1D 1D 1C 1C 1C 1C
+             * 9   1B 1B 1B 1B 1A 1A 1A 1A 19 19 19 19 18 18 18 18
+             * A   17 17 17 17 16 16 16 16 15 15 15 15 14 14 14 14
+             * B   13 13 13 13 12 12 12 12 11 11 11 11 10 10 10 10
+             * C   0F 0F 0F 0F 0E 0E 0E 0E 0D 0D 0D 0D 0C 0C 0C 0C
+             * D   0B 0B 0B 0B 0A 0A 0A 0A 09 09 09 09 08 08 08 08
+             * E   07 07 07 07 06 06 06 06 05 05 05 05 04 04 04 04
+             * F   03 03 03 03 02 02 02 02 01 01 01 01 00 00 00 00
+             *
+             */
+
+            byte[][] xortable =
+	{
+		/* Table 0 */
+		/* 0x0000-0x3ff */
+		/* 0x0800-0xbff */
+		/* 0x4000-0x43ff */
+		/* 0x4800-0x4bff */
+		new byte[]{ 0x00,0x44,0x0c,0x48,0x00,0x44,0x0c,0x48,
+		  0xa0,0xe4,0xac,0xe8,0xa0,0xe4,0xac,0xe8,
+		  0x60,0x24,0x6c,0x28,0x60,0x24,0x6c,0x28,
+		  0xc0,0x84,0xcc,0x88,0xc0,0x84,0xcc,0x88 },
+
+		/* Table 1 */
+		/* 0x0400-0x07ff */
+		/* 0x0c00-0x0fff */
+		/* 0x1400-0x17ff */
+		/* 0x1c00-0x1fff */
+		/* 0x2400-0x27ff */
+		/* 0x2c00-0x2fff */
+		/* 0x3400-0x37ff */
+		/* 0x3c00-0x3fff */
+		/* 0x4400-0x47ff */
+		/* 0x4c00-0x4fff */
+		/* 0x5400-0x57ff */
+		/* 0x5c00-0x5fff */
+		new byte[]{ 0x00,0x44,0x18,0x5c,0x14,0x50,0x0c,0x48,
+		  0x28,0x6c,0x30,0x74,0x3c,0x78,0x24,0x60,
+		  0x60,0x24,0x78,0x3c,0x74,0x30,0x6c,0x28,
+		  0x48,0x0c,0x50,0x14,0x5c,0x18,0x44,0x00 }, //0x00 --> 0x10 ?
+
+		/* Table 2 */
+		/* 0x1000-0x13ff */
+		/* 0x1800-0x1bff */
+		/* 0x5000-0x53ff */
+		/* 0x5800-0x5bff */
+		new byte[]{ 0x00,0x00,0x28,0x28,0x90,0x90,0xb8,0xb8,
+		  0x28,0x28,0x00,0x00,0xb8,0xb8,0x90,0x90,
+		  0x00,0x00,0x28,0x28,0x90,0x90,0xb8,0xb8,
+		  0x28,0x28,0x00,0x00,0xb8,0xb8,0x90,0x90 },
+
+		/* Table 3 */
+		/* 0x2000-0x23ff */
+		/* 0x2800-0x2bff */
+		/* 0x3000-0x33ff */
+		/* 0x3800-0x3bff */
+		new byte[]{ 0x00,0x14,0x88,0x9c,0x30,0x24,0xb8,0xac,
+		  0x24,0x30,0xac,0xb8,0x14,0x00,0x9c,0x88,
+		  0x48,0x5c,0xc0,0xd4,0x78,0x6c,0xf0,0xe4,
+		  0x6c,0x78,0xe4,0xf0,0x5c,0x48,0xd4,0xc0 }
+	};
+
+            int[] findtable =
+	{
+		0,1,0,1, /* 0x0000-0x0fff */
+		2,1,2,1, /* 0x1000-0x1fff */
+		3,1,3,1, /* 0x2000-0x2fff */
+		3,1,3,1, /* 0x3000-0x3fff */
+		0,1,0,1, /* 0x4000-0x4fff */
+		2,1,2,1	 /* 0x5000-0x5fff */
+	};
+
+            _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU1);
+
+            for (int offs = 0x0000; offs < 0x6000; offs++)
+            {
+                byte src = RAM[offs];
+                int i = findtable[offs >> 10];
+                int j = src >> 2;
+                if ((src & 0x80) != 0) j ^= 0x3f;
+                RAM[offs] = (byte)(src ^ xortable[i][j]);
+            }
+        }
+
         Mame.RomModule[] rom_turbo()
         {
 
@@ -1232,7 +1322,7 @@ namespace xnamame036.mame.drivers
             name = "turbo";
             description = "Turbo";
             manufacturer = "Sega";
-            flags = Mame.ROT270;
+            flags = Mame.ROT270 | Mame.GAME_NO_COCKTAIL;
             input_ports = input_ports_turbo();
             rom = rom_turbo();
             drv.HasNVRAMhandler = false;

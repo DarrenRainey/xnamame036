@@ -992,9 +992,17 @@ namespace xnamame036.mame
         {
             return pokey_register_r(0, offset);
         }
+        public static int pokey2_r(int offset)
+        {
+            return pokey_register_r(1, offset);
+        }
         public static void pokey1_w(int offset, int data)
         {
             pokey_register_w(0, offset, data);
+        }
+        public static void pokey2_w(int offset, int data)
+        {
+            pokey_register_w(1, offset, data);
         }
 
         static void poly_init(byte[] poly, int size, int left, int right, int add)
