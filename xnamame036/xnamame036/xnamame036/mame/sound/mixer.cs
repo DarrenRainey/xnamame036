@@ -11,7 +11,7 @@ namespace xnamame036.mame
 
         public const int MIXER_PAN_CENTER = 0, MIXER_PAN_LEFT = 1, MIXER_PAN_RIGHT = 2;
         public const int MIXER_MAX_CHANNELS = 16;
-        public const int DISABLE_CLIPPING = 0;
+        public const bool DISABLE_CLIPPING = false;
         public const int ACCUMULATOR_SAMPLES = 8192;
         public const int ACCUMULATOR_MASK = ACCUMULATOR_SAMPLES - 1;
         public const int FRACTION_BITS = 16;
@@ -367,12 +367,13 @@ namespace xnamame036.mame
                 {
                     /* fetch and clip the left sample */
                     sample = left_accum[accum_pos];
-#if !DISABLE_CLIPPING
-                    if (sample < -32768)
-                        sample = -32768;
-                    else if (sample > 32767)
-                        sample = 32767;
-#endif
+                    if (!DISABLE_CLIPPING)
+                    {
+                        if (sample < -32768)
+                            sample = -32768;
+                        else if (sample > 32767)
+                            sample = 32767;
+                    }
 
                     /* store and zero out behind us */
                     mix_buffer[mix++] = (short)sample;
@@ -380,12 +381,13 @@ namespace xnamame036.mame
 
                     /* fetch and clip the right sample */
                     sample = right_accum[accum_pos];
-#if !DISABLE_CLIPPING
-                    if (sample < -32768)
-                        sample = -32768;
-                    else if (sample > 32767)
-                        sample = 32767;
-#endif
+                    if (!DISABLE_CLIPPING)
+                    {
+                        if (sample < -32768)
+                            sample = -32768;
+                        else if (sample > 32767)
+                            sample = 32767;
+                    }
 
                     /* store and zero out behind us */
                     mix_buffer[mix++] = (short)sample;

@@ -259,12 +259,12 @@ namespace xnamame036.mame.drivers
                         2PA7 = /CRASHL
                     */
                     /* missing short crash sample, but I've never seen it triggered */
-                    if ((data & 0x02) == 0) Mame.sample_start(0, 0, 0);
-                    if ((data & 0x04) == 0) Mame.sample_start(0, 1, 0);
-                    if ((data & 0x08) == 0) Mame.sample_start(0, 2, 0);
-                    if ((data & 0x10) == 0) Mame.sample_start(0, 3, 0);
-                    if ((data & 0x40) == 0) Mame.sample_start(1, 4, 0);
-                    if ((data & 0x80) == 0) Mame.sample_start(2, 5, 0);
+                    if ((data & 0x02) == 0) Mame.sample_start(0, 0, false);
+                    if ((data & 0x04) == 0) Mame.sample_start(0, 1, false);
+                    if ((data & 0x08) == 0) Mame.sample_start(0, 2, false);
+                    if ((data & 0x10) == 0) Mame.sample_start(0, 3, false);
+                    if ((data & 0x40) == 0) Mame.sample_start(1, 4, false);
+                    if ((data & 0x80) == 0) Mame.sample_start(2, 5, false);
                     osel = (byte)((osel & 6) | ((data >> 5) & 1));
                     update_samples();
                     break;
@@ -299,13 +299,13 @@ namespace xnamame036.mame.drivers
                     if ((data & 0x40) == 0)
                     {
                         if (!Mame.sample_playing(7))
-                            Mame.sample_start(7, 8, 0);
+                            Mame.sample_start(7, 8, false);
                         else
                             Mame.printf("ambu didnt start\n");
                     }
                     else
                         Mame.sample_stop(7);
-                    if ((data & 0x80) == 0) Mame.sample_start(3, 6, 0);
+                    if ((data & 0x80) == 0) Mame.sample_start(3, 6, false);
                     break;
             }
         }
@@ -358,7 +358,7 @@ namespace xnamame036.mame.drivers
             if (bsel == 3 && Mame.sample_playing(6))
                 Mame.sample_stop(6);
             else if (bsel != 3 && !Mame.sample_playing(6))
-                Mame.sample_start(6, 7, 1);
+                Mame.sample_start(6, 7, true);
             if (Mame.sample_playing(6))
                 //		sample_set_freq(6, 44100 * (accel & 0x3f) / 7 + 44100);
                 Mame.sample_set_freq(6, (int)(44100 * (accel & 0x3f) / 5.25 + 44100));
@@ -382,7 +382,11 @@ namespace xnamame036.mame.drivers
                 color_table_len = 512 + 6;
                 video_attributes = Mame.VIDEO_TYPE_RASTER;
                 sound_attributes = 0;
+<<<<<<< .mine
+                //xxx sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
+=======
                 //sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
+>>>>>>> .r85
             }
             public override void init_machine()
             {
@@ -456,8 +460,13 @@ namespace xnamame036.mame.drivers
                 sprite_expanded_data = new uint[sprite_length*2];
 
                 /* allocate the expanded background data */
+<<<<<<< .mine
+                int back_length = Mame.memory_region_length(Mame.REGION_GFX3);
+                back_expanded_data = new ushort[back_length/2];
+=======
                 int back_length = Mame.memory_region_length(Mame.REGION_GFX3);
                 back_expanded_data = new ushort[back_length];
+>>>>>>> .r85
 
                 /* allocate the expanded road palette */
                 road_expanded_palette = new ushort[0x40];
@@ -544,11 +553,9 @@ namespace xnamame036.mame.drivers
                 /* adjust our parameters for the specified orientation */
                 if (Mame.Machine.orientation != 0)
                 {
-                    int temp;
-
                     if ((Mame.Machine.orientation & Mame.ORIENTATION_SWAP_XY) != 0)
                     {
-                        temp = startx; startx = starty; starty = temp;
+                        int temp = startx; startx = starty; starty = temp;
                         temp = adjusted_clip.min_x; adjusted_clip.min_x = adjusted_clip.min_y; adjusted_clip.min_y = temp;
                         temp = adjusted_clip.max_x; adjusted_clip.max_x = adjusted_clip.max_y; adjusted_clip.max_y = temp;
                     }
@@ -584,24 +591,30 @@ namespace xnamame036.mame.drivers
 
             static void update_sprite_info()
             {
+<<<<<<< .mine
+=======
                 sprite_params_data data;
                 int  di = 0; ;
 
+>>>>>>> .r85
                 /* first loop over all sprites and update those whose scanlines intersect ours */
+<<<<<<< .mine
+                for (int i = 0; i < 16; i++)
+=======
                 for (int i = 0; i < 16; i++, di++)
+>>>>>>> .r85
                 {
-                    data = sprite_params[di];
                     _BytePtr sprite_base = new _BytePtr(Generic.spriteram, 16 * i);
 
                     /* snarf all the data */
-                    data._base = new UIntSubArray(sprite_expanded_data, (i & 7) * 0x8000);
-                    data.offset = (sprite_base[6] + 256 * sprite_base[7]) & 0x7fff;
-                    data.rowbytes = (short)(sprite_base[4] + 256 * sprite_base[5]);
-                    data.miny = sprite_base[0];
-                    data.maxy = sprite_base[1];
-                    data.xscale = ((5 * 256 - 4 * sprite_base[2]) << 16) / (5 * 256);
-                    data.yscale = (4 << 16) / (sprite_base[3] + 4);
-                    data.xoffs = -1;
+                    sprite_params[i]._base = new UIntSubArray(sprite_expanded_data, (i & 7) * 0x8000);
+                    sprite_params[i].offset = (sprite_base[6] + 256 * sprite_base[7]) & 0x7fff;
+                    sprite_params[i].rowbytes = (short)(sprite_base[4] + 256 * sprite_base[5]);
+                    sprite_params[i].miny = sprite_base[0];
+                    sprite_params[i].maxy = sprite_base[1];
+                    sprite_params[i].xscale = ((5 * 256 - 4 * sprite_base[2]) << 16) / (5 * 256);
+                    sprite_params[i].yscale = (4 << 16) / (sprite_base[3] + 4);
+                    sprite_params[i].xoffs = -1;
                 }
 
                 /* now find the X positions */
@@ -656,43 +669,26 @@ namespace xnamame036.mame.drivers
             }
             static void draw_road_sprites(uint[] dest, int scanline)
             {
-                sprite_params_data[] param_list =
-	{
-		sprite_params[0], sprite_params[8],
-		sprite_params[1], sprite_params[9],
-		sprite_params[2], sprite_params[10]
-	};
+                int[] param_list = { 0, 8, 1, 9, 2, 10 };
 
                 /* loop over the road sprites */
                 for (int i = 0; i < 6; i++)
                 {
-                    sprite_params_data data = param_list[i];
-
                     /* if the sprite intersects this scanline, draw it */
-                    if (scanline >= data.miny && scanline < data.maxy)
-                        draw_one_sprite(data, dest, 0, scanline);
+                    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
+                        draw_one_sprite(sprite_params[param_list[i]], dest, 0, scanline);
                 }
             }
             static void draw_offroad_sprites(uint[] dest, int road_column, int scanline)
             {
-                sprite_params_data[] param_list =
-	{
-		sprite_params[3], sprite_params[11],
-		sprite_params[4], sprite_params[12],
-		sprite_params[5], sprite_params[13],
-		sprite_params[6],sprite_params[14],
-		sprite_params[7], sprite_params[15]
-	};
-                int i;
+                int[] param_list = { 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
 
                 /* loop over the offroad sprites */
-                for (i = 0; i < 10; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    sprite_params_data data = param_list[i];
-
                     /* if the sprite intersects this scanline, draw it */
-                    if (scanline >= data.miny && scanline < data.maxy)
-                        draw_one_sprite(data, dest, road_column, scanline);
+                    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
+                        draw_one_sprite(sprite_params[param_list[i]], dest, road_column, scanline);
                 }
             }
             static void draw_scores(Mame.osd_bitmap bitmap)
@@ -760,10 +756,12 @@ namespace xnamame036.mame.drivers
                 update_sprite_info();
 
                 /* perform the actual drawing */
-                if (bitmap.depth == 8)
-                    draw_everything_core_8(bitmap);
-                else
-                    draw_everything_core_16(bitmap);
+                draw_everything(bitmap,true);
+                
+                //if (bitmap.depth == 8)
+                //    draw_everything_core_8(bitmap);
+                //else
+                //    draw_everything_core_16(bitmap);
 
                 /* draw the LEDs for the scores */
                 draw_scores(bitmap);
@@ -777,11 +775,11 @@ namespace xnamame036.mame.drivers
                 if (!drew_frame)
                 {
                     update_sprite_info();
-                    draw_minimal(Mame.Machine.scrbitmap);
+                    draw_everything(Mame.Machine.scrbitmap,false);
                 }
                 drew_frame = false;
             }
-            static void draw_everything_core_8(Mame.osd_bitmap bitmap)
+            static void draw_everything(Mame.osd_bitmap bitmap, bool fullDraw)
             {
                 _BytePtr _base = new _BytePtr(bitmap.line[starty], startx);
                 uint[] sprite_buffer = new uint[(32 * 8) + 256];
@@ -823,7 +821,8 @@ namespace xnamame036.mame.drivers
                     draw_road_sprites(sprite_buffer, y);
 
                     /* loop over 8-pixel chunks */
-                    dest.offset += dx * 8;
+                    int destoffset = dx * 8;
+                    //dest.offset += dx * 8;
                     int sdi = 8;// sprite_data += 8;
                     for (x = 8; x < (32 * 8); x += 8)
                     {
@@ -831,8 +830,9 @@ namespace xnamame036.mame.drivers
                         byte back_data = Generic.videoram[(y / 8) * 32 + (x / 8) - 33];
                         ushort backbits_buffer = back_expanded_data[(back_data << 3) | (y & 7)];
 
+                        //int destoff = 0;// dest.offset;
                         /* loop over columns */
-                        for (i = 0; i < 8; i++, dest.offset += dx)
+                        for (i = 0; i < 8; i++, destoffset += dx)
                         {
                             uint sprite = sprite_data[sdi++];
 
@@ -910,8 +910,8 @@ namespace xnamame036.mame.drivers
                                 red = (red >> mx) & 0x10;
                                 grn = (grn >> mx) & 0x20;
                                 blu = (blu >> mx) & 0x40;
-                                dest[0] = (byte)colortable[mx | red | grn | blu];
-                                dest.offset++;
+                                dest[destoffset] = (byte)colortable[mx | red | grn | blu];
+                                //dest.offset++;
                             }
                         }
                     }

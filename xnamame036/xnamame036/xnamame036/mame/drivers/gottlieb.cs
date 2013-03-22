@@ -401,15 +401,15 @@ namespace xnamame036.mame.drivers
                             case 57:
                             case 58:
                             case 59:
-                                Mame.sample_start(0, (data ^ 0x3f) - 53, 0);
+                                Mame.sample_start(0, (data ^ 0x3f) - 53, false);
                                 break;
                             case 31:
-                                Mame.sample_start(0, 7, 0);
+                                Mame.sample_start(0, 7, false);
                                 score_sample = 7;
                                 break;
                             case 39:
                                 score_sample++;
-                                if (score_sample < 20) Mame.sample_start(0, score_sample, 0);
+                                if (score_sample < 20) Mame.sample_start(0, score_sample, false);
                                 break;
                         }
                     }
@@ -422,20 +422,20 @@ namespace xnamame036.mame.drivers
                             case 19:
                             case 20:
                             case 21:
-                                Mame.sample_start(0, ((data ^ 0x3f) - 17) * 8 + random_offset, 0);
+                                Mame.sample_start(0, ((data ^ 0x3f) - 17) * 8 + random_offset, false);
                                 random_offset = (random_offset + 1) & 7;
                                 break;
                             case 22:
-                                Mame.sample_start(0, 40, 0);
+                                Mame.sample_start(0, 40, false);
                                 break;
                             case 23:
-                                Mame.sample_start(0, 41, 0);
+                                Mame.sample_start(0, 41, false);
                                 break;
                             case 28:
-                                Mame.sample_start(0, 42, 0);
+                                Mame.sample_start(0, 42, false);
                                 break;
                             case 36:
-                                Mame.sample_start(0, 43, 0);
+                                Mame.sample_start(0, 43, false);
                                 break;
                         }
                     }
@@ -468,7 +468,7 @@ namespace xnamame036.mame.drivers
                 {
                 }
                 else	/* qbert */
-                    Mame.sample_start(0, 44, 0);
+                    Mame.sample_start(0, 44, false);
             }
         }
         static int riot_ram_r(int offset)

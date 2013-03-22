@@ -156,16 +156,14 @@ new Mame.GfxLayout(
 
         static void c1943_c804_w(int offset, int data)
         {
-            int bankaddress;
             _BytePtr RAM = Mame.memory_region(Mame.REGION_CPU1);
-
 
             /* bits 0 and 1 are coin counters */
             Mame.coin_counter_w(0, data & 1);
             Mame.coin_counter_w(1, data & 2);
 
             /* bits 2, 3 and 4 select the ROM bank */
-            bankaddress = 0x10000 + (data & 0x1c) * 0x1000;
+            int bankaddress = 0x10000 + (data & 0x1c) * 0x1000;
             Mame.cpu_setbank(1, new _BytePtr(RAM, bankaddress));
 
             /* bit 5 resets the sound CPU - we ignore it */
@@ -389,7 +387,7 @@ new Mame.GfxLayout(
                                 sx = 240 - sx;
                                 sy = 240 - sy;
                             }
-
+                            
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[3],
                                     (uint)(Generic.spriteram[offs] + ((Generic.spriteram[offs + 1] & 0xe0) << 3)),
                                     (uint)color,
@@ -474,7 +472,7 @@ new Mame.GfxLayout(
                                 sx = 240 - sx;
                                 sy = 240 - sy;
                             }
-
+                            
                             Mame.drawgfx(bitmap, Mame.Machine.gfx[3],
                                     (uint)(Generic.spriteram[offs] + ((Generic.spriteram[offs + 1] & 0xe0) << 3)),
                                     (uint)color,
@@ -498,7 +496,7 @@ new Mame.GfxLayout(
                             sx = 31 - sx;
                             sy = 31 - sy;
                         }
-
+                        //break; //xxx
                         Mame.drawgfx(bitmap, Mame.Machine.gfx[0],
                                 (uint)(Generic.videoram[offs] + ((Generic.colorram[offs] & 0xe0) << 3)),
                                 (uint)(Generic.colorram[offs] & 0x1f),

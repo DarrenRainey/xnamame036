@@ -390,6 +390,7 @@
     <Compile Include="mame\xna\fileio.cs" />
     <Compile Include="mame\xna\input.cs" />
     <Compile Include="mame\xna\sound.cs" />
+    <Compile Include="mame\xna\SoundPlayer.cs" />
     <Compile Include="mame\xna\ticker.cs" />
     <Compile Include="mame\xna\video.cs" />
     <Compile Include="mame\xna\xna.cs" />

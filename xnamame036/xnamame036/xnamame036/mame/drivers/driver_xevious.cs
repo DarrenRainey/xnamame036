@@ -371,9 +371,9 @@ namespace xnamame036.mame.drivers
                         /* it is not known how the parameters control the explosion. */
                         /* We just use samples. */
                         if (memcmp(customio, new byte[] { 0x40, 0x40, 0x40, 0x01, 0xff, 0x00, 0x20 }, 7) == 0)
-                            Mame.sample_start(0, 0, 0);
+                            Mame.sample_start(0, 0, false);
                         else if (memcmp(customio, new byte[] { 0x30, 0x40, 0x00, 0x02, 0xdf, 0x00, 0x10 }, 7) == 0)
-                            Mame.sample_start(0, 1, 0);
+                            Mame.sample_start(0, 1, false);
                     }
                     break;
             }
@@ -562,7 +562,7 @@ namespace xnamame036.mame.drivers
             {
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3125000, readmem_cpu1, writemem_cpu1, null, null, xevious_interrupt_1, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3125000, readmem_cpu2, writemem_cpu2, null, null, xevious_interrupt_2, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3125000, readmem_cpu3, writemem_cpu3, null, null, xevious_interrupt_3, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 3125000, readmem_cpu3, writemem_cpu3, null, null, xevious_interrupt_3, 2));
                 frames_per_second = 60;
                 vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
                 cpu_slices_per_frame = 100;
@@ -575,7 +575,7 @@ namespace xnamame036.mame.drivers
                 video_attributes = Mame.VIDEO_TYPE_RASTER;
                 sound_attributes = 0;
                 sound.Add(new Mame.MachineSound(Mame.SOUND_NAMCO, namco_interface));
-                sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
+                //xxxsound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
             }
             public override void init_machine()
             {

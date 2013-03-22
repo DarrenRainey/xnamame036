@@ -748,8 +748,11 @@ namespace xnamame036.mame
         {
             FuncDict["blockmove_transcolor8"] = "blockmove_transcolor8";
             int end;
-            //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset) / 2);
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset) / 2);
+
+            int offset=(paldata.offset);//-Machine.remapped_colortable.offset);
+            int length= Machine.game_colortable.Length-offset;
+            ArraySegment<ushort> lookupdata = new ArraySegment<ushort>(Machine.game_colortable, offset, length);
+
             srcmodulo -= srcwidth;
             dstmodulo -= srcwidth;
             while (srcheight != 0)
@@ -757,7 +760,7 @@ namespace xnamame036.mame
                 end = (int)(dstdata.offset + srcwidth);
                 while (dstdata.offset < end)
                 {
-                    if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
+                    if (lookupdata.Array[lookupdata.Offset+srcdata.buffer[srcdata.offset]] != transcolor)
                         dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     srcdata.offset++;
                     dstdata.offset++;
@@ -771,8 +774,11 @@ namespace xnamame036.mame
         {
             FuncDict["blockmove_transcolor_flipx8"] = "blockmove_transcolor_flipx8";
             int end;
-            //UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset - Machine.remapped_colortable.offset));
-            UShortSubArray lookupdata = new UShortSubArray(Machine.game_colortable, (int)(paldata.offset));
+
+            int offset = paldata.offset;
+            int length = Machine.game_colortable.Length - offset;
+            ArraySegment<ushort> lookupdata = new ArraySegment<ushort>(Machine.game_colortable, offset, length);
+
             srcmodulo += srcwidth;
             dstmodulo -= srcwidth; //srcdata += srcwidth-1; 
             while (srcheight != 0)
@@ -780,7 +786,7 @@ namespace xnamame036.mame
                 end = (int)(dstdata.offset + srcwidth);
                 while (dstdata.offset < end)
                 {
-                    if (lookupdata[srcdata.buffer[srcdata.offset]] != transcolor)
+                    if (lookupdata.Array[lookupdata.Offset+srcdata.buffer[srcdata.offset]] != transcolor)
                         dstdata.buffer[dstdata.offset] = (byte)paldata[srcdata.buffer[srcdata.offset]];
                     srcdata.offset--;
                     dstdata.offset++;

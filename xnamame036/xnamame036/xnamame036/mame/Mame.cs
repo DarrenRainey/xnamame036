@@ -92,7 +92,7 @@ namespace xnamame036.mame
             //main("pacman");              
             //main("invaders");// sound from samples not good
             //main("1942");
-            //main("1943"); // Some transparent color problems now
+            //main("1943"); 
             //main("zaxxon");
             //main("szaxxon");
             // main("galaga");
@@ -143,6 +143,10 @@ namespace xnamame036.mame
             //main("spang"); 
             //main("block"); 
 
+            //main("vulgus");
+
+
+
             //tnzs gamges
             //--------------
             //main("arkanoi2");
@@ -150,12 +154,15 @@ namespace xnamame036.mame
             //main("tnz2");
             //main("troangel");
             //main("extrmatn");
-           // main("drtoppel");
+            //main("drtoppel");
             //main("plumppop");
+
 
             //main("gng");
             //main("diamond");
-            //main("bublbobl"); // Sound not complete
+
+            //main("bublbobl"); // Graphics now ok. But sound from fm/fmopl crashes
+
 
             //Tecmo games
             //main("rygar");
@@ -179,7 +186,8 @@ namespace xnamame036.mame
             //main("turbo");     //Graphics not drawn correctly. Some offset problem ?             
             //main("ajax");// Border left around the screen
             
-            //main("vulgus");// Graphics not correct. Transparency problems?
+
+
 
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
 
@@ -191,16 +199,17 @@ namespace xnamame036.mame
             //-------------------------------------------------
             //These drivers I would like to implement
             //main("atetris"); // To test the m6502 cpu implementation
-            main("skykid");
-            main("drgnbstr");
+            //main("skykid");
             main("labrunr");
+
 
 
             //main("blockout");//m68000
             //main("nemesis"); //m68000           
             
 
-            main("terracre");  //m68000          
+            //main("terracre");  //m68000          
+
 
             //main("battlane");
 
@@ -231,8 +240,10 @@ namespace xnamame036.mame
             //main("baraduke"); // tilemap & input port. Will not work with 8-bit graphics ?
             //main("irobot");//6809 graphics missing, 
             // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
-            main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
-            main("raiden");  //cpu problems ?
+            //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
+
+            //main("raiden");  //cpu problems ?
+
 
         }
         public void main(string game)

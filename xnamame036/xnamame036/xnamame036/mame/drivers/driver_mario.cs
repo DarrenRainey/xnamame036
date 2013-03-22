@@ -172,7 +172,7 @@ namespace xnamame036.mame.drivers
             if (last1 != data)
             {
                 last1 = data;
-                if (data != 0 && !Mame.sample_playing(0)) Mame.sample_start(0, 3, 0);
+                if (data != 0 && !Mame.sample_playing(0)) Mame.sample_start(0, 3, false);
             }
         }
 
@@ -183,7 +183,7 @@ namespace xnamame036.mame.drivers
             if (last2 != data)
             {
                 last2 = data;
-                if (data != 0 && !Mame.sample_playing(1)) Mame.sample_start(1, 4, 0);
+                if (data != 0 && !Mame.sample_playing(1)) Mame.sample_start(1, 4, false);
             }
         }
 
@@ -200,13 +200,13 @@ namespace xnamame036.mame.drivers
                 switch (offset)
                 {
                     case 2: /* ice */
-                        Mame.sample_start(2, 0, 0);
+                        Mame.sample_start(2, 0, false);
                         break;
                     case 6: /* coin */
-                        Mame.sample_start(2, 1, 0);
+                        Mame.sample_start(2, 1, false);
                         break;
                     case 7: /* skid */
-                        Mame.sample_start(2, 2, 0);
+                        Mame.sample_start(2, 2, false);
                         break;
                 }
             }

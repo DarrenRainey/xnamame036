@@ -428,7 +428,7 @@ namespace xnamame036.mame.drivers
         static void gaplus_customio_w_3(int offset, int data)
         {
             if ((offset == 0x09) && (data >= 0x0f))
-                Mame.sample_start(0, 0, 0);
+                Mame.sample_start(0, 0, false);
             gaplus_customio_3[offset] = (byte)data;
         }
 

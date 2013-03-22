@@ -22,7 +22,7 @@ namespace xnamame036.mame.drivers
             if (state[offset] != data)
             {
                 if (data != 0)
-                    Mame.sample_start(offset, offset, 0);
+                    Mame.sample_start(offset, offset, false);
 
                 state[offset] = data;
             }
@@ -35,7 +35,7 @@ namespace xnamame036.mame.drivers
             {
                 if (data != 0)
                     Mame.sample_stop(7);
-                Mame.sample_start(6, 4, 0);
+                Mame.sample_start(6, 4, false);
 
                 death = data;
             }
@@ -47,7 +47,7 @@ namespace xnamame036.mame.drivers
             if (drop != data)
             {
                 if (data!=0)
-                    Mame.sample_start(7, 5, 0);
+                    Mame.sample_start(7, 5, false);
 
                 drop = data;
             }
@@ -59,7 +59,7 @@ namespace xnamame036.mame.drivers
             if (roar != data)
             {
                 if (data!=0)
-                    Mame.sample_start(7, 2, 0);
+                    Mame.sample_start(7, 2, false);
                 roar = data;
             }
         }
@@ -70,7 +70,7 @@ namespace xnamame036.mame.drivers
             if (jump != data)
             {
                 if (data!=0)
-                    Mame.sample_start(6, 0, 0);
+                    Mame.sample_start(6, 0, false);
 
                 jump = data;
             }
@@ -83,7 +83,7 @@ namespace xnamame036.mame.drivers
             {
                 if (data!=0)
                     Mame.sample_stop(7);
-                Mame.sample_start(4, 1, 0);
+                Mame.sample_start(4, 1, false);
 
                 land = data;
             }
@@ -96,11 +96,11 @@ namespace xnamame036.mame.drivers
             {
                 if (data != 0 && walk == 0)
                 {
-                    Mame.sample_start(3, 3, 0);
+                    Mame.sample_start(3, 3, false);
                 }
                 else if (data != 0 && walk == 1)
                 {
-                    Mame.sample_start(3, 6, 0);
+                    Mame.sample_start(3, 6, false);
                 }
                 climb = data;
             }
@@ -113,7 +113,7 @@ namespace xnamame036.mame.drivers
             {
                 if (data != 0)
                     Mame.sample_stop(7);
-                Mame.sample_start(4, 7, 0);
+                Mame.sample_start(4, 7, false);
 
                 snapjaw = data;
             }

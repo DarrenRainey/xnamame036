@@ -17,7 +17,7 @@ namespace xnamame036.mame
                 this.samplenames = samplenames;
             }
         }
-        public static void sample_start(int channel, int samplenum, int loop)
+        public static void sample_start(int channel, int samplenum, bool loop)
         {
             if (Machine.sample_rate == 0) return;
             if (Machine.samples == null) return;
@@ -39,7 +39,7 @@ namespace xnamame036.mame
                        Machine.samples.sample[samplenum].data,
                         Machine.samples.sample[samplenum].length,
                         Machine.samples.sample[samplenum].smpfreq,
-                        loop != 0);
+                        loop);
             }
             else
             {
@@ -47,7 +47,7 @@ namespace xnamame036.mame
                         new _ShortPtr(Machine.samples.sample[samplenum].data),
                         Machine.samples.sample[samplenum].length,
                         Machine.samples.sample[samplenum].smpfreq,
-                        loop != 0);
+                        loop);
             }
         }
         public static void sample_stop(int channel)
@@ -63,7 +63,6 @@ namespace xnamame036.mame
         }
         static int firstchannel, numchannels;
        
-
         public static void sample_set_freq(int channel, int freq)
         {
             if (Machine.sample_rate == 0) return;
@@ -78,7 +77,6 @@ namespace xnamame036.mame
         }
         public static void sample_set_volume(int channel, int volume)
         {
-
             if (Machine.sample_rate == 0) return;
             if (Machine.samples == null) return;
             if (channel >= numchannels)
