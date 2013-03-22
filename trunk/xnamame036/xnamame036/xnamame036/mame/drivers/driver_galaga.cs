@@ -191,7 +191,7 @@ namespace xnamame036.mame.drivers
             {
                 case 0xa8:
                     if (offset == 3 && data == 0x20)	/* total hack */
-                        Mame.sample_start(0, 0, 0);
+                        Mame.sample_start(0, 0, false);
                     break;
 
                 case 0xe1:

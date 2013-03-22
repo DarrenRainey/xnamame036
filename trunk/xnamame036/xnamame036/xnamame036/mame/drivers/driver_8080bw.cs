@@ -247,7 +247,8 @@ namespace xnamame036.mame.drivers
 	"gunshot.wav",
 	"killed.wav",
 	null      /* end of array */
-};
+}; 
+
         static Mame.Samplesinterface boothill_samples_interface =
 new Mame.Samplesinterface(
     9,	/* 9 channels */
@@ -260,17 +261,17 @@ new Mame.Samplesinterface(
             switch (data)
             {
                 case 0x0c:
-                    Mame.sample_start(0, 0, 0);
+                    Mame.sample_start(0, 0, false);
                     break;
 
                 case 0x18:
                 case 0x28:
-                    Mame.sample_start(1, 2, 0);
+                    Mame.sample_start(1, 2, false);
                     break;
 
                 case 0x48:
                 case 0x88:
-                    Mame.sample_start(2, 3, 0);
+                    Mame.sample_start(2, 3, false);
                     break;
             }
         }
@@ -281,7 +282,7 @@ new Mame.Samplesinterface(
             switch (data)
             {
                 case 0x3b:
-                    Mame.sample_start(2, 1, 0);
+                    Mame.sample_start(2, 1, false);
                     break;
             }
         }
@@ -447,7 +448,7 @@ new Mame.Samplesinterface(
 	new Mame.IOWritePort( -1 )  /* end of table */
 };
 
-        static int SHIFT() { return (((((shift_data1 << 8) | shift_data2) << (shift_amount & 0x07)) >> 8) & 0xff); }
+        //static int SHIFT() { return (((((shift_data1 << 8) | shift_data2) << (shift_amount & 0x07)) >> 8) & 0xff); }
         public static void invaders_shift_amount_w(int offset, int data)
         {
             shift_amount = data;
@@ -477,25 +478,25 @@ new Mame.Samplesinterface(
         {
 
             if ((data & 0x01) != 0 && (~Sound3 & 0x01) != 0)
-                Mame.sample_start(0, 0, 1);
+                Mame.sample_start(0, 0, true);
 
             if ((~data & 0x01) != 0 && (Sound3 & 0x01) != 0)
                 Mame.sample_stop(0);
 
             if ((data & 0x02) != 0 && (~Sound3 & 0x02) != 0)
-                Mame.sample_start(1, 1, 0);
+                Mame.sample_start(1, 1, false);
 
             if ((data & 0x04) != 0 && (~Sound3 & 0x04) != 0)
-                Mame.sample_start(2, 2, 0);
+                Mame.sample_start(2, 2, false);
 
             if ((~data & 0x04) != 0 && (Sound3 & 0x04) != 0)
                 Mame.sample_stop(2);
 
             if ((data & 0x08) != 0 && (~Sound3 & 0x08) != 0)
-                Mame.sample_start(3, 3, 0);
+                Mame.sample_start(3, 3, false);
 
             if ((data & 0x10) != 0 && (~Sound3 & 0x10) != 0)
-                Mame.sample_start(4, 9, 0);
+                Mame.sample_start(4, 9, false);
 
             invaders_screen_red_w(data & 0x04);
 
@@ -506,19 +507,19 @@ new Mame.Samplesinterface(
         {
 
             if ((data & 0x01) != 0 && (~Sound5 & 0x01) != 0)
-                Mame.sample_start(5, 4, 0);			/* Fleet 1 */
+                Mame.sample_start(5, 4, false);			/* Fleet 1 */
 
             if ((data & 0x02) != 0 && (~Sound5 & 0x02) != 0)
-                Mame.sample_start(5, 5, 0);			/* Fleet 2 */
+                Mame.sample_start(5, 5, false);			/* Fleet 2 */
 
             if ((data & 0x04) != 0 && (~Sound5 & 0x04) != 0)
-                Mame.sample_start(5, 6, 0);			/* Fleet 3 */
+                Mame.sample_start(5, 6, false);			/* Fleet 3 */
 
             if ((data & 0x08) != 0 && (~Sound5 & 0x08) != 0)
-                Mame.sample_start(5, 7, 0);			/* Fleet 4 */
+                Mame.sample_start(5, 7, false);			/* Fleet 4 */
 
             if ((data & 0x10) != 0 && (~Sound5 & 0x10) != 0)
-                Mame.sample_start(6, 8, 0);			/* Saucer Hit */
+                Mame.sample_start(6, 8, false);			/* Saucer Hit */
 
             invaders_flipscreen_w(data & 0x20);
 
@@ -526,7 +527,7 @@ new Mame.Samplesinterface(
         }
         public static int invaders_shift_data_r(int offset)
         {
-            return SHIFT();
+            return (((((shift_data1 << 8) | shift_data2) << (shift_amount & 0x07)) >> 8) & 0xff);
         }
         public static string[] invaders_sample_names = {
                                                 "*invaders",

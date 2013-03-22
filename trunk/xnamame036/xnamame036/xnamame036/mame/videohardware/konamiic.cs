@@ -662,24 +662,21 @@ if (errorlog) fprintf(errorlog,"%04x: 052109 register 1d00 = %02x\n",cpu_get_pc(
         }
         static void shuffle(_ShortPtr buf, int len)
         {
-            int i;
-            ushort t;
-
             if (len == 2) return;
 
             if ((len % 4) != 0) throw new Exception();   /* must not happen */
 
             len /= 2;
 
-            for (i = 0; i < len / 2; i++)
+            for (int i = 0; i < len / 2; i++)
             {
-                t = buf.read16(len / 2 + i);
+                ushort t = buf.read16(len / 2 + i);
                 buf.write16(len / 2 + i, buf.read16(len + i));
                 buf.write16(len + i, t);
             }
 
             shuffle(buf, len);
-            shuffle(new _ShortPtr(buf, len * 2), len);
+            shuffle(new _ShortPtr(buf, len*2 ), len);
         }
         public static void konami_rom_deinterleave_2(int mem_region)
         {

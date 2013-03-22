@@ -49,40 +49,40 @@ new Mame.MemoryWriteAddress( 0x0000, 0x4fff, Mame.MWA_ROM ),
         class _sa
         {
             public _sa(int channel) { this.channel = channel; }
-            public _sa(int channel, int num, int looped, int stoppable, int restartable)
+            public _sa(int channel, int num, bool looped, int stoppable, int restartable)
             {
                 this.channel = channel; this.num = num; this.looped = looped; this.stoppable = stoppable; this.restartable = restartable;
             }
             public int channel;
             public int num;
-            public int looped;
+            public bool looped;
             public int stoppable;
             public int restartable;
         }
         static _sa[] sa =
 {
-	new _sa(  0,  0, 1, 1, 1 ),	/* Line  4 - Homing Missile  (channel 1) */
-	new _sa(  1,  1, 0, 1, 1 ),	/* Line  5 - Base Missile */
-	new _sa(  2,  2, 1, 1, 1 ),	/* Line  6 - Laser (force field) (channel 1) */
-	new _sa(  3,  3, 1, 1, 1 ),	/* Line  7 - Battleship (end of level boss) (channel 1) */
+	new _sa(  0,  0, true, 1, 1 ),	/* Line  4 - Homing Missile  (channel 1) */
+	new _sa(  1,  1, false, 1, 1 ),	/* Line  5 - Base Missile */
+	new _sa(  2,  2, true, 1, 1 ),	/* Line  6 - Laser (force field) (channel 1) */
+	new _sa(  3,  3, true, 1, 1 ),	/* Line  7 - Battleship (end of level boss) (channel 1) */
 	new _sa( -1 ),					/* Line  8 - unused */
 	new _sa( -1 ),					/* Line  9 - unused */
 	new _sa( -1 ),					/* Line 10 - unused */
 	new _sa( -1 ),					/* Line 11 - unused */
-	new _sa(  4,  4, 0, 0, 1 ),	/* Line 12 - S-Exp (enemy explosion) */
-	new _sa(  5,  5, 0, 0, 0 ),	/* Line 13 - M-Exp (ship explosion) (channel 1) */
+	new _sa(  4,  4,false, 0, 1 ),	/* Line 12 - S-Exp (enemy explosion) */
+	new _sa(  5,  5,false, 0, 0 ),	/* Line 13 - M-Exp (ship explosion) (channel 1) */
 	new _sa( -1 ),					/* Line 14 - unused */
-	new _sa(  6,  6, 0, 0, 1 ),	/* Line 15 - Cannon (ship fire) */
-	new _sa(  7,  7, 0, 0, 1 ),	/* Line 16 - Shot (enemy fire) */
+	new _sa(  6,  6, false, 0, 1 ),	/* Line 15 - Cannon (ship fire) */
+	new _sa(  7,  7, false, 0, 1 ),	/* Line 16 - Shot (enemy fire) */
 	new _sa( -1 ),					/* Line 17 - unused */
-	new _sa(  8,  8, 0, 0, 1 ),	/* Line 18 - Alarm 2 (target lock) */
-	new _sa(  9,  9, 0, 0, 0 ),	/* Line 19 - Alarm 3 (low fuel) (channel 1) */
+	new _sa(  8,  8, false, 0, 1 ),	/* Line 18 - Alarm 2 (target lock) */
+	new _sa(  9,  9, false, 0, 0 ),	/* Line 19 - Alarm 3 (low fuel) (channel 1) */
 	new _sa( -1 ),					/* Line 20 - unused */
 	new _sa( -1 ),					/* Line 21 - unused */
 	new _sa( -1 ),					/* Line 22 - unused */
 	new _sa( -1 ),					/* Line 23 - unused */
-	new _sa( 10, 10, 1, 1, 1 ),	/* background */
-	new _sa( 11, 11, 1, 1, 1 ),	/* background */
+	new _sa( 10, 10, true, 1, 1 ),	/* background */
+	new _sa( 11, 11, true, 1, 1 ),	/* background */
 };
 
         public static void zaxxon_sound_w(int offset, int data)

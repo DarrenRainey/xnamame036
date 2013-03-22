@@ -66,22 +66,22 @@ namespace xnamame036.mame
 
             /* Play fireball sample */
             if ((data & 0x02)!=0)
-                Mame.sample_start(0, 19, 0);
+                Mame.sample_start(0, 19, false);
 
             /* Play explosion samples */
             if ((data & 0x04)!=0)
-                Mame.sample_start(1, 29, 0);
+                Mame.sample_start(1, 29, false);
             if ((data & 0x08)!=0)
-                Mame.sample_start(1, 28, 0);
+                Mame.sample_start(1, 28, false);
             if ((data & 0x10)!=0)
-                Mame.sample_start(1, 27, 0);
+                Mame.sample_start(1, 27, false);
 
             /* Play bounce sample */
             if ((data & 0x20)!=0)
             {
                 if (Mame.sample_playing(2))
                     Mame.sample_stop(2);
-                Mame.sample_start(2, 20, 0);
+                Mame.sample_start(2, 20, false);
             }
 
             /* Play lazer sample */
@@ -89,7 +89,7 @@ namespace xnamame036.mame
             {
                 if (Mame.sample_playing(3))
                     Mame.sample_stop(3);
-                Mame.sample_start(3, 24, 0);
+                Mame.sample_start(3, 24, false);
             }
         }
 
@@ -99,23 +99,23 @@ namespace xnamame036.mame
 
             /* Play thrust sample */
             if ((data & 0x0f)!=0)
-                Mame.sample_start(4, 25, 0);
+                Mame.sample_start(4, 25, false);
             else
                 Mame.sample_stop(4);
 
             /* Play skitter sample */
             if ((data & 0x10)!=0)
-                Mame.sample_start(5, 21, 0);
+                Mame.sample_start(5, 21, false);
 
             /* Play eliminator sample */
             if ((data & 0x20)!=0)
-                Mame.sample_start(6, 22, 0);
+                Mame.sample_start(6, 22, false);
 
             /* Play electron samples */
             if ((data & 0x40)!=0)
-                Mame.sample_start(7, 40, 0);
+                Mame.sample_start(7, 40, false);
             if ((data & 0x80)!=0)
-                Mame.sample_start(7, 41, 0);
+                Mame.sample_start(7, 41, false);
         }
 
 

@@ -727,9 +727,8 @@ static int roarPlaying;	/* Is the ship roar noise playing? */
         {
             int sound;   /* index into the sample name array in drivers/sega.c */
             int voice = 0; /* which voice to play the sound on */
-            int loop;    /* is this sound continuous? */
+            bool loop=false;    /* is this sound continuous? */
 
-            loop = 0;
             switch (data)
             {
                 case shipRoar:
@@ -763,12 +762,12 @@ static int roarPlaying;	/* Is the ship roar noise playing? */
                 case stingerThrust:
                     voice = kVoiceStinger;
                     sound = 7;
-                    loop = 0; //leave off sound gets stuck on
+                    loop = false; //leave off sound gets stuck on
                     break;
                 case stingerLaser:
                     voice = kVoiceStinger;
                     sound = 8;
-                    loop = 0;
+                    loop = false;
                     break;
                 case stingerExplosion:
                     voice = kVoiceStinger;

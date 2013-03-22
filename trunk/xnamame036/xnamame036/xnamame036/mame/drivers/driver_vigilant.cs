@@ -259,8 +259,8 @@ namespace xnamame036.mame.drivers
                 color_table_len = 512 + 32;
                 video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE;
                 sound_attributes = Mame.SOUND_SUPPORTS_STEREO;
-                sound.Add(new Mame.MachineSound(Mame.SOUND_YM2151, ym2151_interface));
-                sound.Add(new Mame.MachineSound(Mame.SOUND_DAC, dac_interface));
+                //xxxsound.Add(new Mame.MachineSound(Mame.SOUND_YM2151, ym2151_interface));
+                //xxxsound.Add(new Mame.MachineSound(Mame.SOUND_DAC, dac_interface));
             }
             public override void init_machine()
             {
