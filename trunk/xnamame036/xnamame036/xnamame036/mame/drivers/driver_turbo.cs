@@ -382,11 +382,8 @@ namespace xnamame036.mame.drivers
                 color_table_len = 512 + 6;
                 video_attributes = Mame.VIDEO_TYPE_RASTER;
                 sound_attributes = 0;
-<<<<<<< .mine
                 //xxx sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
-=======
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, samples_interface));
->>>>>>> .r85
+
             }
             public override void init_machine()
             {
@@ -460,13 +457,9 @@ namespace xnamame036.mame.drivers
                 sprite_expanded_data = new uint[sprite_length*2];
 
                 /* allocate the expanded background data */
-<<<<<<< .mine
+
                 int back_length = Mame.memory_region_length(Mame.REGION_GFX3);
                 back_expanded_data = new ushort[back_length/2];
-=======
-                int back_length = Mame.memory_region_length(Mame.REGION_GFX3);
-                back_expanded_data = new ushort[back_length];
->>>>>>> .r85
 
                 /* allocate the expanded road palette */
                 road_expanded_palette = new ushort[0x40];
@@ -591,18 +584,8 @@ namespace xnamame036.mame.drivers
 
             static void update_sprite_info()
             {
-<<<<<<< .mine
-=======
-                sprite_params_data data;
-                int  di = 0; ;
-
->>>>>>> .r85
                 /* first loop over all sprites and update those whose scanlines intersect ours */
-<<<<<<< .mine
                 for (int i = 0; i < 16; i++)
-=======
-                for (int i = 0; i < 16; i++, di++)
->>>>>>> .r85
                 {
                     _BytePtr sprite_base = new _BytePtr(Generic.spriteram, 16 * i);
 
