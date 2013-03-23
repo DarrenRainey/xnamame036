@@ -7,7 +7,7 @@ using System.Text;
 
 namespace xnamame036.mame.drivers
 {
-    class driver_irobot : Mame.GameDriver
+    partial class driver_irobot : Mame.GameDriver
     {
         static _BytePtr nvram = new _BytePtr(1);
         static int[] nvram_size = new int[1];
@@ -90,7 +90,7 @@ namespace xnamame036.mame.drivers
         static bool irvg_clear;
         static bool irvg_vblank, irvg_running, irmb_running;
         static object irscanline_timer;
-        static object irvg_timer, irbm_timer;
+        static object irvg_timer;
 
         static _BytePtr[] comRAM = new _BytePtr[2];
         static _BytePtr mbRAM, mbROM;
@@ -100,7 +100,6 @@ namespace xnamame036.mame.drivers
         static _BytePtr irobot_combase_mb;
         static _BytePtr irobot_combase;
         static byte irobot_bufsel, irobot_alphamap;
-
 
         static void irobot_paletteram_w(int offset, int data)
         {
@@ -146,12 +145,6 @@ namespace xnamame036.mame.drivers
         static int irobot_status_r(int offset)
         {
             int d = 0;
-
-            //if (errorlog)
-            //{
-            //    fprintf(errorlog, "status read. ");
-            //    IR_CPU_STATE;
-            //}
 
             if (!irmb_running) d |= 0x20;
             if (irvg_running) d |= 0x40;
@@ -200,16 +193,13 @@ namespace xnamame036.mame.drivers
         {
             Mame.cpu_set_irq_line(0, Mame.cpu_m6809.M6809_FIRQ_LINE, Mame.CLEAR_LINE);
         }
-        static void IR_CPU_STATE() { }
+        
         static void irvg_done_callback(int param)
         {
-            //if (errorlog)fprintf(errorlog, "vg done. ");
-            IR_CPU_STATE();
             irvg_running = false;
         }
         static void irobot_poly_clear()
         {
-
             if (irobot_bufsel != 0)
                 Mame.osd_clearbitmap(polybitmap2);
             else
@@ -228,18 +218,14 @@ namespace xnamame036.mame.drivers
             if ((data & 0x04) != 0 && (irobot_statwr & 0x04) == 0)
             {
                 run_video();
-#if IR_TIMING
                 if (!irvg_running)
                 {
-                    IR_CPU_STATE();
                     irvg_timer = Mame.Timer.timer_set(Mame.Timer.TIME_IN_MSEC(10), 0, irvg_done_callback);
                 }
                 else
                 {
-                    IR_CPU_STATE();
                     Mame.Timer.timer_reset(irvg_timer, Mame.Timer.TIME_IN_MSEC(10));
                 }
-#endif
                 irvg_running = true;
             }
             if ((data & 0x10) != 0 && (irobot_statwr & 0x10) == 0)
@@ -364,8 +350,6 @@ namespace xnamame036.mame.drivers
                 }
             }
         }
-
-
         static void run_video()
         {
             int sx, sy, ex, ey, sx2, ey2;
@@ -374,8 +358,6 @@ namespace xnamame036.mame.drivers
             int lpnt, spnt, spnt2;
             int shp;
             int word1, word2;
-
-            //if (errorlog) fprintf(errorlog,"Starting Polygon Generator, Clear=%d\n",irvg_clear);
 
             if (irobot_bufsel != 0)
                 polybitmapt = polybitmap2;
@@ -496,308 +478,39 @@ namespace xnamame036.mame.drivers
                 } //if polygon
             } //while object
         }
-        static void irmb_dout(irmb_ops curop, uint d)
+        static void irmb_dout(int curop, uint d)
         {
             /* Write to video com ram */
-            if (curop.ramsel == 3)
+            if (mbops[curop].ramsel == 3)
                 irobot_combase_mb.WRITE_WORD((int)(irmb_latch << 1) & 0xfff, (ushort)d);
 
             /* Write to mathox ram */
-            if ((curop.flags & 0x04) == 0)
+            if ((mbops[curop].flags & 0x04) == 0)
             {
-                uint ad = curop.diradd | (irmb_latch & curop.latchmask);
+                uint ad = mbops[curop].diradd | (irmb_latch & mbops[curop].latchmask);
 
-                if (curop.diren != 0 || (irmb_latch & 0x6000) == 0)
+                if (mbops[curop].diren != 0 || (irmb_latch & 0x6000) == 0)
                     mbRAM.WRITE_WORD((int)(ad << 1) & 0x1fff, (ushort)d); /* MB RAM write */
             }
         }
-
-        static int irmb_din(irmb_ops curop)
+        static uint irmb_din(int curop)
         {
             uint d = 0;
 
-            if ((curop.flags & 0x04) == 0 && (curop.flags & 0x80) != 0)
+            if ((mbops[curop].flags & 0x04) == 0 && (mbops[curop].flags & 0x80) != 0)
             {
-                uint ad = curop.diradd | (irmb_latch & curop.latchmask);
+                uint ad = mbops[curop].diradd | (irmb_latch & mbops[curop].latchmask);
 
-                if (curop.diren != 0 || (irmb_latch & 0x6000) == 0)
+                if (mbops[curop].diren != 0 || (irmb_latch & 0x6000) == 0)
                     d = mbRAM.READ_WORD((int)(ad << 1) & 0x1fff); /* MB RAM read */
                 else if ((irmb_latch & 0x4000) != 0)
                     d = mbROM.READ_WORD((int)(ad << 1) + 0x4000); /* MB ROM read, CEMATH = 1 */
                 else
                     d = mbROM.READ_WORD((int)(ad << 1) & 0x3fff); /* MB ROM read, CEMATH = 0 */
             }
-            return (int)d;
+            return d;
         }
-        static void irmb_run()
-        {
-            int prevop = 0;// mbops[0];
-            int curop = 0;// mbops[0];
 
-            uint Q = 0;
-            uint Y = 0;
-            uint nflag = 0;
-            uint vflag = 0;
-            uint cflag = 0;
-            uint zresult = 1;
-            uint CI = 0;
-            uint SP = 0;
-            uint icount = 0;
-
-            while ((mbops[prevop].flags & (0x10 | 0x20)) != (0x10 | 0x20))
-            {
-                uint result;
-                uint fu;
-                uint tmp;
-
-                icount += mbops[curop].cycles;
-
-                /* Get function code */
-                fu = mbops[curop].func;
-
-                /* Modify function for MULT */
-                if ((mbops[prevop].flags & 0x01) == 0 || (Q & 1) != 0)
-                    fu = fu ^ 0x02;
-                else
-                    fu = fu | 0x02;
-
-                /* Modify function for DIV */
-                if ((mbops[prevop].flags & 0x40) != 0 || nflag != 0)
-                    fu = fu ^ 0x08;
-                else
-                    fu = fu | 0x08;
-
-                /* Do source and operation */
-                switch (fu & 0x03f)
-                {
-                    case 0x00: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = mbops[curop].areg[0] + Q + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + (Q & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x01: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = mbops[curop].areg[0] + mbops[curop].breg[0] + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + (mbops[curop].breg[0] & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x02: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + Q + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + (Q & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x03: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + mbops[curop].breg[0] + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + (mbops[curop].breg[0] & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x04: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + mbops[curop].areg[0] + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + (mbops[curop].areg[0] & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x05: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + mbops[curop].areg[0] + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + (mbops[curop].areg[0] & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x06: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + Q + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + (Q & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x07: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + 0 + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + (0 & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x08: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (mbops[curop].areg[0] ^ 0xFFFF) + Q + CI; cflag = (result >> 16) & 1; vflag = (((Q & 0x7fff) + ((mbops[curop].areg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x09: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (mbops[curop].areg[0] ^ 0xFFFF) + mbops[curop].breg[0] + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].breg[0] & 0x7fff) + ((mbops[curop].areg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0a: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (0 ^ 0xFFFF) + Q + CI; cflag = (result >> 16) & 1; vflag = (((Q & 0x7fff) + ((0 ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0b: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (0 ^ 0xFFFF) + mbops[curop].breg[0] + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].breg[0] & 0x7fff) + ((0 ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0c: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (0 ^ 0xFFFF) + mbops[curop].areg[0] + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + ((0 ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0d: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (tmp ^ 0xFFFF) + mbops[curop].areg[0] + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + ((tmp ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0e: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (tmp ^ 0xFFFF) + Q + CI; cflag = (result >> 16) & 1; vflag = (((Q & 0x7fff) + ((tmp ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x0f: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = (tmp ^ 0xFFFF) + 0 + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + ((tmp ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x10: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = mbops[curop].areg[0] + (Q ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + ((Q ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x11: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = mbops[curop].areg[0] + (mbops[curop].breg[0] ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((mbops[curop].areg[0] & 0x7fff) + ((mbops[curop].breg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x12: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + (Q ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + ((Q ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x13: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + (mbops[curop].breg[0] ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + ((mbops[curop].breg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x14: CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = 0 + (mbops[curop].areg[0] ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((0 & 0x7fff) + ((mbops[curop].areg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x15: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + (mbops[curop].areg[0] ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + ((mbops[curop].areg[0] ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x16: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + (Q ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + ((Q ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x17: tmp = (uint)irmb_din(mbops[curop]); CI = 0; if ((mbops[curop].flags & 0x10) != 0) CI = cflag; else { if ((mbops[curop].flags & 0x20) != 0) CI = 1; if ((mbops[prevop].flags & 0x40) == 0 && nflag == 0) CI = 1; }; result = tmp + (0 ^ 0xFFFF) + CI; cflag = (result >> 16) & 1; vflag = (((tmp & 0x7fff) + ((0 ^ 0xffff) & 0x7fff) + CI) >> 15) ^ cflag; break;
-                    case 0x18: result = mbops[curop].areg[0] | Q; vflag = cflag = 0; break;
-                    case 0x19: result = mbops[curop].areg[0] | mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x1a: result = 0 | Q; vflag = cflag = 0; break;
-                    case 0x1b: result = 0 | mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x1c: result = 0 | mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x1d: result = (uint)irmb_din(mbops[curop]) | mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x1e: result = (uint)irmb_din(mbops[curop]) | Q; vflag = cflag = 0; break;
-                    case 0x1f: result = (uint)irmb_din(mbops[curop]) | 0; vflag = cflag = 0; break;
-                    case 0x20: result = mbops[curop].areg[0] & Q; vflag = cflag = 0; break;
-                    case 0x21: result = mbops[curop].areg[0] & mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x22: result = 0 & Q; vflag = cflag = 0; break;
-                    case 0x23: result = 0 & mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x24: result = 0 & mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x25: result = (uint)irmb_din(mbops[curop]) & mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x26: result = (uint)irmb_din(mbops[curop]) & Q; vflag = cflag = 0; break;
-                    case 0x27: result = (uint)irmb_din(mbops[curop]) & 0; vflag = cflag = 0; break;
-                    case 0x28: result = (mbops[curop].areg[0] ^ 0xFFFF) & Q; vflag = cflag = 0; break;
-                    case 0x29: result = (mbops[curop].areg[0] ^ 0xFFFF) & mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x2a: result = (0 ^ 0xFFFF) & Q; vflag = cflag = 0; break;
-                    case 0x2b: result = (0 ^ 0xFFFF) & mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x2c: result = (0 ^ 0xFFFF) & mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x2d: result = (uint)(irmb_din(mbops[curop]) ^ 0xFFFF) & mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x2e: result = (uint)(irmb_din(mbops[curop]) ^ 0xFFFF) & Q; vflag = cflag = 0; break;
-                    case 0x2f: result = (uint)(irmb_din(mbops[curop]) ^ 0xFFFF) & 0; vflag = cflag = 0; break;
-                    case 0x30: result = mbops[curop].areg[0] ^ Q; vflag = cflag = 0; break;
-                    case 0x31: result = mbops[curop].areg[0] ^ mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x32: result = 0 ^ Q; vflag = cflag = 0; break;
-                    case 0x33: result = 0 ^ mbops[curop].breg[0]; vflag = cflag = 0; break;
-                    case 0x34: result = 0 ^ mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x35: result = (uint)irmb_din(mbops[curop]) ^ mbops[curop].areg[0]; vflag = cflag = 0; break;
-                    case 0x36: result = (uint)irmb_din(mbops[curop]) ^ Q; vflag = cflag = 0; break;
-                    case 0x37: result = (uint)irmb_din(mbops[curop]) ^ 0; vflag = cflag = 0; break;
-                    case 0x38: result = (mbops[curop].areg[0] ^ Q) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x39: result = (mbops[curop].areg[0] ^ mbops[curop].breg[0]) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x3a: result = (0 ^ Q) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x3b: result = (0 ^ mbops[curop].breg[0]) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x3c: result = (0 ^ mbops[curop].areg[0]) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x3d: result = (uint)(irmb_din(mbops[curop]) ^ mbops[curop].areg[0]) ^ 0xFFFF; vflag = cflag = 0; break;
-                    case 0x3e: result = (uint)(irmb_din(mbops[curop]) ^ Q) ^ 0xFFFF; vflag = cflag = 0; break;
-                    default:
-                    case 0x3f: result = (uint)(irmb_din(mbops[curop]) ^ 0) ^ 0xFFFF; vflag = cflag = 0; break;
-                }
-
-                /* Evaluate flags */
-                zresult = result & 0xFFFF;
-                nflag = zresult >> 15;
-
-                prevop = curop;
-
-                /* Do destination and jump */
-                switch (fu >> 6)
-                {
-                    case 0x00:
-                    case 0x08: Q = Y = zresult; curop++; ; break;
-                    case 0x01:
-                    case 0x09: Y = zresult; curop++; ; break;
-                    case 0x02:
-                    case 0x0a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; curop++; ; break;
-                    case 0x03:
-                    case 0x0b: mbops[curop].breg[0] = zresult; Y = zresult; curop++; ; break;
-                    case 0x04: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; curop++; ; break;
-                    case 0x05: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; curop++; ; break;
-                    case 0x06: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; curop++; ; break;
-                    case 0x07: mbops[curop].breg[0] = zresult << 1; Y = zresult; curop++; ; break;
-                    case 0x0c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; curop++; ; break;
-                    case 0x0d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; curop++; ; break;
-                    case 0x0e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; curop++; ; break;
-                    case 0x0f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; curop++; ; break;
-
-                    case 0x10:
-                    case 0x18: Q = Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x11:
-                    case 0x19: Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x12:
-                    case 0x1a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x13:
-                    case 0x1b: mbops[curop].breg[0] = zresult; Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x14: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x15: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x16: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x17: mbops[curop].breg[0] = zresult << 1; Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x1c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x1d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x1e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x1f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; if (cflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-
-                    case 0x20:
-                    case 0x28: Q = Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x21:
-                    case 0x29: Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x22:
-                    case 0x2a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x23:
-                    case 0x2b: mbops[curop].breg[0] = zresult; Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x24: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x25: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x26: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x27: mbops[curop].breg[0] = zresult << 1; Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x2c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x2d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x2e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x2f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; if (zresult == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-
-                    case 0x30:
-                    case 0x38: Q = Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x31:
-                    case 0x39: Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x32:
-                    case 0x3a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x33:
-                    case 0x3b: mbops[curop].breg[0] = zresult; Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x34: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x35: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x36: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x37: mbops[curop].breg[0] = zresult << 1; Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x3c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x3d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x3e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x3f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; if (nflag == 0) curop = mbops[curop].nxtop; else curop++; ; break;
-
-                    case 0x40:
-                    case 0x48: Q = Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x41:
-                    case 0x49: Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x42:
-                    case 0x4a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x43:
-                    case 0x4b: mbops[curop].breg[0] = zresult; Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x44: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x45: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x46: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x47: mbops[curop].breg[0] = zresult << 1; Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x4c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x4d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x4e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-                    case 0x4f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; if (nflag != 0) curop = mbops[curop].nxtop; else curop++; ; break;
-
-                    case 0x50:
-                    case 0x58: Q = Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x51:
-                    case 0x59: Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x52:
-                    case 0x5a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x53:
-                    case 0x5b: mbops[curop].breg[0] = zresult; Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x54: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x55: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x56: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x57: mbops[curop].breg[0] = zresult << 1; Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x5c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x5d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x5e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; curop = mbops[curop].nxtop; ; break;
-                    case 0x5f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; curop = mbops[curop].nxtop; ; break;
-
-                    case 0x60:
-                    case 0x68: Q = Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x61:
-                    case 0x69: Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x62:
-                    case 0x6a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x63:
-                    case 0x6b: mbops[curop].breg[0] = zresult; Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x64: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x65: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x66: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x67: mbops[curop].breg[0] = zresult << 1; Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x6c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x6d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x6e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-                    case 0x6f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; irmb_stack[SP] = curop + 1; SP = (SP + 1) & 15; curop = mbops[curop].nxtop; ; break;
-
-                    case 0x70:
-                    case 0x78: Q = Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x71:
-                    case 0x79: Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x72:
-                    case 0x7a: Y = mbops[curop].areg[0]; mbops[curop].breg[0] = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x73:
-                    case 0x7b: mbops[curop].breg[0] = zresult; Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x74: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Q = (uint)((Q >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x75: mbops[curop].breg[0] = (uint)((zresult >> 1) | ((mbops[curop].flags & 0x20) << 10)); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x76: mbops[curop].breg[0] = zresult << 1; Q = ((Q << 1) & 0xffff) | (nflag ^ 1); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x77: mbops[curop].breg[0] = zresult << 1; Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x7c: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Q = (Q >> 1) | ((zresult & 0x01) << 15); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x7d: mbops[curop].breg[0] = (zresult >> 1) | ((nflag ^ vflag) << 15); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x7e: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Q = (Q << 1) & 0xffff; Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                    case 0x7f: mbops[curop].breg[0] = (zresult << 1) | ((Q & 0x8000) >> 15); Y = zresult; SP = (SP - 1) & 15; curop = irmb_stack[SP]; ; break;
-                }
-
-                /* Do write */
-                if ((mbops[prevop].flags & 0x80) == 0)
-                    irmb_dout(mbops[prevop], Y);
-
-                /* ADDEN */
-                if ((mbops[prevop].flags & 0x08) == 0)
-                {
-                    if ((mbops[prevop].flags & 0x80) != 0)
-                        irmb_latch = (uint)irmb_din(mbops[prevop]);
-                    else
-                        irmb_latch = Y;
-                }
-            }
-
-        }
         delegate void _drawfunc(int x1, int x2, int y, int col);
         static _drawfunc[] hline_8_table ={draw_hline_8, draw_hline_8_fx, draw_hline_8_fy, draw_hline_8_fx_fy,draw_hline_8_swap, draw_hline_8_swap_fx, draw_hline_8_swap_fy, draw_hline_8_swap_fx_fy};
         static _drawfunc[] hline_16_table = {
@@ -969,7 +682,7 @@ namespace xnamame036.mame.drivers
         {
             if (scanline == 0) irvg_vblank = false;
             if (scanline == 224) irvg_vblank = true;
-            //if (errorlog) fprintf(errorlog, "SCANLINE CALLBACK %d\n", scanline);
+            
             /* set the IRQ line state based on the 32V line state */
             Mame.cpu_set_irq_line(0, Mame.cpu_m6809.M6809_IRQ_LINE, (scanline & 32) != 0 ? Mame.ASSERT_LINE : Mame.CLEAR_LINE);
 
@@ -977,29 +690,6 @@ namespace xnamame036.mame.drivers
             scanline += 32;
             if (scanline >= 256) scanline = 0;
             irscanline_timer = Mame.Timer.timer_set(Mame.cpu_getscanlinetime(scanline), scanline, scanline_callback);
-        }
-        void irobot_init_machine()
-        {
-            _BytePtr MB = Mame.memory_region(Mame.REGION_CPU2);
-
-            /* initialize the memory regions */
-            mbROM = new _BytePtr(MB, 0x00000);
-            mbRAM = new _BytePtr(MB, 0x0c000);
-            comRAM[0] = new _BytePtr(MB, 0x0e000);
-            comRAM[1] = new _BytePtr(MB, 0x0f000);
-
-            irvg_vblank = false;
-            irvg_running = false;
-            irmb_running = false;
-
-            /* set an initial timer to go off on scanline 0 */
-            irscanline_timer = Mame.Timer.timer_set(Mame.cpu_getscanlinetime(0), 0, scanline_callback);
-
-            irobot_rom_banksel(0, 0);
-            irobot_out0_w(0, 0);
-            irobot_combase = comRAM[0];
-            irobot_combase_mb = comRAM[1];
-            irobot_outx = 0;
         }
         void load_oproms()
         {
@@ -1069,11 +759,6 @@ namespace xnamame036.mame.drivers
 #endif
             }
         }
-
-
-
-
-
         public override void driver_init()
         {
             for (int i = 0; i < 16; i++)
