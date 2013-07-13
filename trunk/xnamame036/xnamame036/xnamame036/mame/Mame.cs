@@ -89,13 +89,14 @@ namespace xnamame036.mame
         public void Run()
         {
             //These driver seems to work OK
-            //main("pacman");              
+            //main("pacman");
+            main("mspacman");
             //main("invaders");// sound from samples not good
             //main("1942");
             //main("1943"); 
             //main("zaxxon");
             //main("szaxxon");
-            // main("galaga");
+             //main("galaga");
             //main("digdug");
             //main("dkong");
             //main("mario");
@@ -188,19 +189,23 @@ namespace xnamame036.mame
             
 
 
-
+            //6502 games. All have problems
             //main("centipede"); // Screen layout not correct. graphics or cpu related ?
+            main("atetris"); // To test the m6502 cpu implementation
 
-            //main("defender"); //graphics/palette problems
+            
+            main("skykid");
+
+
+
+            main("defender"); //graphics/palette problems
 
             //main("retofinv"); // major graphics glitches
 
 
             //-------------------------------------------------
             //These drivers I would like to implement
-            //main("atetris"); // To test the m6502 cpu implementation
-            //main("skykid");
-            main("labrunr");
+            //main("labrunr");
 
 
 
@@ -239,12 +244,17 @@ namespace xnamame036.mame
 
             //main("baraduke"); // tilemap & input port. Will not work with 8-bit graphics ?
             //main("irobot");//6809 graphics missing, 
-            // main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
+
+            //main("airwolf"); // stops/hangs during init of system (displays status screen though),submem check
             //main("srdmissn"); // same problems as airwolf, driver related ? memory handling related ?
 
             //main("raiden");  //cpu problems ?
 
-
+            //interesting v30 games
+            //main("dsoccr94");
+            main("rtype");// M72
+            //main("bmaster");//m92
+            //main/"
         }
         public void main(string game)
         {

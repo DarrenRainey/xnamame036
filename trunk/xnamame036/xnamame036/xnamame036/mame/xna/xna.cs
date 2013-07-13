@@ -49,8 +49,6 @@ namespace xnamame036.mame
         }
         static int osd_allocate_colors(uint totalcolors, byte[] palette, ushort[] pens, int modifiable)
         {
-            int i;
-
             modifiable_palette = modifiable;
             screen_colors = (int)totalcolors;
             if (scrbitmap.depth != 8)
@@ -63,10 +61,10 @@ namespace xnamame036.mame
             if (dirtycolor == null || current_palette == null || palette_16bit_lookup == null)
                 return 1;
 
-            for (i = 0; i < screen_colors; i++)
+            for (int i = 0; i < screen_colors; i++)
                 dirtycolor[i] = true;
             dirtypalette = true;
-            for (i = 0; i < screen_colors; i++)
+            for (int i = 0; i < screen_colors; i++)
                 current_palette[3 * i + 0] = current_palette[3 * i + 1] = current_palette[3 * i + 2] = 0;
 
             if (scrbitmap.depth != 8 && modifiable == 0)
@@ -74,7 +72,7 @@ namespace xnamame036.mame
                 int r, g, b;
 
                 uint p = 0;// (uint)pens.offset;
-                for (i = 0; i < totalcolors; i++)
+                for (int i = 0; i < totalcolors; i++)
                 {
                     r = (int)(255 * brightness * Math.Pow(palette[3 * i + 0] / 255.0, 1 / osd_gamma_correction) / 100);
                     g = (int)(255 * brightness * Math.Pow(palette[3 * i + 1] / 255.0, 1 / osd_gamma_correction) / 100);
@@ -98,7 +96,7 @@ namespace xnamame036.mame
                     bestblack = bestwhite = 0;
                     bestblackscore = 3 * 255 * 255;
                     bestwhitescore = 0;
-                    for (i = 0; i < totalcolors; i++)
+                    for (int i = 0; i < totalcolors; i++)
                     {
                         int r = palette[3 * i + 0];
                         int g = palette[3 * i + 1];
@@ -117,7 +115,7 @@ namespace xnamame036.mame
                         }
                     }
 
-                    for (i = 0; i < totalcolors; i++)
+                    for (int i = 0; i < totalcolors; i++)
                         pens[i] = (ushort)i;
 
                     /* map black to pen 0, otherwise the screen border will not be black */
@@ -140,11 +138,11 @@ namespace xnamame036.mame
 
                     /* fill the palette starting from the end, so we mess up badly written */
                     /* drivers which don't go through Machine.pens[] */
-                    for (i = 0; i < totalcolors; i++)
+                    for (int i = 0; i < totalcolors; i++)
                         pens[i] = (ushort)((screen_colors - 1) - i);
                 }
 
-                for (i = 0; i < totalcolors; i++)
+                for (int i = 0; i < totalcolors; i++)
                 {
                     current_palette[3 * pens[i] + 0] = palette[3 * i];
                     current_palette[3 * pens[i] + 1] = palette[3 * i + 1];

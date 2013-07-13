@@ -92,24 +92,24 @@ namespace xnamame036.mame
         }
         int AY8910_init(Mame.MachineSound msound, int chip, int clock, int volume, int sample_rate, AY8910portRead portAread, AY8910portRead portBread, AY8910portWrite portAwrite, AY8910portWrite portBwrite)
         {
-            AY8910 PSG = AYPSG[chip];
+            //AY8910 PSG = AYPSG[chip];
 
             string[] name = new string[3];
             int[] vol = new int[3];
 
-            PSG.SampleRate = sample_rate;
-            PSG.PortAread = portAread;
-            PSG.PortBread = portBread;
-            PSG.PortAwrite = portAwrite;
-            PSG.PortBwrite = portBwrite;
+            AYPSG[chip].SampleRate = sample_rate;
+            AYPSG[chip].PortAread = portAread;
+            AYPSG[chip].PortBread = portBread;
+            AYPSG[chip].PortAwrite = portAwrite;
+            AYPSG[chip].PortBwrite = portBwrite;
             for (int i = 0; i < 3; i++)
             {
                 vol[i] = volume;
                 name[i] = Mame.sprintf("%s #%d Ch %c", Mame.sound_name(msound), chip, 'A' + i);
             }
-            PSG.Channel = Mame.stream_init_multi(3, name, vol, sample_rate, chip, AY8910Update);
+            AYPSG[chip].Channel = Mame.stream_init_multi(3, name, vol, sample_rate, chip, AY8910Update);
 
-            if (PSG.Channel == -1)
+            if (AYPSG[chip].Channel == -1)
                 return 1;
 
             AY8910_set_clock(chip, clock);

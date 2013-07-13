@@ -8,7 +8,6 @@ namespace xnamame036.mame
     partial class Mame
     {
         public const byte MAXPOKEYS = 4;
-
     }
     public delegate int pot_delegate(int offset);
     public delegate void pokey_serout(int offset, int data);
@@ -66,7 +65,7 @@ namespace xnamame036.mame
         {
             this.sound_num = Mame.SOUND_POKEY;
             this.name = "Pokey";
-    }
+        }
         class POKEYregisters
         {
             public int[] counter = new int[4];		/* channel counter */
@@ -228,7 +227,7 @@ namespace xnamame036.mame
         }
         public override int chips_num(Mame.MachineSound msound)
         {
-           return ((POKEYinterface)msound.sound_interface).num;
+            return ((POKEYinterface)msound.sound_interface).num;
         }
         public override void reset()
         {
@@ -606,187 +605,182 @@ namespace xnamame036.mame
         }
         static void pokey_register_w(int chip, int offs, int data)
         {
-            POKEYregisters p = _pokey[chip];
+            //POKEYregisters p = _pokey[chip];
             int ch_mask = 0, new_val;
 
-
-            Mame.stream_update(p.channel, 0);
+            Mame.stream_update(_pokey[chip].channel, 0);
 
             /* determine which address was changed */
             switch (offs & 15)
             {
                 case AUDF1_C:
-                    if (data == p.AUDF[CHAN1])
+                    if (data == _pokey[chip].AUDF[CHAN1])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDF1  $%02x\n", chip, data));
-                    p.AUDF[CHAN1] = (byte)data;
+                    _pokey[chip].AUDF[CHAN1] = (byte)data;
                     ch_mask = 1 << CHAN1;
-                    if ((p.AUDCTL & CH12_JOINED) != 0)		/* if ch 1&2 tied together */
+                    if ((_pokey[chip].AUDCTL & CH12_JOINED) != 0)		/* if ch 1&2 tied together */
                         ch_mask |= 1 << CHAN2;    /* then also change on ch2 */
                     break;
 
                 case AUDC1_C:
-                    if (data == p.AUDC[CHAN1])
+                    if (data == _pokey[chip].AUDC[CHAN1])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDC1  $%02x (%s)\n", chip, data, audc2str(data)));
-                    p.AUDC[CHAN1] = (byte)data;
+                    _pokey[chip].AUDC[CHAN1] = (byte)data;
                     ch_mask = 1 << CHAN1;
                     break;
 
                 case AUDF2_C:
-                    if (data == p.AUDF[CHAN2])
+                    if (data == _pokey[chip].AUDF[CHAN2])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDF2  $%02x\n", chip, data));
-                    p.AUDF[CHAN2] = (byte)data;
+                    _pokey[chip].AUDF[CHAN2] = (byte)data;
                     ch_mask = 1 << CHAN2;
                     break;
 
                 case AUDC2_C:
-                    if (data == p.AUDC[CHAN2])
+                    if (data == _pokey[chip].AUDC[CHAN2])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDC2  $%02x (%s)\n", chip, data, audc2str(data)));
-                    p.AUDC[CHAN2] = (byte)data;
+                    _pokey[chip].AUDC[CHAN2] = (byte)data;
                     ch_mask = 1 << CHAN2;
                     break;
 
                 case AUDF3_C:
-                    if (data == p.AUDF[CHAN3])
+                    if (data == _pokey[chip].AUDF[CHAN3])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDF3  $%02x\n", chip, data));
-                    p.AUDF[CHAN3] = (byte)data;
+                    _pokey[chip].AUDF[CHAN3] = (byte)data;
                     ch_mask = 1 << CHAN3;
 
-                    if ((p.AUDCTL & CH34_JOINED) != 0)	/* if ch 3&4 tied together */
+                    if ((_pokey[chip].AUDCTL & CH34_JOINED) != 0)	/* if ch 3&4 tied together */
                         ch_mask |= 1 << CHAN4;  /* then also change on ch4 */
                     break;
 
                 case AUDC3_C:
-                    if (data == p.AUDC[CHAN3])
+                    if (data == _pokey[chip].AUDC[CHAN3])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDC3  $%02x (%s)\n", chip, data, audc2str(data)));
-                    p.AUDC[CHAN3] = (byte)data;
+                    _pokey[chip].AUDC[CHAN3] = (byte)data;
                     ch_mask = 1 << CHAN3;
                     break;
 
                 case AUDF4_C:
-                    if (data == p.AUDF[CHAN4])
+                    if (data == _pokey[chip].AUDF[CHAN4])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDF4  $%02x\n", chip, data));
-                    p.AUDF[CHAN4] = (byte)data;
+                    _pokey[chip].AUDF[CHAN4] = (byte)data;
                     ch_mask = 1 << CHAN4;
                     break;
 
                 case AUDC4_C:
-                    if (data == p.AUDC[CHAN4])
+                    if (data == _pokey[chip].AUDC[CHAN4])
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDC4  $%02x (%s)\n", chip, data, audc2str(data)));
-                    p.AUDC[CHAN4] = (byte)data;
+                    _pokey[chip].AUDC[CHAN4] = (byte)data;
                     ch_mask = 1 << CHAN4;
                     break;
 
                 case AUDCTL_C:
-                    if (data == p.AUDCTL)
+                    if (data == _pokey[chip].AUDCTL)
                         return;
                     //LOG_SOUND((errorlog, "POKEY #%d AUDCTL $%02x (%s)\n", chip, data, audctl2str(data)));
-                    p.AUDCTL = (byte)data;
+                    _pokey[chip].AUDCTL = (byte)data;
                     ch_mask = 15;       /* all channels */
                     /* determine the base multiplier for the 'div by n' calculations */
-                    p.clockmult = (p.AUDCTL & CLK_15KHZ) != 0 ? DIV_15 : DIV_64;
+                    _pokey[chip].clockmult = (_pokey[chip].AUDCTL & CLK_15KHZ) != 0 ? DIV_15 : DIV_64;
                     break;
 
                 case STIMER_C:
                     /* first remove any existing timers */
                     //LOG_TIMER((errorlog, "POKEY #%d STIMER $%02x\n", chip, data));
-                    if (p.timer[TIMER1] != null)
-                        Mame.Timer.timer_remove(p.timer[TIMER1]);
-                    if (p.timer[TIMER2] != null)
-                        Mame.Timer.timer_remove(p.timer[TIMER2]);
-                    if (p.timer[TIMER4] != null)
-                        Mame.Timer.timer_remove(p.timer[TIMER4]);
-                    p.timer[TIMER1] = null;
-                    p.timer[TIMER2] = null;
-                    p.timer[TIMER4] = null;
+                    if (_pokey[chip].timer[TIMER1] != null)
+                        Mame.Timer.timer_remove(_pokey[chip].timer[TIMER1]);
+                    if (_pokey[chip].timer[TIMER2] != null)
+                        Mame.Timer.timer_remove(_pokey[chip].timer[TIMER2]);
+                    if (_pokey[chip].timer[TIMER4] != null)
+                        Mame.Timer.timer_remove(_pokey[chip].timer[TIMER4]);
+                    _pokey[chip].timer[TIMER1] = null;
+                    _pokey[chip].timer[TIMER2] = null;
+                    _pokey[chip].timer[TIMER4] = null;
 
                     /* reset all counters to zero (side effect) */
-                    p.polyadjust = 0;
-                    p.counter[CHAN1] = 0;
-                    p.counter[CHAN2] = 0;
-                    p.counter[CHAN3] = 0;
-                    p.counter[CHAN4] = 0;
+                    _pokey[chip].polyadjust = 0;
+                    _pokey[chip].counter[CHAN1] = 0;
+                    _pokey[chip].counter[CHAN2] = 0;
+                    _pokey[chip].counter[CHAN3] = 0;
+                    _pokey[chip].counter[CHAN4] = 0;
 
                     /* joined chan#1 and chan#2 ? */
-                    if ((p.AUDCTL & CH12_JOINED) != 0)
+                    if ((_pokey[chip].AUDCTL & CH12_JOINED) != 0)
                     {
-                        if (p.divisor[CHAN2] > 4)
+                        if (_pokey[chip].divisor[CHAN2] > 4)
                         {
                             //LOG_TIMER((errorlog, "POKEY #%d timer1+2 after %d clocks\n", chip, p.divisor[CHAN2]));
                             /* set timer #1 _and_ #2 event after timer_div clocks of joined CHAN1+CHAN2 */
-                            p.timer[TIMER2] =
-                                Mame.Timer.timer_pulse(1.0 * p.divisor[CHAN2] / intf.baseclock,
+                            _pokey[chip].timer[TIMER2] =
+                                Mame.Timer.timer_pulse(1.0 * _pokey[chip].divisor[CHAN2] / intf.baseclock,
                                     (chip << 3) | IRQ_TIMR2 | IRQ_TIMR1, pokey_timer_expire);
                         }
                     }
                     else
                     {
-                        if (p.divisor[CHAN1] > 4)
+                        if (_pokey[chip].divisor[CHAN1] > 4)
                         {
                             //LOG_TIMER((errorlog, "POKEY #%d timer1 after %d clocks\n", chip, p.divisor[CHAN1]));
                             /* set timer #1 event after timer_div clocks of CHAN1 */
-                            p.timer[TIMER1] =
-                                Mame.Timer.timer_pulse(1.0 * p.divisor[CHAN1] / intf.baseclock,
+                            _pokey[chip].timer[TIMER1] =Mame.Timer.timer_pulse(1.0 * _pokey[chip].divisor[CHAN1] / intf.baseclock,
                                     (chip << 3) | IRQ_TIMR1, pokey_timer_expire);
                         }
 
-                        if (p.divisor[CHAN2] > 4)
+                        if (_pokey[chip].divisor[CHAN2] > 4)
                         {
                             //LOG_TIMER((errorlog, "POKEY #%d timer2 after %d clocks\n", chip, p.divisor[CHAN2]));
                             /* set timer #2 event after timer_div clocks of CHAN2 */
-                            p.timer[TIMER2] =
-                                Mame.Timer.timer_pulse(1.0 * p.divisor[CHAN2] / intf.baseclock,
+                            _pokey[chip].timer[TIMER2] = Mame.Timer.timer_pulse(1.0 * _pokey[chip].divisor[CHAN2] / intf.baseclock,
                                     (chip << 3) | IRQ_TIMR2, pokey_timer_expire);
                         }
                     }
 
                     /* Note: p[chip] does not have a timer #3 */
 
-                    if ((p.AUDCTL & CH34_JOINED) != 0)
+                    if ((_pokey[chip].AUDCTL & CH34_JOINED) != 0)
                     {
                         /* not sure about this: if audc4 == 0000xxxx don't start timer 4 ? */
-                        if ((p.AUDC[CHAN4] & 0xf0) != 0)
+                        if ((_pokey[chip].AUDC[CHAN4] & 0xf0) != 0)
                         {
-                            if (p.divisor[CHAN4] > 4)
+                            if (_pokey[chip].divisor[CHAN4] > 4)
                             {
                                 //LOG_TIMER((errorlog, "POKEY #%d timer4 after %d clocks\n", chip, p.divisor[CHAN4]));
                                 /* set timer #4 event after timer_div clocks of CHAN4 */
-                                p.timer[TIMER4] =
-                                    Mame.Timer.timer_pulse(1.0 * p.divisor[CHAN4] / intf.baseclock,
+                                _pokey[chip].timer[TIMER4] = Mame.Timer.timer_pulse(1.0 * _pokey[chip].divisor[CHAN4] / intf.baseclock,
                                         (chip << 3) | IRQ_TIMR4, pokey_timer_expire);
                             }
                         }
                     }
                     else
                     {
-                        if (p.divisor[CHAN4] > 4)
+                        if (_pokey[chip].divisor[CHAN4] > 4)
                         {
                             //LOG_TIMER((errorlog, "POKEY #%d timer4 after %d clocks\n", chip, p.divisor[CHAN4]));
                             /* set timer #4 event after timer_div clocks of CHAN4 */
-                            p.timer[TIMER4] =
-                                Mame.Timer.timer_pulse(1.0 * p.divisor[CHAN4] / intf.baseclock,
+                            _pokey[chip].timer[TIMER4] = Mame.Timer.timer_pulse(1.0 * _pokey[chip].divisor[CHAN4] / intf.baseclock,
                                     (chip << 3) | IRQ_TIMR4, pokey_timer_expire);
                         }
                     }
-                    if (p.timer[TIMER1] != null)
-                        Mame.Timer.timer_enable(p.timer[TIMER1], p.IRQEN & IRQ_TIMR1);
-                    if (p.timer[TIMER2] != null)
-                        Mame.Timer.timer_enable(p.timer[TIMER2], p.IRQEN & IRQ_TIMR2);
-                    if (p.timer[TIMER4] != null)
-                        Mame.Timer.timer_enable(p.timer[TIMER4], p.IRQEN & IRQ_TIMR4);
+                    if (_pokey[chip].timer[TIMER1] != null)
+                        Mame.Timer.timer_enable(_pokey[chip].timer[TIMER1], _pokey[chip].IRQEN & IRQ_TIMR1);
+                    if (_pokey[chip].timer[TIMER2] != null)
+                        Mame.Timer.timer_enable(_pokey[chip].timer[TIMER2], _pokey[chip].IRQEN & IRQ_TIMR2);
+                    if (_pokey[chip].timer[TIMER4] != null)
+                        Mame.Timer.timer_enable(_pokey[chip].timer[TIMER4], _pokey[chip].IRQEN & IRQ_TIMR4);
                     break;
 
                 case SKREST_C:
                     /* reset SKSTAT */
                     //LOG((errorlog, "POKEY #%d SKREST $%02x\n", chip, data));
-                    p.SKSTAT &= unchecked((byte)~(SK_FRAME | SK_OVERRUN | SK_KBERR));
+                    _pokey[chip].SKSTAT &= unchecked((byte)~(SK_FRAME | SK_OVERRUN | SK_KBERR));
                     break;
 
                 case POTGO_C:
@@ -796,9 +790,9 @@ namespace xnamame036.mame
 
                 case SEROUT_C:
                     //LOG((errorlog, "POKEY #%d SEROUT $%02x\n", chip, data));
-                    if (p.serout_w != null)
-                        p.serout_w(offs, data);
-                    p.SKSTAT |= SK_SEROUT;
+                    if (_pokey[chip].serout_w != null)
+                        _pokey[chip].serout_w(offs, data);
+                    _pokey[chip].SKSTAT |= SK_SEROUT;
                     /*
                      * These are arbitrary values, tested with some custom boot
                      * loaders from Ballblazer and Escape from Fractalus
@@ -813,31 +807,31 @@ namespace xnamame036.mame
                     //LOG((errorlog, "POKEY #%d IRQEN  $%02x\n", chip, data));
 
                     /* acknowledge one or more IRQST bits ? */
-                    if ((p.IRQST & ~data) != 0)
+                    if ((_pokey[chip].IRQST & ~data) != 0)
                     {
                         /* reset IRQST bits that are masked now */
-                        p.IRQST &= (byte)data;
+                        _pokey[chip].IRQST &= (byte)data;
                     }
                     else
                     {
                         /* enable/disable timers now to avoid unneeded
                            breaking of the CPU cores for masked timers */
-                        if (p.timer[TIMER1] != null && ((p.IRQEN ^ data) & IRQ_TIMR1) != 0)
-                            Mame.Timer.timer_enable(p.timer[TIMER1], data & IRQ_TIMR1);
-                        if (p.timer[TIMER2] != null && ((p.IRQEN ^ data) & IRQ_TIMR2) != 0)
-                            Mame.Timer.timer_enable(p.timer[TIMER2], data & IRQ_TIMR2);
-                        if (p.timer[TIMER4] != null && ((p.IRQEN ^ data) & IRQ_TIMR4) != 0)
-                            Mame.Timer.timer_enable(p.timer[TIMER4], data & IRQ_TIMR4);
+                        if (_pokey[chip].timer[TIMER1] != null && ((_pokey[chip].IRQEN ^ data) & IRQ_TIMR1) != 0)
+                            Mame.Timer.timer_enable(_pokey[chip].timer[TIMER1], data & IRQ_TIMR1);
+                        if (_pokey[chip].timer[TIMER2] != null && ((_pokey[chip].IRQEN ^ data) & IRQ_TIMR2) != 0)
+                            Mame.Timer.timer_enable(_pokey[chip].timer[TIMER2], data & IRQ_TIMR2);
+                        if (_pokey[chip].timer[TIMER4] != null && ((_pokey[chip].IRQEN ^ data) & IRQ_TIMR4) != 0)
+                            Mame.Timer.timer_enable(_pokey[chip].timer[TIMER4], data & IRQ_TIMR4);
                     }
                     /* store irq enable */
-                    p.IRQEN = (byte)data;
+                    _pokey[chip].IRQEN = (byte)data;
                     break;
 
                 case SKCTL_C:
-                    if (data == p.SKCTL)
+                    if (data == _pokey[chip].SKCTL)
                         return;
                     //LOG((errorlog, "POKEY #%d SKCTL  $%02x\n", chip, data));
-                    p.SKCTL = (byte)data;
+                    _pokey[chip].SKCTL = (byte)data;
                     if ((data & SK_RESET) == 0)
                     {
                         pokey_register_w(chip, IRQEN_C, 0);
@@ -859,131 +853,131 @@ namespace xnamame036.mame
             if ((ch_mask & (1 << CHAN1)) != 0)
             {
                 /* process channel 1 frequency */
-                if ((p.AUDCTL & CH1_HICLK) != 0)
-                    new_val = p.AUDF[CHAN1] + DIVADD_HICLK;
+                if ((_pokey[chip].AUDCTL & CH1_HICLK) != 0)
+                    new_val = _pokey[chip].AUDF[CHAN1] + DIVADD_HICLK;
                 else
-                    new_val = (int)((p.AUDF[CHAN1] + DIVADD_LOCLK) * p.clockmult);
+                    new_val = (int)((_pokey[chip].AUDF[CHAN1] + DIVADD_LOCLK) * _pokey[chip].clockmult);
 
                 //LOG_SOUND((errorlog, "POKEY #%d chan1 %d\n", chip, new_val));
 
-                p.volume[CHAN1] = (uint)((p.AUDC[CHAN1] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
-                p.divisor[CHAN1] = new_val;
-                if (new_val < p.counter[CHAN1])
-                    p.counter[CHAN1] = new_val;
-                if (p.interrupt_cb != null && p.timer[TIMER1] != null)
-                    Mame.Timer.timer_reset(p.timer[TIMER1], 1.0 * new_val / intf.baseclock);
-                p.audible[CHAN1] = (!(
-                    (p.AUDC[CHAN1] & VOLUME_ONLY) != 0 ||
-                    (p.AUDC[CHAN1] & VOLUME_MASK) == 0 ||
-                    ((p.AUDC[CHAN1] & PURE) != 0 && new_val < (p.samplerate_24_8 >> 8))));
-                if (!p.audible[CHAN1])
+                _pokey[chip].volume[CHAN1] = (uint)((_pokey[chip].AUDC[CHAN1] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
+                _pokey[chip].divisor[CHAN1] = new_val;
+                if (new_val < _pokey[chip].counter[CHAN1])
+                    _pokey[chip].counter[CHAN1] = new_val;
+                if (_pokey[chip].interrupt_cb != null && _pokey[chip].timer[TIMER1] != null)
+                    Mame.Timer.timer_reset(_pokey[chip].timer[TIMER1], 1.0 * new_val / intf.baseclock);
+                _pokey[chip].audible[CHAN1] = (!(
+                    (_pokey[chip].AUDC[CHAN1] & VOLUME_ONLY) != 0 ||
+                    (_pokey[chip].AUDC[CHAN1] & VOLUME_MASK) == 0 ||
+                    ((_pokey[chip].AUDC[CHAN1] & PURE) != 0 && new_val < (_pokey[chip].samplerate_24_8 >> 8))));
+                if (!_pokey[chip].audible[CHAN1])
                 {
-                    p.output[CHAN1] = 1;
-                    p.counter[CHAN1] = 0x7fffffff;
+                    _pokey[chip].output[CHAN1] = 1;
+                    _pokey[chip].counter[CHAN1] = 0x7fffffff;
                     /* 50% duty cycle should result in half volume */
-                    p.volume[CHAN1] >>= 1;
+                    _pokey[chip].volume[CHAN1] >>= 1;
                 }
             }
 
             if ((ch_mask & (1 << CHAN2)) != 0)
             {
                 /* process channel 2 frequency */
-                if ((p.AUDCTL & CH12_JOINED) != 0)
+                if ((_pokey[chip].AUDCTL & CH12_JOINED) != 0)
                 {
-                    if ((p.AUDCTL & CH1_HICLK) != 0)
-                        new_val = p.AUDF[CHAN2] * 256 + p.AUDF[CHAN1] + DIVADD_HICLK_JOINED;
+                    if ((_pokey[chip].AUDCTL & CH1_HICLK) != 0)
+                        new_val = _pokey[chip].AUDF[CHAN2] * 256 + _pokey[chip].AUDF[CHAN1] + DIVADD_HICLK_JOINED;
                     else
-                        new_val = (int)((p.AUDF[CHAN2] * 256 + p.AUDF[CHAN1] + DIVADD_LOCLK) * p.clockmult);
+                        new_val = (int)((_pokey[chip].AUDF[CHAN2] * 256 + _pokey[chip].AUDF[CHAN1] + DIVADD_LOCLK) * _pokey[chip].clockmult);
                     //LOG_SOUND((errorlog, "POKEY #%d chan1+2 %d\n", chip, new_val));
                 }
                 else
                 {
-                    new_val = (int)((p.AUDF[CHAN2] + DIVADD_LOCLK) * p.clockmult);
+                    new_val = (int)((_pokey[chip].AUDF[CHAN2] + DIVADD_LOCLK) * _pokey[chip].clockmult);
                     //LOG_SOUND((errorlog, "POKEY #%d chan2 %d\n", chip, new_val));
                 }
 
-                p.volume[CHAN2] = (uint)((p.AUDC[CHAN2] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
-                p.divisor[CHAN2] = new_val;
-                if (new_val < p.counter[CHAN2])
-                    p.counter[CHAN2] = new_val;
-                if (p.interrupt_cb != null && p.timer[TIMER2] != null)
-                    Mame.Timer.timer_reset(p.timer[TIMER2], 1.0 * new_val / intf.baseclock);
-                p.audible[CHAN2] = (!(
-                    (p.AUDC[CHAN2] & VOLUME_ONLY) != 0 ||
-                    (p.AUDC[CHAN2] & VOLUME_MASK) == 0 ||
-                    ((p.AUDC[CHAN2] & PURE) != 0 && new_val < (p.samplerate_24_8 >> 8))));
-                if (!p.audible[CHAN2])
+                _pokey[chip].volume[CHAN2] = (uint)((_pokey[chip].AUDC[CHAN2] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
+                _pokey[chip].divisor[CHAN2] = new_val;
+                if (new_val < _pokey[chip].counter[CHAN2])
+                    _pokey[chip].counter[CHAN2] = new_val;
+                if (_pokey[chip].interrupt_cb != null && _pokey[chip].timer[TIMER2] != null)
+                    Mame.Timer.timer_reset(_pokey[chip].timer[TIMER2], 1.0 * new_val / intf.baseclock);
+                _pokey[chip].audible[CHAN2] = (!(
+                    (_pokey[chip].AUDC[CHAN2] & VOLUME_ONLY) != 0 ||
+                    (_pokey[chip].AUDC[CHAN2] & VOLUME_MASK) == 0 ||
+                    ((_pokey[chip].AUDC[CHAN2] & PURE) != 0 && new_val < (_pokey[chip].samplerate_24_8 >> 8))));
+                if (!_pokey[chip].audible[CHAN2])
                 {
-                    p.output[CHAN2] = 1;
-                    p.counter[CHAN2] = 0x7fffffff;
+                    _pokey[chip].output[CHAN2] = 1;
+                    _pokey[chip].counter[CHAN2] = 0x7fffffff;
                     /* 50% duty cycle should result in half volume */
-                    p.volume[CHAN2] >>= 1;
+                    _pokey[chip].volume[CHAN2] >>= 1;
                 }
             }
 
             if ((ch_mask & (1 << CHAN3)) != 0)
             {
                 /* process channel 3 frequency */
-                if ((p.AUDCTL & CH3_HICLK) != 0)
-                    new_val = p.AUDF[CHAN3] + DIVADD_HICLK;
+                if ((_pokey[chip].AUDCTL & CH3_HICLK) != 0)
+                    new_val = _pokey[chip].AUDF[CHAN3] + DIVADD_HICLK;
                 else
-                    new_val = (int)((p.AUDF[CHAN3] + DIVADD_LOCLK) * p.clockmult);
+                    new_val = (int)((_pokey[chip].AUDF[CHAN3] + DIVADD_LOCLK) * _pokey[chip].clockmult);
 
                 //LOG_SOUND((errorlog, "POKEY #%d chan3 %d\n", chip, new_val));
 
-                p.volume[CHAN3] = (uint)((p.AUDC[CHAN3] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
-                p.divisor[CHAN3] = new_val;
-                if (new_val < p.counter[CHAN3])
-                    p.counter[CHAN3] = new_val;
+                _pokey[chip].volume[CHAN3] = (uint)((_pokey[chip].AUDC[CHAN3] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
+                _pokey[chip].divisor[CHAN3] = new_val;
+                if (new_val < _pokey[chip].counter[CHAN3])
+                    _pokey[chip].counter[CHAN3] = new_val;
                 /* channel 3 does not have a timer associated */
-                p.audible[CHAN3] = !(
-                    (p.AUDC[CHAN3] & VOLUME_ONLY) != 0 ||
-                    (p.AUDC[CHAN3] & VOLUME_MASK) == 0 ||
-                    ((p.AUDC[CHAN3] & PURE) != 0 && new_val < (p.samplerate_24_8 >> 8))) ||
-                    (p.AUDCTL & CH1_FILTER) != 0;
-                if (!p.audible[CHAN3])
+                _pokey[chip].audible[CHAN3] = !(
+                    (_pokey[chip].AUDC[CHAN3] & VOLUME_ONLY) != 0 ||
+                    (_pokey[chip].AUDC[CHAN3] & VOLUME_MASK) == 0 ||
+                    ((_pokey[chip].AUDC[CHAN3] & PURE) != 0 && new_val < (_pokey[chip].samplerate_24_8 >> 8))) ||
+                    (_pokey[chip].AUDCTL & CH1_FILTER) != 0;
+                if (!_pokey[chip].audible[CHAN3])
                 {
-                    p.output[CHAN3] = 1;
-                    p.counter[CHAN3] = 0x7fffffff;
+                    _pokey[chip].output[CHAN3] = 1;
+                    _pokey[chip].counter[CHAN3] = 0x7fffffff;
                     /* 50% duty cycle should result in half volume */
-                    p.volume[CHAN3] >>= 1;
+                    _pokey[chip].volume[CHAN3] >>= 1;
                 }
             }
 
             if ((ch_mask & (1 << CHAN4)) != 0)
             {
                 /* process channel 4 frequency */
-                if ((p.AUDCTL & CH34_JOINED) != 0)
+                if ((_pokey[chip].AUDCTL & CH34_JOINED) != 0)
                 {
-                    if ((p.AUDCTL & CH3_HICLK) != 0)
-                        new_val = p.AUDF[CHAN4] * 256 + p.AUDF[CHAN3] + DIVADD_HICLK_JOINED;
+                    if ((_pokey[chip].AUDCTL & CH3_HICLK) != 0)
+                        new_val = _pokey[chip].AUDF[CHAN4] * 256 + _pokey[chip].AUDF[CHAN3] + DIVADD_HICLK_JOINED;
                     else
-                        new_val = (int)((p.AUDF[CHAN4] * 256 + p.AUDF[CHAN3] + DIVADD_LOCLK) * p.clockmult);
+                        new_val = (int)((_pokey[chip].AUDF[CHAN4] * 256 + _pokey[chip].AUDF[CHAN3] + DIVADD_LOCLK) * _pokey[chip].clockmult);
                     //LOG_SOUND((errorlog, "POKEY #%d chan3+4 %d\n", chip, new_val));
                 }
                 else
                 {
-                    new_val = (int)((p.AUDF[CHAN4] + DIVADD_LOCLK) * p.clockmult);
+                    new_val = (int)((_pokey[chip].AUDF[CHAN4] + DIVADD_LOCLK) * _pokey[chip].clockmult);
                     //LOG_SOUND((errorlog, "POKEY #%d chan4 %d\n", chip, new_val));
                 }
 
-                p.volume[CHAN4] = (uint)((p.AUDC[CHAN4] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
-                p.divisor[CHAN4] = new_val;
-                if (new_val < p.counter[CHAN4])
-                    p.counter[CHAN4] = new_val;
-                if (p.interrupt_cb != null && p.timer[TIMER4] != null)
-                    Mame.Timer.timer_reset(p.timer[TIMER4], 1.0 * new_val / intf.baseclock);
-                p.audible[CHAN4] = !(
-                    (p.AUDC[CHAN4] & VOLUME_ONLY) != 0 ||
-                    (p.AUDC[CHAN4] & VOLUME_MASK) == 0 ||
-                    ((p.AUDC[CHAN4] & PURE) != 0 && new_val < (p.samplerate_24_8 >> 8))) ||
-                    (p.AUDCTL & CH2_FILTER) != 0;
-                if (!p.audible[CHAN4])
+                _pokey[chip].volume[CHAN4] = (uint)((_pokey[chip].AUDC[CHAN4] & VOLUME_MASK) * POKEY_DEFAULT_GAIN);
+                _pokey[chip].divisor[CHAN4] = new_val;
+                if (new_val < _pokey[chip].counter[CHAN4])
+                    _pokey[chip].counter[CHAN4] = new_val;
+                if (_pokey[chip].interrupt_cb != null && _pokey[chip].timer[TIMER4] != null)
+                    Mame.Timer.timer_reset(_pokey[chip].timer[TIMER4], 1.0 * new_val / intf.baseclock);
+                _pokey[chip].audible[CHAN4] = !(
+                    (_pokey[chip].AUDC[CHAN4] & VOLUME_ONLY) != 0 ||
+                    (_pokey[chip].AUDC[CHAN4] & VOLUME_MASK) == 0 ||
+                    ((_pokey[chip].AUDC[CHAN4] & PURE) != 0 && new_val < (_pokey[chip].samplerate_24_8 >> 8))) ||
+                    (_pokey[chip].AUDCTL & CH2_FILTER) != 0;
+                if (!_pokey[chip].audible[CHAN4])
                 {
-                    p.output[CHAN4] = 1;
-                    p.counter[CHAN4] = 0x7fffffff;
+                    _pokey[chip].output[CHAN4] = 1;
+                    _pokey[chip].counter[CHAN4] = 0x7fffffff;
                     /* 50% duty cycle should result in half volume */
-                    p.volume[CHAN4] >>= 1;
+                    _pokey[chip].volume[CHAN4] >>= 1;
                 }
             }
         }
@@ -1008,10 +1002,10 @@ namespace xnamame036.mame
         static void poly_init(byte[] poly, int size, int left, int right, int add)
         {
             int mask = (1 << size) - 1;
-            int i, x = 0;
+            int x = 0;
             int pi = 0;
             //LOG_POLY((errorlog,"poly %d\n", size));
-            for (i = 0; i < mask; i++)
+            for (int i = 0; i < mask; i++)
             {
                 poly[pi++] = (byte)(x & 1);
                 //		LOG_POLY((errorlog,"%05x: %d\n", x, x&1));
@@ -1023,10 +1017,10 @@ namespace xnamame036.mame
         static void rand_init(byte[] rng, int size, int left, int right, int add)
         {
             int mask = (1 << size) - 1;
-            int i, x = 0;
+            int x = 0;
             int ri = 0;
             //	LOG_RAND((errorlog,"rand %d\n", size));
-            for (i = 0; i < mask; i++)
+            for (int i = 0; i < mask; i++)
             {
                 rng[ri] = (byte)(x >> (size - 8));   /* use the upper 8 bits */
                 //LOG_RAND((errorlog, "%05x: %02x\n", x, *rng));

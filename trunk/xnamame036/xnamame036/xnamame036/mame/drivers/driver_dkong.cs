@@ -409,6 +409,7 @@ new Mame.DACinterface(
                 video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_SUPPORTS_DIRTY;
                 sound_attributes = 0;
                 sound.Add(new Mame.MachineSound(Mame.SOUND_DAC, dkong_dac_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_SAMPLES, dkong_samples_interface));
             }
             public override void init_machine()
             {

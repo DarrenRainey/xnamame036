@@ -29,7 +29,7 @@ namespace xnamame036.mame
         }
         public void writeinc(byte v) { buffer[ offset++] = v; }
         public byte readinc() { return buffer[offset++]; }
-
+        public byte readdec() { return buffer[offset--]; }
         public void write16inc(ushort value) { buffer[offset] = (byte)value; buffer[offset + 1] = (byte)(value >> 8); offset += 2; }
         
         public virtual byte this[uint index]

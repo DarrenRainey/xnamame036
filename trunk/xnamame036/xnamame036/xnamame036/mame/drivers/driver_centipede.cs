@@ -10,6 +10,7 @@ namespace xnamame036.mame.drivers
         static int flipscreen;
         static Mame.rectangle spritevisiblearea = new Mame.rectangle(1 * 8, 31 * 8 - 1, 0 * 8, 30 * 8 - 1);
         static int powerup_counter;
+        static int oldpos1, sign1, oldpos2, sign2;
 
         static void centiped_led_w(int offset, int data)
         {
@@ -29,7 +30,7 @@ namespace xnamame036.mame.drivers
             ay8910.AY8910_control_port_0_w(0, offset);
             return ay8910.AY8910_read_port_0_r(0);
         }
-        static int oldpos1, sign1;
+        
         static int centiped_IN0_r(int offset)
         {
             int newpos = Mame.readinputport(6);
@@ -42,7 +43,6 @@ namespace xnamame036.mame.drivers
             return ((Mame.readinputport(0) & 0x70) | (oldpos1 & 0x0f) | sign1);
         }
 
-        static int oldpos2, sign2;
         static int centiped_IN2_r(int offset)
         {
             int newpos = Mame.readinputport(2);
@@ -73,6 +73,43 @@ namespace xnamame036.mame.drivers
                 int start = Mame.Machine.drv.gfxdecodeinfo[1].color_codes_start;
 
                 setcolor(start + (offset - 12), data);
+            }
+        }
+        static void setcolor(int pen, int data)
+        {
+            int r = 0xff * ((~data >> 0) & 1);
+            int g = 0xff * ((~data >> 1) & 1);
+            int b = 0xff * ((~data >> 2) & 1);
+
+            if ((~data & 0x08) != 0)/* alternate = 1 */
+            {
+                /* when blue component is not 0, decrease it. When blue component is 0, */
+                /* decrease green component. */
+                if (b != 0) b = 0xc0;
+                else if (g != 0) g = 0xc0;
+            }
+
+            Mame.palette_change_color(pen, (byte)r, (byte)g, (byte)b);
+        }
+        static int centiped_interrupt()
+        {
+            int slice = 3 - Mame.cpu_getiloops();
+            int start = Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start;
+
+            /* set the palette for the previous screen slice to properly support */
+            /* midframe palette changes in test mode */
+            for (int offset = 4; offset < 8; offset++)
+                setcolor(4 * slice + start + (offset - 4), Mame.paletteram[offset]);
+
+            /* Centipede doesn't like to receive interrupts just after a reset. */
+            /* The only workaround I've found is to wait a little before starting */
+            /* to generate them. */
+            if (powerup_counter == 0)
+                return Mame.interrupt();
+            else
+            {
+                powerup_counter--;
+                return Mame.ignore_interrupt();
             }
         }
 
@@ -161,43 +198,6 @@ namespace xnamame036.mame.drivers
             new pot_delegate[] { null }
         );
         
-        static void setcolor(int pen, int data)
-        {
-            int r = 0xff * ((~data >> 0) & 1);
-            int g = 0xff * ((~data >> 1) & 1);
-            int b = 0xff * ((~data >> 2) & 1);
-
-            if ((~data & 0x08) != 0)/* alternate = 1 */
-            {
-                /* when blue component is not 0, decrease it. When blue component is 0, */
-                /* decrease green component. */
-                if (b != 0) b = 0xc0;
-                else if (g != 0) g = 0xc0;
-            }
-
-            Mame.palette_change_color(pen, (byte)r, (byte)g, (byte)b);
-        }
-        static int centiped_interrupt()
-        {
-            int slice = 3 - Mame.cpu_getiloops();
-            int start = Mame.Machine.drv.gfxdecodeinfo[0].color_codes_start;
-
-            /* set the palette for the previous screen slice to properly support */
-            /* midframe palette changes in test mode */
-            for (int offset = 4; offset < 8; offset++)
-                setcolor(4 * slice + start + (offset - 4), Mame.paletteram[offset]);
-
-            /* Centipede doesn't like to receive interrupts just after a reset. */
-            /* The only workaround I've found is to wait a little before starting */
-            /* to generate them. */
-            if (powerup_counter == 0)
-                return Mame.interrupt();
-            else
-            {
-                powerup_counter--;
-                return Mame.ignore_interrupt();
-            }
-        }
         class machine_driver_centipede : Mame.MachineDriver
         {
             public machine_driver_centipede()
@@ -252,7 +252,7 @@ namespace xnamame036.mame.drivers
 
                         Mame.drawgfx(bitmap, Mame.Machine.gfx[0],
                                (uint) ((Generic.videoram[offs] & 0x3f) + 0x40),
-                                (uint)(sy + 1) / 8,	/* support midframe palette changes in test mode */
+                                (uint)((sy + 1) / 8),	/* support midframe palette changes in test mode */
                                 flipscreen!=0, flipscreen!=0,
                                 8 * sx, 8 * sy,
                                 Mame.Machine.drv.visible_area, Mame.TRANSPARENCY_NONE, 0);

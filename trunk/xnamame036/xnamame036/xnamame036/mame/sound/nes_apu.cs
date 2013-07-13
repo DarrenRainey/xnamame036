@@ -176,6 +176,11 @@ namespace xnamame036.mame
         static uint[] sync_times2 = new uint[SYNCS_MAX2]; /* Samples per sync table */
         static int channel;
 
+        public nes_apu()
+        {
+            this.sound_num = Mame.SOUND_NES;
+            this.name = "NES";
+        }
         public override int chips_clock(Mame.MachineSound msound)
         {
             return 0;
@@ -238,16 +243,16 @@ namespace xnamame036.mame
         }
         public override void update()
         {
-  if (real_rate==0) return;
+            if (real_rate == 0) return;
 
-  for (int i = 0;i < chip_max;i++)
-  {
-    apu_update(i);
+            for (int i = 0; i < chip_max; i++)
+            {
+                apu_update(i);
 #if !USE_QUEUE
-    APU[i].buf_pos=0;
+                APU[i].buf_pos = 0;
 #endif
-    Mame.mixer_play_streamed_sample_16(channel+i,new _ShortPtr(APU[i].buffer),buffer_size,real_rate);
-  }
+                Mame.mixer_play_streamed_sample_16(channel + i, new _ShortPtr(APU[i].buffer), buffer_size, real_rate);
+            }
         }
         static byte apu_read(int chip, int address)
         {
@@ -281,7 +286,7 @@ namespace xnamame036.mame
             while (chan.env_phase < 0)
             {
                 chan.env_phase += env_delay;
-                if ((chan.regs[0] & 0x20)!=0)
+                if ((chan.regs[0] & 0x20) != 0)
                     chan.env_vol = (byte)((chan.env_vol + 1) & 15);
                 else if (chan.env_vol < 15)
                     chan.env_vol++;
@@ -295,14 +300,14 @@ namespace xnamame036.mame
                 return 0;
 
             /* freqsweeps */
-            if ((chan.regs[1] & 0x80) !=0&& (chan.regs[1] & 7)!=0)
+            if ((chan.regs[1] & 0x80) != 0 && (chan.regs[1] & 7) != 0)
             {
                 sweep_delay = (int)sync_times1[(chan.regs[1] >> 4) & 7];
                 chan.sweep_phase -= 2;
                 while (chan.sweep_phase < 0)
                 {
                     chan.sweep_phase += sweep_delay;
-                    if ((chan.regs[1] & 8)!=0)
+                    if ((chan.regs[1] & 8) != 0)
                         chan.freq -= chan.freq >> (chan.regs[1] & 7);
                     else
                         chan.freq += chan.freq >> (chan.regs[1] & 7);
@@ -321,13 +326,13 @@ namespace xnamame036.mame
                 chan.adder = (byte)((chan.adder + 1) & 0x0F);
             }
 
-            if ((chan.regs[0] & 0x10) !=0)/* fixed volume */
+            if ((chan.regs[0] & 0x10) != 0)/* fixed volume */
                 output = (sbyte)(chan.regs[0] & 0x0F);
             else
-                output =(sbyte)( 0x0F - chan.env_vol);
+                output = (sbyte)(0x0F - chan.env_vol);
 
             if (chan.adder < (duty_lut[chan.regs[0] >> 6]))
-                output =(sbyte) -output;
+                output = (sbyte)-output;
 
             return (sbyte)output;
         }
@@ -353,7 +358,7 @@ namespace xnamame036.mame
             while (chan.env_phase < 0)
             {
                 chan.env_phase += env_delay;
-                if ((chan.regs[0] & 0x20)!=0)
+                if ((chan.regs[0] & 0x20) != 0)
                     chan.env_vol = (byte)((chan.env_vol + 1) & 15);
                 else if (chan.env_vol < 15)
                     chan.env_vol++;
@@ -376,13 +381,13 @@ namespace xnamame036.mame
                 chan.phaseacc += freq;
 
                 chan.cur_pos++;
-                if (NOISE_SHORT == chan.cur_pos && (chan.regs[2] & 0x80)!=0)
+                if (NOISE_SHORT == chan.cur_pos && (chan.regs[2] & 0x80) != 0)
                     chan.cur_pos = 0;
                 else if (NOISE_LONG == chan.cur_pos)
                     chan.cur_pos = 0;
             }
 
-            if ((chan.regs[0] & 0x10)!=0) /* fixed volume */
+            if ((chan.regs[0] & 0x10) != 0) /* fixed volume */
                 outvol = (byte)(chan.regs[0] & 0x0F);
             else
                 outvol = (byte)(0x0F - chan.env_vol);
@@ -391,8 +396,8 @@ namespace xnamame036.mame
             if (output > outvol)
                 output = outvol;
 
-            if ((noise_lut[chan.cur_pos] & 0x80)!=0) /* make it negative */
-                output =(byte)((sbyte) -output);
+            if ((noise_lut[chan.cur_pos] & 0x80) != 0) /* make it negative */
+                output = (byte)((sbyte)-output);
 
             return (sbyte)output;
         }
@@ -410,7 +415,7 @@ namespace xnamame036.mame
 
             if (false == chan.counter_started && 0 == (chan.regs[0] & 0x80))
             {
-                if (chan.write_latency!=0)
+                if (chan.write_latency != 0)
                     chan.write_latency--;
                 if (0 == chan.write_latency)
                     chan.counter_started = true;
@@ -420,7 +425,7 @@ namespace xnamame036.mame
             {
                 if (chan.linear_length > 0)
                     chan.linear_length--;
-                if (chan.vbl_length !=0&& 0 == (chan.regs[0] & 0x80))
+                if (chan.vbl_length != 0 && 0 == (chan.regs[0] & 0x80))
                     chan.vbl_length--;
 
                 if (0 == chan.vbl_length)
@@ -441,10 +446,10 @@ namespace xnamame036.mame
                 chan.phaseacc += freq;
                 chan.adder = (byte)((chan.adder + 1) & 0x1F);
 
-                output =(sbyte)( (chan.adder & 7) << 1);
-                if ((chan.adder & 8)!=0)
+                output = (sbyte)((chan.adder & 7) << 1);
+                if ((chan.adder & 8) != 0)
                     output = (sbyte)(0x10 - output);
-                if ((chan.adder & 0x10)!=0)
+                if ((chan.adder & 0x10) != 0)
                     output = (sbyte)-output;
 
                 chan.output_vol = output;
@@ -456,7 +461,7 @@ namespace xnamame036.mame
         {
             chan.address = (uint)(0xC000 + (ushort)(chan.regs[2] << 6));
             chan.length = (uint)((ushort)(chan.regs[3] << 4) + 1);
-            chan.bits_left =(int)( chan.length << 3);
+            chan.bits_left = (int)(chan.length << 3);
             chan.irq_occurred = false;
         }
         sbyte apu_dpcm(dpcm_t chan)
@@ -480,11 +485,11 @@ namespace xnamame036.mame
 
                     if (0 == chan.length)
                     {
-                        if ((chan.regs[0] & 0x40)!=0)
+                        if ((chan.regs[0] & 0x40) != 0)
                             apu_dpcmreset(chan);
                         else
                         {
-                            if ((chan.regs[0] & 0x80)!=0) /* IRQ Generator */
+                            if ((chan.regs[0] & 0x80) != 0) /* IRQ Generator */
                             {
                                 chan.irq_occurred = true;
                                 Mame.cpu_n2a03.n2a03_irq();
@@ -502,7 +507,7 @@ namespace xnamame036.mame
                         chan.length--;
                     }
 
-                    if ((chan.cur_byte & (1 << bit_pos))!=0)
+                    if ((chan.cur_byte & (1 << bit_pos)) != 0)
                         //            chan.regs[1]++;
                         chan.vol++;
                     else
@@ -518,12 +523,12 @@ namespace xnamame036.mame
 
             return (sbyte)(chan.vol >> 1);
         }
-   static _ShortPtr buffer16 = null;
+        static _ShortPtr buffer16 = null;
         void apu_update(int chip)
-{
-   int accum;
-   int endp = Mame.sound_scalebufferpos(samps_per_sync);
-   int elapsed;
+        {
+            int accum;
+            int endp = Mame.sound_scalebufferpos(samps_per_sync);
+            int elapsed;
 
 #if USE_QUEUE
    queue_t *q=NULL;
@@ -531,17 +536,17 @@ namespace xnamame036.mame
    elapsed=0;
 #endif
 
-   cur= APU[chip];
-   buffer16  = new _ShortPtr(cur.buffer);
+            cur = APU[chip];
+            buffer16 = new _ShortPtr(cur.buffer);
 
 #if !USE_QUEUE
-   /* Recall last position updated and restore pointers */
-   elapsed = cur.buf_pos;
-   buffer16.offset += elapsed*2;
+            /* Recall last position updated and restore pointers */
+            elapsed = cur.buf_pos;
+            buffer16.offset += elapsed * 2;
 #endif
 
-   while (elapsed<endp)
-   {
+            while (elapsed < endp)
+            {
 #if USE_QUEUE
       while (apu_queuenotempty(chip) && (cur.queue[cur.head].pos==elapsed))
       {
@@ -549,27 +554,27 @@ namespace xnamame036.mame
          apu_regwrite(chip,q.reg,q.val);
       }
 #endif
-      elapsed++;
+                elapsed++;
 
-      accum = apu_square(cur.squ[0]);
-      accum += apu_square(cur.squ[1]);
-      accum += apu_triangle(cur.tri);
-      accum += apu_noise(cur.noi);
-      accum += apu_dpcm(cur.dpcm);
+                accum = apu_square(cur.squ[0]);
+                accum += apu_square(cur.squ[1]);
+                accum += apu_triangle(cur.tri);
+                accum += apu_noise(cur.noi);
+                accum += apu_dpcm(cur.dpcm);
 
-      /* 8-bit clamps */
-      if (accum > 127)
-         accum = 127;
-      else if (accum < -128)
-         accum = -128;
+                /* 8-bit clamps */
+                if (accum > 127)
+                    accum = 127;
+                else if (accum < -128)
+                    accum = -128;
 
-      buffer16.write16(0, (ushort)(accum << 8));
-      buffer16.offset += 2;
-   }
+                buffer16.write16(0, (ushort)(accum << 8));
+                buffer16.offset += 2;
+            }
 #if !USE_QUEUE
-   cur.buf_pos = endp;
+            cur.buf_pos = endp;
 #endif
-}
+        }
 
         static void create_vbltimes(ushort[] table, byte[] vbl, uint rate)
         {

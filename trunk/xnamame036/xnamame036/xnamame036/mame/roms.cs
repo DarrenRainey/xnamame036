@@ -30,6 +30,30 @@ namespace xnamame036.mame
         {
             rm.Add(new Mame.RomModule(name, (offset) | 1, (length) | ROMFLAG_ALTERNATE, crc));
         }
+        public static void ROM_RELOAD_EVEN(uint offset,uint length)
+        {
+            rm.Add(new Mame.RomModule("-1", (uint)((offset) & ~1), (length) | ROMFLAG_ALTERNATE, 0));
+        }
+        public static void ROM_RELOAD_ODD(uint offset, uint length)
+        {
+            rm.Add(new Mame.RomModule("-1", (uint)((offset) |1), (length) | ROMFLAG_ALTERNATE, 0));
+        }
+        public static void ROM_RELOAD_V20_EVEN(uint offset, uint length)
+        {
+#if WINDOWS 
+            ROM_RELOAD_EVEN(offset,length);
+#else
+            ROM_RELOAD_ODD(offset,length);
+#endif
+        }
+        public static void ROM_RELOAD_V20_ODD( uint offset, uint length)
+        {
+#if WINDOWS
+            ROM_RELOAD_ODD( offset, length);
+#else
+            ROM_RELOAD_EVEN(offset,length);
+#endif
+        }
         public static void ROM_LOAD_V20_EVEN(string name, uint offset, uint length, uint crc)
         {
 #if WINDOWS

@@ -122,9 +122,9 @@
     <Compile Include="mame\cpu\konami\cpu_konami.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mame\cpu\m6502\cpu_m6502.cs" />
-    <Compile Include="mame\cpu\m6502\m6502.cs" />
+    <Compile Include="mame\cpu\m6502\kn_m6502.cs" />
     <Compile Include="mame\cpu\m68000\cpu_m68000.cs" />
+    <Compile Include="mame\cpu\m68000\m68000.cs" />
     <Compile Include="mame\cpu\m68000\m68kcpu.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -133,8 +133,10 @@
     </Compile>
     <Compile Include="mame\cpu\m6805\cpu_m6805.cs" />
     <Compile Include="mame\cpu\m6809\cpu_m6809.cs" />
-    <Compile Include="mame\cpu\nec\nec.cs" />
-    <Compile Include="mame\cpu\nec\neccpu.cs" />
+    <Compile Include="mame\cpu\nec\cpu_nec.cs" />
+    <Compile Include="mame\cpu\nec\kn_nec.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="mame\cpu\z80\daa_table.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -144,7 +146,7 @@
     <Compile Include="mame\DataFile.cs" />
     <Compile Include="mame\DrawGfx.cs" />
     <Compile Include="mame\driver.cs" />
-    <Compile Include="mame\drivers\atetris.cs" />
+    <Compile Include="mame\drivers\driver_atetris.cs" />
     <Compile Include="mame\drivers\driver_blockout.cs" />
     <Compile Include="mame\drivers\driver_brkthru.cs" />
     <Compile Include="mame\drivers\driver_bublbobl.cs" />
@@ -214,6 +216,7 @@
     <Compile Include="mame\drivers\driver_irobot.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mame\drivers\driver_irobot_mathbox.cs" />
     <Compile Include="mame\drivers\driver_jackal.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -289,6 +292,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mame\drivers\ironhors.cs" />
+    <Compile Include="mame\drivers\driver_m72.cs" />
     <Compile Include="mame\drivers\pleiads.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -300,8 +304,9 @@
     <Compile Include="mame\drivers\driver_troangel.cs" />
     <Compile Include="mame\drivers\driver_tnzs.cs" />
     <Compile Include="mame\drivers\driver_vulgus.cs" />
-    <Compile Include="mame\drivers\skykid.cs" />
+    <Compile Include="mame\drivers\driver_skykid.cs" />
     <Compile Include="mame\drivers\starwars.cs" />
+    <Compile Include="mame\drivers\driver_system16.cs" />
     <Compile Include="mame\machine\8255ppi.cs" />
     <Compile Include="mame\machine\atari_vg.cs">
       <SubType>Code</SubType>
@@ -318,6 +323,7 @@
     <Compile Include="mame\sound\k005289.cs" />
     <Compile Include="mame\sound\m72.cs" />
     <Compile Include="mame\sound\nes_apu.cs" />
+    <Compile Include="mame\sound\segapcm.cs" />
     <Compile Include="mame\sound\vlm5030.cs" />
     <Compile Include="mame\sound\YMDELTAT.cs" />
     <Compile Include="mame\videohardware\cinemat.cs" />

@@ -115,7 +115,7 @@ namespace xnamame036.mame
                                              new cpu_m68705(),
                                              new cpu_hd63705(),
                                              new cpu_konami(),
-                                             new cpu_m6502_2(),
+                                             new cpu_m6502(),
                                              new cpu_ccpu(),
                                              new cpu_v30(),
                                              new cpu_m68000(),
