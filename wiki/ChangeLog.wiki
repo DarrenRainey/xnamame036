@@ -1,4 +1,7 @@
 #summary Changes done sorted descending on date
+===2013.07.13===
+Whow, almost a year. Some new drivers added, especially mspacman from giorgiosmrls
+
 
 ===2012.07.18===
 Bughunt successful. Added drivers for bublbobl (sound incorrect though),rygar,silkworm,gemini,gyrodine,block.
