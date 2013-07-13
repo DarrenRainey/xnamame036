@@ -75,7 +75,7 @@ namespace xnamame036.mame
             }
             public override void create_context(ref object reg)
             {
-                throw new NotImplementedException();
+                reg = new m68k_cpu_context();
             }
             public override int execute(int cycles)
             {
@@ -119,7 +119,8 @@ namespace xnamame036.mame
             }
             public override void set_context(object reg)
             {
-                throw new NotImplementedException();
+                if (reg != null)
+                    m68k_set_context(reg);
             }
             public override void set_irq_callback(irqcallback callback)
             {

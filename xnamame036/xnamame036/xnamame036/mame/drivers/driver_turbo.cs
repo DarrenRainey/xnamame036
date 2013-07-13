@@ -447,8 +447,7 @@ namespace xnamame036.mame.drivers
             public override int vh_start()
             {
                 uint[] sprite_expand = new uint[16];
-                uint[] dst;
-                ushort[] bdst;
+    
                 _BytePtr src;
 
                 /* allocate the expanded sprite data */
@@ -495,15 +494,15 @@ namespace xnamame036.mame.drivers
 
                 /* expand the sprite ROMs */
                 src = new _BytePtr(sprite_gfxdata);
-                dst = sprite_expanded_data;
+                //dst = sprite_expanded_data;
                 for (int i = 0; i < 8; i++)
                 {
                     int di = 0;
                     /* expand this bank */
                     for (int j = 0; j < sprite_bank_size; j++)
                     {
-                        dst[di++] = sprite_expand[src[0] >> 4];
-                        dst[di++] = sprite_expand[src[0] & 15];
+                        sprite_expanded_data[di++] = sprite_expand[src[0] >> 4];
+                        sprite_expanded_data[di++] = sprite_expand[src[0] & 15];
                         src.offset++;
                     }
 
@@ -514,7 +513,7 @@ namespace xnamame036.mame.drivers
 
                 /* expand the background ROMs */
                 src = new _BytePtr(back_gfxdata);
-                bdst = back_expanded_data;
+                //bdst = back_expanded_data;
                 int bdi = 0;
                 for (int i = 0; i < back_length / 2; i++, src.offset++)
                 {
@@ -527,15 +526,15 @@ namespace xnamame036.mame.drivers
                         newbits |= ((bits1 >> (j ^ 7)) & 1) << (j * 2);
                         newbits |= ((bits2 >> (j ^ 7)) & 1) << (j * 2 + 1);
                     }
-                    bdst[bdi++] = (ushort)newbits;
+                    back_expanded_data[bdi++] = (ushort)newbits;
                 }
 
                 /* expand the road palette */
                 src = road_palette;
-                bdst = road_expanded_palette;
+                //bdst = road_expanded_palette;
                 bdi = 0;
                 for (int i = 0; i < 0x20; i++, src.offset++)
-                    bdst[bdi++] = (ushort)(src[0] | (src[0x20] << 8));
+                    road_expanded_palette[bdi++] = (ushort)(src[0] | (src[0x20] << 8));
 
                 /* set the default drawing parameters */
                 startx = game_clip.min_x;
@@ -652,27 +651,61 @@ namespace xnamame036.mame.drivers
             }
             static void draw_road_sprites(uint[] dest, int scanline)
             {
-                int[] param_list = { 0, 8, 1, 9, 2, 10 };
+                //int[] param_list = { 0, 8, 1, 9, 2, 10 };
+                ///* loop over the road sprites */
+                //for (int i = 0; i < 6; i++)
+                //{
+                //    /* if the sprite intersects this scanline, draw it */
+                //    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
+                //        draw_one_sprite(sprite_params[param_list[i]], dest, 0, scanline);
+                //}
+                sprite_params_data[] param_list =
+	{
+		sprite_params[0], sprite_params[8],
+		sprite_params[1], sprite_params[9],
+		sprite_params[2], sprite_params[10]
+	};
 
-                /* loop over the road sprites */
-                for (int i = 0; i < 6; i++)
-                {
-                    /* if the sprite intersects this scanline, draw it */
-                    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
-                        draw_one_sprite(sprite_params[param_list[i]], dest, 0, scanline);
-                }
+	/* loop over the road sprites */
+	for (int i = 0; i < 6; i++)
+	{
+		sprite_params_data data = param_list[i];
+
+		/* if the sprite intersects this scanline, draw it */
+		if (scanline >= data.miny && scanline < data.maxy)
+			draw_one_sprite(data, dest, 0, scanline);
+	}
             }
             static void draw_offroad_sprites(uint[] dest, int road_column, int scanline)
             {
-                int[] param_list = { 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
+                //int[] param_list = { 3, 11, 4, 12, 5, 13, 6, 14, 7, 15 };
 
-                /* loop over the offroad sprites */
-                for (int i = 0; i < 10; i++)
-                {
-                    /* if the sprite intersects this scanline, draw it */
-                    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
-                        draw_one_sprite(sprite_params[param_list[i]], dest, road_column, scanline);
-                }
+                ///* loop over the offroad sprites */
+                //for (int i = 0; i < 10; i++)
+                //{
+                //    /* if the sprite intersects this scanline, draw it */
+                //    if (scanline >= sprite_params[param_list[i]].miny && scanline < sprite_params[param_list[i]].maxy)
+                //        draw_one_sprite(sprite_params[param_list[i]], dest, road_column, scanline);
+                //}
+                sprite_params_data[]param_list =
+	{
+		sprite_params[3], sprite_params[11],
+		sprite_params[4], sprite_params[12],
+		sprite_params[5], sprite_params[13],
+		sprite_params[6], sprite_params[14],
+		sprite_params[7], sprite_params[15]
+	};
+	int i;
+
+	/* loop over the offroad sprites */
+	for (i = 0; i < 10; i++)
+	{
+		sprite_params_data data = param_list[i];
+
+		/* if the sprite intersects this scanline, draw it */
+		if (scanline >= data.miny && scanline < data.maxy)
+			draw_one_sprite(data, dest, road_column, scanline);
+	}
             }
             static void draw_scores(Mame.osd_bitmap bitmap)
             {
@@ -740,12 +773,7 @@ namespace xnamame036.mame.drivers
 
                 /* perform the actual drawing */
                 draw_everything(bitmap,true);
-                
-                //if (bitmap.depth == 8)
-                //    draw_everything_core_8(bitmap);
-                //else
-                //    draw_everything_core_16(bitmap);
-
+                                
                 /* draw the LEDs for the scores */
                 draw_scores(bitmap);
 
@@ -800,153 +828,11 @@ namespace xnamame036.mame.drivers
 
                     /* clear the sprite buffer and draw the road sprites */
                     Array.Clear(sprite_buffer, 0, 32 * 8);
-                    //memset(sprite_buffer, 0, (32*8) * sizeof(UINT32));
-                    draw_road_sprites(sprite_buffer, y);
-
-                    /* loop over 8-pixel chunks */
-                    int destoffset = dx * 8;
-                    //dest.offset += dx * 8;
-                    int sdi = 8;// sprite_data += 8;
-                    for (x = 8; x < (32 * 8); x += 8)
-                    {
-                        int area5_buffer = road_gfxdata_base[0x4000 + (x >> 3)];
-                        byte back_data = Generic.videoram[(y / 8) * 32 + (x / 8) - 33];
-                        ushort backbits_buffer = back_expanded_data[(back_data << 3) | (y & 7)];
-
-                        //int destoff = 0;// dest.offset;
-                        /* loop over columns */
-                        for (i = 0; i < 8; i++, destoffset += dx)
-                        {
-                            uint sprite = sprite_data[sdi++];
-
-                            /* compute the X sum between opb and the current column; only the carry matters (p. 141) */
-                            int carry = (x + i + turbo_opb) >> 8;
-
-                            /* the carry selects which inputs to use (p. 141) */
-                            if (carry != 0)
-                            {
-                                sel = turbo_ipb;
-                                coch = turbo_ipc >> 4;
-                            }
-                            else
-                            {
-                                sel = turbo_ipa;
-                                coch = turbo_ipc & 15;
-                            }
-
-                            /* at this point we also compute area5 (p. 141) */
-                            area5 = (area5_buffer >> 3) & 0x10;
-                            area5_buffer <<= 1;
-
-                            /* now look up the rest of the road bits (p. 142) */
-                            area1 = road_gfxdata[0x0000 | ((sel & 15) << 8) | va];
-                            area1 = ((area1 + x + i) >> 8) & 0x01;
-                            area2 = road_gfxdata[0x1000 | ((sel & 15) << 8) | va];
-                            area2 = ((area2 + x + i) >> 7) & 0x02;
-                            area3 = road_gfxdata[0x2000 | ((sel >> 4) << 8) | va];
-                            area3 = ((area3 + x + i) >> 6) & 0x04;
-                            area4 = road_gfxdata[0x3000 | ((sel >> 4) << 8) | va];
-                            area4 = ((area4 + x + i) >> 5) & 0x08;
-
-                            /* compute the final area value and look it up in IC18/PR1115 (p. 144) */
-                            area = area5 | area4 | area3 | area2 | area1;
-                            babit = road_enable_collide[area] & 0x07;
-
-                            /* note: SLIPAR is 0 on the road surface only */
-                            /*		 ACCIAR is 0 on the road surface and the striped edges only */
-                            slipar_acciar = road_enable_collide[area] & 0x30;
-                            if (road == 0 && (slipar_acciar & 0x20) != 0)
-                            {
-                                road = 1;
-                                draw_offroad_sprites(sprite_buffer, x + i + 2, y);
-                            }
-
-                            /* perform collision detection here */
-                            turbo_collision |= collision_map[(uint)((sprite >> 24) & 7) | (uint)(slipar_acciar >> 1)];
-
-                            /* we only need to continue if we're actually drawing */
-                            if (true)
-                            {
-                                int bacol, red, grn, blu, priority, backbits, mx;
-
-                                /* also use the coch value to look up color info in IC13/PR1114 and IC21/PR1117 (p. 144) */
-                                bacol = road_palette_base[coch & 15];
-
-                                /* at this point, do the character lookup */
-                                backbits = backbits_buffer & 3;
-                                backbits_buffer >>= 2;
-                                backbits = back_palette[backbits | (back_data & 0xfc)];
-
-                                /* look up the sprite priority in IC11/PR1122 */
-                                priority = sprite_priority_base[sprite >> 25];
-
-                                /* use that to look up the overall priority in IC12/PR1123 */
-                                mx = overall_priority_base[(uint)((priority & 7) | ((sprite >> 21) & 8) | ((back_data >> 3) & 0x10) | ((backbits << 2) & 0x20) | (babit << 6))];
-
-                                /* the input colors consist of a mix of sprite, road and 1's & 0's */
-                                red = (int)(0x040000 | ((bacol & 0x001f) << 13) | ((backbits & 1) << 12) | ((sprite << 4) & 0x0ff0));
-                                grn = (int)(0x080000 | ((bacol & 0x03e0) << 9) | ((backbits & 2) << 12) | ((sprite >> 3) & 0x1fe0));
-                                blu = (int)(0x100000 | ((bacol & 0x7c00) << 5) | ((backbits & 4) << 12) | ((sprite >> 10) & 0x3fc0));
-
-                                /* we then go through a muxer; normally these values are inverted, but */
-                                /* we've already taken care of that when we generated the palette */
-                                red = (red >> mx) & 0x10;
-                                grn = (grn >> mx) & 0x20;
-                                blu = (blu >> mx) & 0x40;
-                                dest[destoffset] = (byte)colortable[mx | red | grn | blu];
-                                //dest.offset++;
-                            }
-                        }
-                    }
-                }
-            }
-            static void draw_everything_core_16(Mame.osd_bitmap bitmap)
-            {
-                throw new Exception();
-            }
-            static void draw_minimal(Mame.osd_bitmap bitmap)
-            {
-                _BytePtr _base = new _BytePtr(bitmap.line[starty], startx);
-                uint[] sprite_buffer = new uint[(32 * 8) + 256];
-
-                _BytePtr overall_priority_base = new _BytePtr(overall_priority, (turbo_fbpla & 8) << 6);
-                _BytePtr sprite_priority_base = new _BytePtr(sprite_priority, (turbo_fbpla & 7) << 7);
-                _BytePtr road_gfxdata_base = new _BytePtr(road_gfxdata, (turbo_opc << 5) & 0x7e0);
-                UShortSubArray road_palette_base = new UShortSubArray(road_expanded_palette, (turbo_fbcol & 1) << 4);
-
-                int dx = deltax, dy = deltay, rowsize = (bitmap.line[1].offset - bitmap.line[0].offset) * 8 / bitmap.depth;
-                UShortSubArray colortable;
-                int x, y, i;
-
-                /* expand the appropriate delta */
-                if ((Mame.Machine.orientation & Mame.ORIENTATION_SWAP_XY) != 0)
-                    dx *= rowsize;
-                else
-                    dy *= rowsize;
-
-                /* determine the color offset */
-                colortable = new UShortSubArray(Mame.Machine.pens, (turbo_fbcol & 6) << 6);
-
-                /* loop over rows */
-                for (y = 4; y < (28 * 8) - 4; y++, _base.offset += dy)
-                {
-                    int sel, coch, babit, slipar_acciar, area, area1, area2, area3, area4, area5, road = 0;
-                    uint[] sprite_data = sprite_buffer;
-                    _BytePtr dest = new _BytePtr(_base);
-
-                    /* compute the Y sum between opa and the current scanline (p. 141) */
-                    int va = (y + turbo_opa) & 0xff;
-
-                    /* the upper bit of OPC inverts the road */
-                    if ((turbo_opc & 0x80) == 0) va ^= 0xff;
-
-                    /* clear the sprite buffer and draw the road sprites */
-                    Array.Clear(sprite_buffer, 0, 32 * 8);// memset(sprite_buffer, 0, (32 * 8) * sizeof(UINT32));
                     draw_road_sprites(sprite_buffer, y);
 
                     /* loop over 8-pixel chunks */
                     dest.offset += dx * 8;
-                    int sdi = 8;// sprite_data += 8;
+                    int sdi = 8;
                     for (x = 8; x < (32 * 8); x += 8)
                     {
                         int area5_buffer = road_gfxdata_base[0x4000 + (x >> 3)];
@@ -1001,44 +887,43 @@ namespace xnamame036.mame.drivers
                             }
 
                             /* perform collision detection here */
-                            turbo_collision |= collision_map[(uint)(((sprite >> 24) & 7) | (slipar_acciar >> 1))];
+                            turbo_collision |= collision_map[(uint)((sprite >> 24) & 7) | (uint)(slipar_acciar >> 1)];
 
                             /* we only need to continue if we're actually drawing */
-                            if (false)
+                            if (fullDraw)
                             {
-                                //int bacol, red, grn, blu, priority, backbits, mx;
+                                int bacol, red, grn, blu, priority, backbits, mx;
 
-                                ///* also use the coch value to look up color info in IC13/PR1114 and IC21/PR1117 (p. 144) */
-                                //bacol = road_palette_base[coch & 15];
+                                /* also use the coch value to look up color info in IC13/PR1114 and IC21/PR1117 (p. 144) */
+                                bacol = road_palette_base[coch & 15];
 
-                                ///* at this point, do the character lookup */
-                                //backbits = backbits_buffer & 3;
-                                //backbits_buffer >>= 2;
-                                //backbits = back_palette[backbits | (back_data & 0xfc)];
+                                /* at this point, do the character lookup */
+                                backbits = backbits_buffer & 3;
+                                backbits_buffer >>= 2;
+                                backbits = back_palette[backbits | (back_data & 0xfc)];
 
-                                ///* look up the sprite priority in IC11/PR1122 */
-                                //priority = sprite_priority_base[sprite >> 25];
+                                /* look up the sprite priority in IC11/PR1122 */
+                                priority = sprite_priority_base[sprite >> 25];
 
-                                ///* use that to look up the overall priority in IC12/PR1123 */
-                                //mx = overall_priority_base[(priority & 7) | ((sprite >> 21) & 8) | ((back_data >> 3) & 0x10) | ((backbits << 2) & 0x20) | (babit << 6)];
+                                /* use that to look up the overall priority in IC12/PR1123 */
+                                mx = overall_priority_base[(uint)((priority & 7) | ((sprite >> 21) & 8) | ((back_data >> 3) & 0x10) | ((backbits << 2) & 0x20) | (babit << 6))];
 
-                                ///* the input colors consist of a mix of sprite, road and 1's & 0's */
-                                //red = 0x040000 | ((bacol & 0x001f) << 13) | ((backbits & 1) << 12) | ((sprite << 4) & 0x0ff0);
-                                //grn = 0x080000 | ((bacol & 0x03e0) << 9) | ((backbits & 2) << 12) | ((sprite >> 3) & 0x1fe0);
-                                //blu = 0x100000 | ((bacol & 0x7c00) << 5) | ((backbits & 4) << 12) | ((sprite >> 10) & 0x3fc0);
+                                /* the input colors consist of a mix of sprite, road and 1's & 0's */
+                                red = (int)(0x040000 | ((bacol & 0x001f) << 13) | ((backbits & 1) << 12) | ((sprite << 4) & 0x0ff0));
+                                grn = (int)(0x080000 | ((bacol & 0x03e0) << 9) | ((backbits & 2) << 12) | ((sprite >> 3) & 0x1fe0));
+                                blu = (int)(0x100000 | ((bacol & 0x7c00) << 5) | ((backbits & 4) << 12) | ((sprite >> 10) & 0x3fc0));
 
-                                ///* we then go through a muxer; normally these values are inverted, but */
-                                ///* we've already taken care of that when we generated the palette */
-                                //red = (red >> mx) & 0x10;
-                                //grn = (grn >> mx) & 0x20;
-                                //blu = (blu >> mx) & 0x40;
-                                //*dest = colortable[mx | red | grn | blu];
+                                /* we then go through a muxer; normally these values are inverted, but */
+                                /* we've already taken care of that when we generated the palette */
+                                red = (red >> mx) & 0x10;
+                                grn = (grn >> mx) & 0x20;
+                                blu = (blu >> mx) & 0x40;
+                                dest[0] = (byte)colortable[mx | red | grn | blu];
                             }
                         }
                     }
                 }
             }
-
         }
 
         public override void driver_init()
@@ -1121,7 +1006,7 @@ namespace xnamame036.mame.drivers
 		new byte[]{ 0x00,0x44,0x18,0x5c,0x14,0x50,0x0c,0x48,
 		  0x28,0x6c,0x30,0x74,0x3c,0x78,0x24,0x60,
 		  0x60,0x24,0x78,0x3c,0x74,0x30,0x6c,0x28,
-		  0x48,0x0c,0x50,0x14,0x5c,0x18,0x44,0x00 }, //0x00 --> 0x10 ?
+		  0x48,0x0c,0x50,0x14,0x5c,0x18,0x44,0x00 }, //0x00 -. 0x10 ?
 
 		/* Table 2 */
 		/* 0x1000-0x13ff */

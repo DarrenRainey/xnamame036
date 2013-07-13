@@ -112,9 +112,6 @@ namespace xnamame036.mame.drivers
                             case 0x80:
                                 {
                                     slapstic_nextbank = BANK0;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 0 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 break;
 
@@ -123,16 +120,10 @@ namespace xnamame036.mame.drivers
                                     (slapstic_75xxcnt == 2 && slapstic_last60xx == 0x90))
                                 {
                                     slapstic_nextbank = BANK1;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 1 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 else
                                 {
                                     slapstic_nextbank = BANK0;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 0 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 break;
 
@@ -140,16 +131,10 @@ namespace xnamame036.mame.drivers
                                 if (slapstic_last60xx == 0xb0)
                                 {
                                     slapstic_nextbank = BANK1;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 1 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 else
                                 {
                                     slapstic_nextbank = BANK0;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 0 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 break;
 
@@ -158,16 +143,10 @@ namespace xnamame036.mame.drivers
                                     slapstic_last75xx == 0x53)
                                 {
                                     slapstic_nextbank = BANK1;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 1 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 else
                                 {
                                     slapstic_nextbank = BANK0;
-#if LOG_SLAPSTICK
-                    if (errorlog) fprintf(errorlog, "Selecting Bank 0 at %04X\n", cpu_get_pc());
-#endif
                                 }
                                 break;
 
@@ -187,7 +166,6 @@ namespace xnamame036.mame.drivers
 
             return Mame.memory_region(Mame.REGION_CPU1)[slapstic_bank + offset];
         }
-
 
         class machine_driver_atetris : Mame.MachineDriver
         {
@@ -284,8 +262,6 @@ namespace xnamame036.mame.drivers
             // Move the lower 16k to 0x10000
             Buffer.BlockCopy(RAM.buffer, RAM.offset, RAM.buffer, RAM.offset + 0x10000, 0x4000);
             Array.Clear(RAM.buffer, RAM.offset, 0x4000);
-            //memcpy(&RAM[0x10000], &RAM[0x00000], 0x4000);
-            //memset(&RAM[0x00000], 0, 0x4000);
         }
         Mame.RomModule[] rom_atetris()
         {

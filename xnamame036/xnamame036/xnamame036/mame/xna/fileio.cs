@@ -181,7 +181,7 @@ namespace xnamame036.mame
 
                     for (indx = 0; indx < pathc && !found; ++indx)
                     {
-                        string dir_name = "c:\\xnamame\\"+pathv[indx];
+                        string dir_name = "d:\\xnamame\\"+pathv[indx];
 
                         if (!found)
                         {

@@ -7,10 +7,15 @@ namespace xnamame036.mame
 {
     partial class Mame
     {
-        class SpriteManager
+        public class SpriteManager
         {
-            enum SpriteType { SPRITE_TYPE_STACK, SPRITE_TYPE_UNPACK, SPRITE_TYPE_ZOOM };
-            class sprite
+            public const byte SPRITE_LIST_BACK_TO_FRONT = 0x0;
+            public const byte SPRITE_LIST_FRONT_TO_BACK = 0x1;
+            public const byte SPRITE_LIST_RAW_DATA = 0x2;
+            public const byte SPRITE_LIST_FLIPX = 0x4;
+            public const byte SPRITE_LIST_FLIPY = 0x8;
+            public enum SpriteType { SPRITE_TYPE_STACK, SPRITE_TYPE_UNPACK, SPRITE_TYPE_ZOOM };
+            public class sprite
             {
                 public int priority, flags;
 
@@ -33,7 +38,7 @@ namespace xnamame036.mame
                 public int mask_offset;
             }
 
-            class sprite_list
+            public class sprite_list
             {
                 public SpriteType sprite_type;
                 public int num_sprites;
@@ -42,7 +47,7 @@ namespace xnamame036.mame
                 public int transparent_pen;
                 public int special_pen;
 
-                public sprite sprite;
+                public sprite[] sprite;
                 public sprite_list next; /* resource tracking */
             }
 
@@ -54,8 +59,8 @@ namespace xnamame036.mame
             static sprite_list first_sprite_list = null; /* used for resource tracking */
             static int FlickeringInvisible;
 
-            static _ShortPtr shade_table;
-            static _BytePtr mask_buffer=null;
+            static ushort[] shade_table;
+            static _BytePtr mask_buffer = null;
             static int mask_buffer_size = 0, mask_buffer_used = 0;
 
             public static void sprite_init()
@@ -116,7 +121,27 @@ namespace xnamame036.mame
                 }
                 first_sprite_list = null;
             }
-            
+            public static sprite_list sprite_list_create(int num_sprites, int flags)
+            {
+                sprite[] sprite = new SpriteManager.sprite[num_sprites];
+                sprite_list sprite_list = new sprite_list();
+
+                sprite_list.num_sprites = num_sprites;
+                sprite_list.special_pen = -1;
+                sprite_list.sprite = sprite;
+                sprite_list.flags = flags;
+
+                /* resource tracking */
+                sprite_list.next = first_sprite_list;
+                first_sprite_list = sprite_list;
+
+                return sprite_list; /* warning: no error checking! */
+            }
+            public static void sprite_set_shade_table(ushort[]  table)
+            {
+                shade_table = table;
+            }
+
 
         }
     }

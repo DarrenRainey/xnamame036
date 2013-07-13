@@ -265,11 +265,11 @@ namespace xnamame036.mame.drivers
         {
             public machine_driver_raiden()
             {
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_V30, 19000000, readmem, writemem, null, null, raiden_interrupt, 1));
-                cpu.Add(new Mame.MachineCPU(Mame.CPU_V30, 19000000, sub_readmem, sub_writemem, null, null, raiden_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_V30, 20000000, readmem, writemem, null, null, raiden_interrupt, 1));
+                cpu.Add(new Mame.MachineCPU(Mame.CPU_V30, 20000000, sub_readmem, sub_writemem, null, null, raiden_interrupt, 1));
                 cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80 | Mame.CPU_AUDIO_CPU, 14318180 / 4, sound_readmem, sound_writemem, null, null, Mame.ignore_interrupt, 0));
                 frames_per_second = 60;
-                vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION * 2;
+                vblank_duration = Mame.DEFAULT_REAL_60HZ_VBLANK_DURATION * 2;
                 cpu_slices_per_frame = 70;
                 screen_width = 32 * 8;
                 screen_height = 32 * 8;
@@ -280,7 +280,7 @@ namespace xnamame036.mame.drivers
                 video_attributes = Mame.VIDEO_TYPE_RASTER | Mame.VIDEO_MODIFIES_PALETTE | Mame.VIDEO_BUFFERS_SPRITERAM;
                 sound_attributes = 0;
                 sound.Add(new Mame.MachineSound(Mame.SOUND_YM3812, ym3812_interface));
-                //sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295,okim6295_interface));
+                sound.Add(new Mame.MachineSound(Mame.SOUND_OKIM6295,okim6295_interface));
             }
             public override void init_machine()
             {

@@ -13,7 +13,7 @@ namespace xnamame036.mame.drivers
             cpu.Add(new Mame.MachineCPU(Mame.CPU_Z80, 18432000 / 4, driver_kyugo.srdmissn_sub_readmem, driver_kyugo.srdmissn_sub_writemem, driver_kyugo.srdmissn_sub_readport, driver_kyugo.srdmissn_sub_writeport, Mame.interrupt, 4));
 
             frames_per_second = 60;
-            vblank_duration = Mame.DEFAULT_60HZ_VBLANK_DURATION;
+            vblank_duration = Mame.DEFAULT_REAL_60HZ_VBLANK_DURATION;
             cpu_slices_per_frame = 100;
             screen_width = 64 * 8;
             screen_height = 32 * 8;

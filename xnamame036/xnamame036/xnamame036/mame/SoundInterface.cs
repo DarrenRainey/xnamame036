@@ -12,6 +12,7 @@ namespace xnamame036.mame
             public int sound_type;
             public object sound_interface;
             public MachineSound(int sound_type, object sound_interface) { this.sound_type = sound_type; this.sound_interface = sound_interface; }
+
         }
         static Timer.timer_entry sound_update_timer;
         double snd_refresh_period;
@@ -55,7 +56,6 @@ namespace xnamame036.mame
             }
         }
 
-        const byte SOUND_COUNT = 16;
         public const byte SOUND_NAMCO = 1;
         public const byte SOUND_SAMPLES = 2;
         public const byte SOUND_AY8910 = 3;
@@ -76,8 +76,8 @@ namespace xnamame036.mame
         public const byte SOUND_K005289 = 18;
         public const byte SOUND_VLM5030 = 19;
         public const byte SOUND_TMS5220 = 20;
-
-        public const byte SOUND_SEGAPCM = 99;
+        public const byte SOUND_SEGAPCM = 21;
+        const byte SOUND_COUNT = SOUND_SEGAPCM+1;
 
         public delegate int CustomSoundStart(MachineSound msound);
         public delegate void CustomSoundHandler();
@@ -138,7 +138,8 @@ namespace xnamame036.mame
                                       new YM3526(),
                                       new k005289(),
                                       new vlm5030(),
-                                      new tms5220()
+                                      new tms5220(),
+                                      new segapcm(),
                                   };
         int sound_start()
         {

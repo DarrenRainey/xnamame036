@@ -173,7 +173,6 @@ namespace xnamame036.mame.drivers
         {
             return drgnbstr_videoram[offset];
         }
-
         static void skykid_videoram_w(int offset, int data)
         {
             if (drgnbstr_videoram[offset] != data)
@@ -182,9 +181,6 @@ namespace xnamame036.mame.drivers
                 Mame.tilemap_mark_tile_dirty(background, (offset & 0x7ff) % 64, (offset & 0x7ff) / 64);
             }
         }
-
-
-
         static int skykid_interrupt()
         {
             if (irq_disabled == 0)
@@ -192,20 +188,16 @@ namespace xnamame036.mame.drivers
             else
                 return Mame.ignore_interrupt();
         }
-
         static void skykid_irq_ctrl_w(int offset, int data)
         {
             irq_disabled = offset;
         }
-
         static void inputport_select_w(int offset, int data)
         {
             if ((data & 0xf0) == 0x60)
                 inputport_selected = data & 0x07;
         }
-
         static int reverse_bitstrm(int data) { return ((data & 0x01) << 4) | ((data & 0x02) << 2) | (data & 0x04) | ((data & 0x08) >> 2) | ((data & 0x10) >> 4); }
-
         static int inputport_r(int offset)
         {
             int data = 0;
@@ -233,13 +225,11 @@ namespace xnamame036.mame.drivers
 
             return data;
         }
-
         static void skykid_lamps_w(int offset, int data)
         {
             Mame.osd_led_w(0, (data & 0x08) >> 3);
             Mame.osd_led_w(1, (data & 0x10) >> 4);
         }
-
         static void skykid_halt_mcu_w(int offset, int data)
         {
             if (offset == 0)
@@ -252,7 +242,6 @@ namespace xnamame036.mame.drivers
                 Mame.cpu_set_halt_line(1, Mame.ASSERT_LINE);
             }
         }
-
         static int skykid_sharedram_r(int offset)
         {
             return sharedram[offset];
@@ -276,7 +265,6 @@ namespace xnamame036.mame.drivers
             else
                 Mame.tilemap_set_scrollx(background, 0, (189 - (offset ^ 1)) & 0x1ff);
         }
-
         static void skykid_scroll_y_w(int offset, int data)
         {
             if (game != 0)

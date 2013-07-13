@@ -44,7 +44,7 @@ namespace xnamame036.mame
             //memcpy(buffered_spriteram, spriteram, spriteram_size);
         }
 
-        public static void videoram_w(int offset, int data)
+         public static void videoram_w(int offset, int data)
         {
             if (videoram[offset] != data)
             {

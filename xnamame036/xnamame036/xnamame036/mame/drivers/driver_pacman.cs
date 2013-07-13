@@ -196,7 +196,7 @@ namespace xnamame036.mame.drivers
             return Mame.interrupt();
         }
         static Namco_interface namco_interface = new Namco_interface(3072000 / 32, 3, 100, Mame.REGION_SOUND1);
-        class machine_driver_pacman : Mame.MachineDriver
+        public class machine_driver_pacman : Mame.MachineDriver
         {
             public machine_driver_pacman()
             {
@@ -261,6 +261,108 @@ namespace xnamame036.mame.drivers
         public override void driver_init()
         {
             //none
+        }
+    }
+    public class driver_mspacman : driver_pacman
+    {
+        Mame.RomModule[] rom_mspacman()
+        {
+            ROM_START("mspacman");
+            ROM_REGION(0x10000, Mame.REGION_CPU1);	/* 64k for code */
+            ROM_LOAD("boot1", 0x0000, 0x1000, 0xd16b31b7);
+            ROM_LOAD("boot2", 0x1000, 0x1000, 0x0d32de5e);
+            ROM_LOAD("boot3", 0x2000, 0x1000, 0x1821ee0b);
+            ROM_LOAD("boot4", 0x3000, 0x1000, 0x165a9dd8);
+            ROM_LOAD("boot5", 0x8000, 0x1000, 0x8c3e6de6);
+            ROM_LOAD("boot6", 0x9000, 0x1000, 0x368cb165);
+
+            ROM_REGION(0x1000, Mame.REGION_GFX1 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("5e", 0x0000, 0x1000, 0x5c281d01);
+
+            ROM_REGION(0x1000, Mame.REGION_GFX2 | Mame.REGIONFLAG_DISPOSE);
+            ROM_LOAD("5f", 0x0000, 0x1000, 0x615af909);
+
+            ROM_REGION(0x0120, Mame.REGION_PROMS);
+            ROM_LOAD("82s123.7f", 0x0000, 0x0020, 0x2fc650bd);
+            ROM_LOAD("82s126.4a", 0x0020, 0x0100, 0x3eb3a8e4);
+
+            ROM_REGION(0x0200, Mame.REGION_SOUND1);/* sound PROMs */
+            ROM_LOAD("82s126.1m", 0x0000, 0x0100, 0xa9cc86bf);
+            ROM_LOAD("82s126.3m", 0x0100, 0x0100, 0x77245b66);	/* timing - not used */
+            return ROM_END;
+        }
+        /* Ms. Pac-Man input ports are identical to Pac-Man, the only difference is */
+        /* the missing Ghost Names dip switch. */
+        Mame.InputPortTiny[] input_ports_mspacman()
+        {
+            INPUT_PORTS_START("mspacman");
+            PORT_START("IN0");
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_UP | IPF_4WAY);
+            PORT_BIT(0x02, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_LEFT | IPF_4WAY);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_RIGHT | IPF_4WAY);
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_DOWN | IPF_4WAY);
+            PORT_BITX(0x10, 0x10, (uint)inptports.IPT_DIPSWITCH_NAME | IPF_CHEAT, "Rack Test", (ushort)Mame.InputCodes.KEYCODE_F1, IP_JOY_NONE);
+            PORT_DIPSETTING(0x10, ipdn_defaultstrings["Off"]);
+            PORT_DIPSETTING(0x00, ipdn_defaultstrings["On"]);
+            PORT_BIT(0x20, IP_ACTIVE_LOW, (int)inptports.IPT_COIN1);
+            PORT_BIT(0x40, IP_ACTIVE_LOW, (int)inptports.IPT_COIN2);
+            PORT_BIT(0x80, IP_ACTIVE_LOW, (int)inptports.IPT_COIN3);
+
+            PORT_START("IN1");
+            PORT_BIT(0x01, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_UP | IPF_4WAY | IPF_COCKTAIL);
+            PORT_BIT(0x02, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_LEFT | IPF_4WAY | IPF_COCKTAIL);
+            PORT_BIT(0x04, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_RIGHT | IPF_4WAY | IPF_COCKTAIL);
+            PORT_BIT(0x08, IP_ACTIVE_LOW, (int)inptports.IPT_JOYSTICK_DOWN | IPF_4WAY | IPF_COCKTAIL);
+            PORT_SERVICE(0x10, IP_ACTIVE_LOW);
+            PORT_BIT(0x20, IP_ACTIVE_LOW, (int)inptports.IPT_START1);
+            PORT_BIT(0x40, IP_ACTIVE_LOW, (int)inptports.IPT_START2);
+            PORT_DIPNAME(0x80, 0x80, ipdn_defaultstrings["Cabinet"]);
+            PORT_DIPSETTING(0x80, ipdn_defaultstrings["Upright"]);
+            PORT_DIPSETTING(0x00, ipdn_defaultstrings["Cocktail"]);
+
+            PORT_START("DSW 1");
+            PORT_DIPNAME(0x03, 0x01, ipdn_defaultstrings["Coinage"]);
+            PORT_DIPSETTING(0x03, ipdn_defaultstrings["2C_1C"]);
+            PORT_DIPSETTING(0x01, ipdn_defaultstrings["1C_1C"]);
+            PORT_DIPSETTING(0x02, ipdn_defaultstrings["1C_2C"]);
+            PORT_DIPSETTING(0x00, ipdn_defaultstrings["Free Play"]);
+            PORT_DIPNAME(0x0c, 0x08, ipdn_defaultstrings["Lives"]);
+            PORT_DIPSETTING(0x00, "1");
+            PORT_DIPSETTING(0x04, "2");
+            PORT_DIPSETTING(0x08, "3");
+            PORT_DIPSETTING(0x0c, "5");
+            PORT_DIPNAME(0x30, 0x00, ipdn_defaultstrings["Bonus Life"]);
+            PORT_DIPSETTING(0x00, "10000");
+            PORT_DIPSETTING(0x10, "15000");
+            PORT_DIPSETTING(0x20, "20000");
+            PORT_DIPSETTING(0x30, "None");
+            PORT_DIPNAME(0x40, 0x40, ipdn_defaultstrings["Difficulty"]);
+            PORT_DIPSETTING(0x40, "Normal");
+            PORT_DIPSETTING(0x00, "Hard");
+            PORT_BIT(0x80, IP_ACTIVE_LOW, IPT_UNUSED);
+
+            PORT_START("DSW 2");
+            PORT_BIT(0xff, IP_ACTIVE_HIGH, IPT_UNUSED);
+
+            PORT_START("FAKE");
+            /* This fake input port is used to get the status of the fire button */
+            /* and activate the speedup cheat if it is. */
+            PORT_BITX(0x01, 0x00, (int)inptports.IPT_DIPSWITCH_NAME | IPF_CHEAT, "Speedup Cheat", (ushort)Mame.InputCodes.KEYCODE_LCONTROL, (ushort)Mame.InputCodes.JOYCODE_1_BUTTON1);
+            PORT_DIPSETTING(0x00, ipdn_defaultstrings["Off"]);
+            PORT_DIPSETTING(0x01, ipdn_defaultstrings["On"]);
+            return INPUT_PORTS_END;
+        }
+        public driver_mspacman()
+        {
+            drv = new machine_driver_pacman();
+            year = "1981";
+            name = "mspacman";
+            description = "Ms. Pac-Man";
+            manufacturer = "bootleg";
+            flags = Mame.ROT90;
+            input_ports = input_ports_mspacman();
+            rom = rom_mspacman();
+            drv.HasNVRAMhandler = false;
         }
     }
 }
