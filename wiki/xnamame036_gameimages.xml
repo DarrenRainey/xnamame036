@@ -114,7 +114,7 @@
          $.each(menus, function (i, menu) {
              var row = '<tr><td>' + titles[i] + '</td><td>';
 
-             row += '<img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_images/xnamame036_' + menu + '.png" alt="' + menu + '" id="xmi_' + menu + '"/>';
+             row += '<img src="//xnamame036.googlecode.com/svn/wiki/xnamame036_images/xnamame036_' + menu + '.png" alt="' + menu + '" id="xmi_' + menu + '"/>';
 
              row += '</td></tr>';
              rows.push(row);
