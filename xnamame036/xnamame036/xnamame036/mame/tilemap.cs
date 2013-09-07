@@ -191,15 +191,25 @@ namespace xnamame036.mame
         }
         static void dispose_bg_mask(tilemap tilemap)
         {
-            throw new Exception();
+            if ((tilemap.type & TILEMAP_SPLIT) != 0)
+            {
+                osd_free_bitmap(tilemap.bg_mask);
+                tilemap.bg_mask_data_row = null;
+                tilemap.bg_mask_data = null;
+            }
         }
         static void dispose_fg_mask(tilemap tilemap)
         {
-            throw new Exception();
+            tilemap.fg_mask_data_row = null;
+            tilemap.fg_mask_data = null;
+            osd_free_bitmap(tilemap.fg_mask);
         }
         static void dispose_pixmap(tilemap tilemap)
         {
-            throw new Exception();
+            osd_free_bitmap(tilemap.pixmap);
+            tilemap.colscroll = null;
+            tilemap.rowscroll = null;
+
         }
         static void dispose_tile_info(tilemap tilemap)
         {
@@ -504,7 +514,7 @@ namespace xnamame036.mame
                 y2 -= ypos;
                 source_baseaddr = new _BytePtr(blit.pixmap.line[y1]);
                 c1 = x1 / 8; /* round down */
-                c2 = (x2 + 8 - 1) / 8; /* round up */ 
+                c2 = (x2 + 8 - 1) / 8; /* round up */
                 y = y1;
                 y_next = 8 * (y1 / 8) + 8;
                 if (y_next > y2)
@@ -521,7 +531,7 @@ namespace xnamame036.mame
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
                     int x_start = x1;
-                    int x_end; 
+                    int x_end;
                     int column;
                     for (column = c1; column <= c2; column++)
                     {
@@ -554,7 +564,7 @@ namespace xnamame036.mame
                     }
                     if (y_next == y2)
                         break; /* we are done! */
-                    dest_baseaddr =new _BytePtr( dest_next);
+                    dest_baseaddr = new _BytePtr(dest_next);
                     source_baseaddr = new _BytePtr(source_next);
                     y = y_next;
                     y_next += 8;
@@ -736,7 +746,7 @@ namespace xnamame036.mame
         }
         static void draw_opaque16x16x8BPP(int xpos, int ypos)
         {
-            int x1 = xpos; 
+            int x1 = xpos;
             int y1 = ypos;
             int x2 = xpos + blit.source_width;
             int y2 = ypos + blit.source_height; /* clip source coordinates */
@@ -775,7 +785,7 @@ namespace xnamame036.mame
                     byte tile_type;
                     byte prev_tile_type = TILE_TRANSPARENT;
                     int x_start = x1;
-                    int x_end; int column; 
+                    int x_end; int column;
                     for (column = c1; column <= c2; column++)
                     {
                         if (column == c2 || priority_data[column] != priority)
@@ -807,7 +817,7 @@ namespace xnamame036.mame
                         prev_tile_type = tile_type;
                     }
                     if (y_next == y2) break; /* we are done! */
-                    dest_baseaddr =new _BytePtr( dest_next);
+                    dest_baseaddr = new _BytePtr(dest_next);
                     source_baseaddr = new _BytePtr(source_next);
                     y = y_next;
                     y_next += 16;
