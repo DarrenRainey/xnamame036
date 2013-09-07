@@ -1,4 +1,7 @@
 #summary Changes done sorted descending on date
+===2013.09.07===
+Added gberet driver from george@moralis.gr.
+
 ===2013.07.13===
 Whow, almost a year. Some new drivers added, especially mspacman from giorgiosmrls
 
