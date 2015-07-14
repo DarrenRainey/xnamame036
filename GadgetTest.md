@@ -1,0 +1,1 @@
+&lt;wiki:gadget url="http://xnamame036.googlecode.com/svn/wiki/k.xml" width="600" height="2048"/&gt;

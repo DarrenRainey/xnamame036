@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?> <Module>  <ModulePrefs />   
+
+<Content type="html">   
+
+<![CDATA[
+<script  type="text/javascript"
+        src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+    </script>
+ <script type="text/javascript">
+     $(document).ready(function () {
+        var titles = ['PuckMan (Japan set 1)<br>1980 Namco',
+        'Space Invaders<br>1978 Midway',
+         '1942 (set 1)<br>1984 Capcom', 
+         '1943 - The Battle of Midway (US)<br>1987 Capcom',
+         'Zaxxon (set 1)<br>1982 Sega',
+         'Super Zaxxon<br>1982 Sega',
+         'Galaga<br>1981 Namco',
+         'Dig Dug (set 1)<br>1982 Namco',
+         'Donkey Kong (US)<br>1981 Nintendo of America',
+         'Donkey Kong Junior (US)<br>1982 Nintendo of America',
+         'Donkey Kong 3(US)<br>1983 Nintendo of America',
+         'Mario Bros. (US)<br>1983 Nintendo of America',
+         'Bomb Jack (set 1)<br>1984 Tehkan',
+         'Amidar<br>1981 Konami',
+         'Phoenix<br>1980 Amstar',
+         'Loco-Motion<br>1982 Konami (Centuri license)',
+         "Time Pilot '84 (set 1)<br>1984 Konami",
+         'Phozon<br>1983 Namco',
+         'Mappy (US)<br>1983 Namco',
+         'Gun Fight<br>1975 Midway',
+         'Boot Hill<br>1977 Midway',
+         'Arkanoid (World)<br>1986 Taito Corporation Japan',
+         'Frogger<br>1981 Konami',
+         'Gun.Smoke (World)<br>1985 Capcom',
+         'Qix (set 1)<br>1981 Taito America Corporation',
+         'Moon Patrol (Williams)<br>1982 Namco',
+         'Pinball Action (set 1)<br>1985 Tehkan',
+         'City Connection (set 1)<br>1985 Jaleco',
+         'Jackal (World)<br>1986 Konami',
+         'Speed Ball<br>1987 Tecfri',
+         'Gyruss (Konami)<br>1983 Konami',
+         "Roc'n Rope<br>1983 Konami",
+         'Galaxian (Namco)<br>1979 Namco',
+         'Lady Bug<br>1981 Universal',
+         'Lode Runner (set 1)<br>1984 Irem (licensed from Broderbund)',
+         'Lode Runner II - The Bungeling Strikes Back<br>1984 Irem (licensed from Broderbund)',
+         'Lode Runner  III - Majin No Fukkatsu<br>1985 Irem (licensed from Broderbund)',
+         'Lode Runner IV - Teikoku Karano Dasshutsu<br>1986 Irem (licensed from Broderbund)',
+'Galaga 3 (set 1)<br>1984 Namco',
+'Gaplus (set 1)<br>1984 Namco',
+'Cobra-Command (World revision 5)<br>1988 Data Ease Corporation',
+'Double Dragon (bootleg)<br>1987 bootleg',
+'Dougle Dragon II - The Revenge<br>1988 Tecnos',
+'Vigilante (World)<br>1988 Irem',
+'Pang (World)<br>1989 Mitchell',
+'Super Pang (World)<br>1990 Mitchell',
+"Ghosts'n Goblins (World)<br>1985 Capcom",
+'Diamond Run<br>1989 Capcom'
+
+
+
+
+];
+         
+         var menus = ['pacman', 'invaders', '1942', '1943',
+                  'zaxxon',
+         'szaxxon',
+         'galaga',
+         'digdug',
+         'dkong',
+         'dkongjr',
+         'dkong3',
+         'mario',
+         'bombjack',
+         'amidar',
+         'phoenix',
+         'locomtn',
+         'tp84',
+         'phozon',
+         'mappy',
+         'gunfight',
+         'boothill',
+         'arkanoid',
+         'frogger',
+         'gunsmoke',
+         'qix',
+         'mpatrol',
+         'pbaction',
+         'citycon',
+         'jackal',
+         'speedbal',
+         'gyruss',
+         'rocnrope',
+         'galaxians',
+         'ladybug',
+         'ldrun',
+         'ldrun2',
+         'ldrun3',
+         'ldrun4',
+         'galaga3',
+         'gaplus',
+         'cobracom',
+         'ddragonb',
+         'ddragon2',
+         'vigilant',
+         'pang',
+         'spang',
+         'gng',
+         'diamond'
+
+];
+
+         var rows = [];
+         $.each(menus, function (i, menu) {
+             var row = '<tr><td>' + titles[i] + '</td><td>';
+
+             row += '<img src="http://xnamame036.googlecode.com/svn/wiki/xnamame036_images/xnamame036_' + menu + '.png" alt="' + menu + '" id="xmi_' + menu + '"/>';
+
+             row += '</td></tr>';
+             rows.push(row);
+         });
+         var t = '<table>' + rows.join('') + '</table>';
+         $('<table></table>').append(rows.join('')).appendTo('#menuOrder'); 
+         $("img[id^='xmi_']").each(function () {
+             $(this).width(200);
+             $('#' + this.id).mouseover(function () {
+                 $(this).css("cursor", "pointer");
+             });
+             $(this).toggle(function ()
+             { $(this).animate({ width: "500px" }, 'slow'); },
+          function () {
+              $(this).animate({ width: "200px" }, 'slow');
+          });
+             
+         });         
+    });
+    </script>
+<div id="menuOrder" />
+
+  ]]>
+  </Content> 
+</Module>
